@@ -15,37 +15,71 @@
         android:textStyle="italic" />
 
     <EditText
-        android:id="@+id/editTextDevice"
+        android:id="@+id/editTextIp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="@string/secure_device"
+        android:hint="@string/secure_ip"
         android:inputType="text"
         android:textAlignment="center" />
 
+    <TextView
+        android:id="@+id/secIpErr"
+        android:layout_width="214dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/secure_ipErr"
+        android:textColor="#f00"
+        android:textSize="12dp"
+        android:visibility="gone" />
 
     <EditText
         android:id="@+id/editTextPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
         android:ems="10"
         android:hint="@string/secure_pass"
         android:inputType="numberPassword"
         android:textAlignment="center" />
 
+    <TextView
+        android:id="@+id/secPassErr1"
+        android:layout_width="214dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/secure_passErr1"
+        android:textColor="#f00"
+        android:textSize="12dp"
+        android:visibility="gone" />
+
     <EditText
         android:id="@+id/editTextPasschk"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
         android:ems="10"
         android:hint="@string/secure_passchk"
         android:inputType="numberPassword"
         android:textAlignment="center" />
 
+    <TextView
+        android:id="@+id/secPassErr"
+        android:layout_width="214dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/secure_passErr"
+        android:textColor="#f00"
+        android:textSize="12dp"
+        android:visibility="gone" />
+
+
     <Button
         android:id="@+id/buttonRegister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
         android:text="@string/secure_register" />
+
 
 </LinearLayout>

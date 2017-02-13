@@ -9,7 +9,7 @@ public class UserVo {
     private String email;
     private String nickname;
     private String pass_word;
-    private int ser_pass_word;
+    private int sec_pass_word;
     private String infomation;
     private String users_image;
     private int follower_num;
@@ -63,12 +63,12 @@ public class UserVo {
         this.pass_word = pass_word;
     }
 
-    public int getSer_pass_word() {
-        return ser_pass_word;
+    public int getSec_pass_word() {
+        return sec_pass_word;
     }
 
-    public void setSer_pass_word(int ser_pass_word) {
-        this.ser_pass_word = ser_pass_word;
+    public void setSec_pass_word(int sec_pass_word) {
+        this.sec_pass_word = sec_pass_word;
     }
 
     public String getUsers_image() {
@@ -94,7 +94,7 @@ public class UserVo {
                 ", users_no=" + users_no +
                 ", nickname='" + nickname + '\'' +
                 ", pass_word='" + pass_word + '\'' +
-                ", ser_pass_word=" + ser_pass_word +
+                ", sec_pass_word=" + sec_pass_word +
                 ", infomation='" + infomation + '\'' +
                 ", users_image='" + users_image + '\'' +
                 ", follower_num=" + follower_num +

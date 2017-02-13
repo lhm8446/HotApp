@@ -1,4 +1,4 @@
-package com.hotdog.hotapp.network;
+package com.hotdog.hotapp.other.network;
 
 import android.os.Handler;
 import android.os.Looper;

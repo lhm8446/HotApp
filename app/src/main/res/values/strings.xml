@@ -31,12 +31,16 @@
     <string name="privacy_policy">Privacy Policy</string>
 
     <!-- streaming -->
-    <string name="secure_text">기기와 2차 비밀번호 등록하세요.</string>
-    <string name="secure_device">기기 번호</string>
+    <string name="secure_text">IP 주소와 2차 비밀번호 등록하세요.</string>
+    <string name="streamSec_pass">스트리밍 접속</string>
+    <string name="secure_ip">IP 주소</string>
+    <string name="secure_ipErr">IP 주소를 입력하세요.</string>
     <string name="secure_pass">2차 비밀번호</string>
     <string name="secure_passchk">2차 비밀번호 확인</string>
+    <string name="secure_passErr">비밀번호가 일치하지 않습니다.</string>
+    <string name="secure_passErr1">4자리 이상 입력하세요</string>
     <string name="secure_register">등록</string>
-
+    <string name="secure_login">접속</string>
 
     <!-- 앱 시작 화면 -->
     <string name="appStartScreen_title">HotDog\nbuy petcam !</string>
@@ -213,8 +217,11 @@
     <string name="mypagePet_enrollButton">등록</string>
     <string name="mypagePet_petTitle">애완동물정보 수정</string>
     <string name="mypagePet_petInfo">애완동물 소개</string>
+    <string name="mypagePet_petage">생년월일</string>
+    <string name="mypagePet_petagehint">생년월일</string>
+    <string name="mypagePet_name">이름</string>
     <string name="mypagePet_nameHint">이름을 입력해주세요!</string>
-    <string name="mypagePet_infoHint">소개해줭</string>
+    <string name="mypagePet_infoHint">소개해주세요</string>
     <string name="mypagePet_nameError">이름이 입력되지 않았습니다.</string>
     <string name="mypagePet_gender">성별</string>
     <string name="mypagePet_togetherTitle">함께한날</string>

@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.hotdog.hotapp.R;
 import com.hotdog.hotapp.activity.JoinActivity;
 import com.hotdog.hotapp.activity.LoginActivity;
-import com.hotdog.hotapp.network.SafeAsyncTask;
+import com.hotdog.hotapp.other.network.SafeAsyncTask;
 import com.hotdog.hotapp.other.Util;
 import com.hotdog.hotapp.service.UserService;
 

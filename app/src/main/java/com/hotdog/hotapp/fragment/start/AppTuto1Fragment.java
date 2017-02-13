@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.hotdog.hotapp.R;
-import com.hotdog.hotapp.extraFragment.BaseFragment;
+import com.hotdog.hotapp.other.extraFragment.BaseFragment;
 
 public class AppTuto1Fragment extends BaseFragment {
 

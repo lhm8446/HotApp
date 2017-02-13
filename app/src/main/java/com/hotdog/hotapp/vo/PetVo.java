@@ -9,9 +9,10 @@ public class PetVo {
     private String name;
     private String co_date;
     private String gender;
-    private int age;
+    private String age;
     private String info;
     private String pet_image;
+    private int sec_pass_word;
     private int users_no;
 
     public int getPet_no() {
@@ -46,11 +47,11 @@ public class PetVo {
         this.gender = gender;
     }
 
-    public int getAge() {
+    public String getAge() {
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge(String age) {
         this.age = age;
     }
 
@@ -70,6 +71,14 @@ public class PetVo {
         this.pet_image = pet_image;
     }
 
+    public int getSec_pass_word() {
+        return sec_pass_word;
+    }
+
+    public void setSec_pass_word(int sec_pass_word) {
+        this.sec_pass_word = sec_pass_word;
+    }
+
     public int getUsers_no() {
         return users_no;
     }
@@ -85,9 +94,10 @@ public class PetVo {
                 ", name='" + name + '\'' +
                 ", co_date='" + co_date + '\'' +
                 ", gender='" + gender + '\'' +
-                ", age=" + age +
+                ", age='" + age + '\'' +
                 ", info='" + info + '\'' +
                 ", pet_image='" + pet_image + '\'' +
+                ", sec_pass_word=" + sec_pass_word +
                 ", users_no=" + users_no +
                 '}';
     }

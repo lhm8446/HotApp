@@ -12,6 +12,7 @@ import android.support.v4.content.ContextCompat;
 
 import com.hotdog.hotapp.R;
 import com.hotdog.hotapp.vo.PetVo;
+import com.hotdog.hotapp.vo.PiVo;
 import com.hotdog.hotapp.vo.UserVo;
 
 /**
@@ -114,6 +115,27 @@ public class Util {
         editor.commit();
     }
 
+    public static void setFirstUserVo(String key, Context context, UserVo userVo) {
+        SharedPreferences data = context.getSharedPreferences(key, 0);
+        SharedPreferences.Editor editor = data.edit();
+        editor.clear();
+
+        editor.putInt("users_no", userVo.getUsers_no());
+        editor.putString("nickname", userVo.getNickname());
+        editor.putString("email", userVo.getEmail());
+        editor.putString("users_image", userVo.getUsers_image());
+        editor.putString("pass_word", userVo.getPass_word());
+        editor.commit();
+    }
+
+
+    public static void setSecPass(String key, Context context, int secPass) {
+        SharedPreferences data = context.getSharedPreferences(key, 0);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putInt("ser_pass_word", secPass);
+        editor.commit();
+    }
+
     public static UserVo getUserVo(String key, Context context) {
         SharedPreferences data = context.getSharedPreferences(key, 0);
 
@@ -141,6 +163,9 @@ public class Util {
         if (petVo.getGender() != null) {
             editor.putString("gender", petVo.getGender());
         }
+        if (petVo.getAge() != null) {
+            editor.putString("age", petVo.getAge());
+        }
         if (petVo.getCo_date() != null) {
             editor.putString("co_date", petVo.getCo_date());
         }
@@ -153,6 +178,22 @@ public class Util {
         editor.commit();
     }
 
+    public static void setFirstPetVo(String key, Context context, PetVo petVo) {
+        SharedPreferences data = context.getSharedPreferences(key, 0);
+        SharedPreferences.Editor editor = data.edit();
+        editor.clear();
+
+        editor.putInt("pet_no", petVo.getPet_no());
+        editor.putString("name", petVo.getName());
+        editor.putString("info", petVo.getInfo());
+        editor.putString("gender", petVo.getGender());
+        editor.putString("age", petVo.getAge());
+        editor.putString("co_date", petVo.getCo_date());
+        editor.putString("pet_image", petVo.getPet_image());
+        editor.putInt("users_no", petVo.getUsers_no());
+        editor.commit();
+    }
+
     public static PetVo getPetVo(String key, Context context) {
         SharedPreferences data = context.getSharedPreferences(key, 0);
 
@@ -161,9 +202,35 @@ public class Util {
         petVo.setName(data.getString("name", ""));
         petVo.setInfo(data.getString("info", ""));
         petVo.setGender(data.getString("gender", ""));
+        petVo.setAge(data.getString("age", ""));
         petVo.setCo_date(data.getString("co_date", ""));
         petVo.setPet_image(data.getString("pet_image", ""));
         petVo.setUsers_no(data.getInt("users_no", 0));
         return petVo;
     }
+
+    public static void setPiVo(String key, Context context, PiVo piVo) {
+        SharedPreferences data = context.getSharedPreferences(key, 0);
+        SharedPreferences.Editor editor = data.edit();
+        editor.clear();
+
+        editor.putInt("users_no", piVo.getUsers_no());
+        editor.putString("device_num", piVo.getDevice_num());
+        editor.putString("ip_address", piVo.getIp_address());
+        editor.putInt("temperature", piVo.getTemperature());
+        editor.commit();
+    }
+
+    public static PiVo getPiVo(String key, Context context) {
+        SharedPreferences data = context.getSharedPreferences(key, 0);
+
+        PiVo piVo = new PiVo();
+        piVo.setUsers_no(data.getInt("users_no", 0));
+        piVo.setDevice_num(data.getString("device_num", ""));
+        piVo.setIp_address(data.getString("ip_address", ""));
+        piVo.setTemperature(data.getInt("temperature", 0));
+
+        return piVo;
+    }
+
 }

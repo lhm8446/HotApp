@@ -3,7 +3,7 @@ package com.hotdog.hotapp.service;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.hotdog.hotapp.network.JSONResult;
+import com.hotdog.hotapp.other.network.JSONResult;
 import com.hotdog.hotapp.vo.PetVo;
 import com.hotdog.hotapp.vo.UserVo;
 
@@ -31,7 +31,6 @@ public class UserService {
         }
 
         JSONResultEmailCheck jsonResultEmailCheck = fromJSON(httpRequest, JSONResultEmailCheck.class);
-        System.out.println("==================" + jsonResultEmailCheck.getData());
 
         return jsonResultEmailCheck.getData();
     }
@@ -122,11 +121,55 @@ public class UserService {
         }
 
         JSONResultEmailCheck jsonResultEmailCheck = fromJSON(httpRequest, JSONResultEmailCheck.class);
-        System.out.println("==================" + jsonResultEmailCheck.getData());
-
         return jsonResultEmailCheck.getData();
     }
 
+    //2차 비밀번호 등록 유무 확인
+    public String chkSecPass(UserVo userVo) {
+        String url = SERVER_URL + "/user/app/secretcontrol";
+        HttpRequest httpRequest = HttpRequest.post(url);
+
+        Map<String, String> data = new HashMap<String, String>();
+        data.put("users_no", String.valueOf(userVo.getUsers_no()));
+
+        if (httpRequest.form(data).created()) {
+            System.out.println("----- UserVo email checked ----");
+        }
+
+        JSONResultSecPassChk jSONResultSecPassChk = fromJSON(httpRequest, JSONResultSecPassChk.class);
+        return jSONResultSecPassChk.getData();
+    }
+
+    //2차 비밀번호 등록
+    public String registerSecPass(UserVo userVo) {
+        String url = SERVER_URL + "/user/app/account/secretmodify";
+        HttpRequest httpRequest = HttpRequest.post(url);
+
+        Map<String, Object> data = new HashMap<String, Object>();
+        System.out.println(userVo);
+        data.put("nickname", userVo.getNickname());
+        data.put("sec_pass_word", userVo.getSec_pass_word());
+        if (httpRequest.form(data).created()) {
+        }
+
+        JSONResultSecPassChk jSONResultSecPassChk = fromJSON(httpRequest, JSONResultSecPassChk.class);
+        return jSONResultSecPassChk.getData();
+    }
+
+    //2차 비밀번호 로그인
+    public String SecPassLogin(UserVo userVo) {
+        String url = SERVER_URL + "/user/app/secretlogin";
+        HttpRequest httpRequest = HttpRequest.post(url);
+
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("users_no", userVo.getUsers_no());
+        data.put("sec_pass_word", userVo.getSec_pass_word());
+        if (httpRequest.form(data).created()) {
+        }
+
+        JSONResultSecPassChk jSONResultSecPassChk = fromJSON(httpRequest, JSONResultSecPassChk.class);
+        return jSONResultSecPassChk.getData();
+    }
 
     // 펫 정보 불러오기
     public PetVo getPet(int userNo) {
@@ -160,7 +203,7 @@ public class UserService {
 
         if (httpRequest.form(data).created()) {
             System.out.println("----- Pet update ----");
-        }else{
+        } else {
             System.out.println(httpRequest.body());
         }
 
@@ -179,6 +222,9 @@ public class UserService {
     }
 
     private class JSONResultPetUpdate extends JSONResult<String> {
+    }
+
+    private class JSONResultSecPassChk extends JSONResult<String> {
     }
 
     protected <V> V fromJSON(HttpRequest request, Class<V> target) {

@@ -1,4 +1,4 @@
-package com.hotdog.hotapp.extraFragment;
+package com.hotdog.hotapp.other.extraFragment;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

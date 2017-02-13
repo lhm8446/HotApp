@@ -24,9 +24,10 @@ import com.hotdog.hotapp.R;
 import com.hotdog.hotapp.fragment.home.HomeFragment;
 import com.hotdog.hotapp.fragment.home.MypageMainFragment;
 import com.hotdog.hotapp.fragment.home.SettingFragment;
-import com.hotdog.hotapp.fragment.home.StreamingFragment;
+import com.hotdog.hotapp.fragment.home.StreamSecFragment;
+import com.hotdog.hotapp.fragment.home.StreamStartFragment;
 import com.hotdog.hotapp.fragment.home.VodFragment;
-import com.hotdog.hotapp.network.SafeAsyncTask;
+import com.hotdog.hotapp.other.network.SafeAsyncTask;
 import com.hotdog.hotapp.other.CircleTransform;
 import com.hotdog.hotapp.other.Util;
 import com.hotdog.hotapp.service.UserService;
@@ -122,8 +123,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         // 회원 로그인정보 불러오기
         Intent intent = getIntent();
         users_no = intent.getIntExtra("userNo", -1);
-        callback = intent.getStringExtra("callback");
-        System.out.println(callback + " ---++");
         new UserGetAsyncTask().execute();
     }
 
@@ -171,7 +170,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             Util.changeHomeFragment(getSupportFragmentManager(), new HomeFragment());
         } else if (id == R.id.nav_streaming) {
             popClear();
-            Util.changeHomeFragment(getSupportFragmentManager(), new StreamingFragment());
+            new SecPassChkAsyncTask().execute();
         } else if (id == R.id.nav_vod) {
             popClear();
             Util.changeHomeFragment(getSupportFragmentManager(), new VodFragment());
@@ -287,7 +286,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         @Override
         protected void onSuccess(UserVo userVo) throws Exception {
 
-            Util.setUserVo("userData", getApplicationContext(), userVo);
+            Util.setFirstUserVo("userData", getApplicationContext(), userVo);
 
             new PetGetAsyncTask().execute();
 
@@ -311,9 +310,36 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         @Override
         protected void onSuccess(PetVo petVo) throws Exception {
-            Util.setPetVo("petData", getApplicationContext(), petVo);
+            Util.setFirstPetVo("petData", getApplicationContext(), petVo);
             loadNavHeader();
 
         }
     }
+
+    private class SecPassChkAsyncTask extends SafeAsyncTask<String> {
+        @Override
+        public String call() throws Exception {
+
+            // 통신 완료 후 리턴값 저장
+            userService = new UserService();
+
+            return userService.chkSecPass(userVo);
+        }
+
+        @Override
+        protected void onException(Exception e) throws RuntimeException {
+            super.onException(e);
+            System.out.println("-------------------- 에러 ------------------- " + e);
+        }
+
+        @Override
+        protected void onSuccess(String flag) throws Exception {
+            if ("exist".equals(flag)) {
+                Util.changeHomeFragment(getSupportFragmentManager(), new StreamSecFragment());
+            } else if ("first".equals(flag)) {
+                Util.changeHomeFragment(getSupportFragmentManager(), new StreamStartFragment());
+            }
+        }
+    }
+
 }

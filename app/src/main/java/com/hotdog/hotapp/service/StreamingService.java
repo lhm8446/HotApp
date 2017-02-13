@@ -5,7 +5,7 @@ import android.util.Log;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.hotdog.hotapp.network.JSONResult;
+import com.hotdog.hotapp.other.network.JSONResult;
 
 import java.io.File;
 import java.io.IOException;

@@ -23,7 +23,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.hotdog.hotapp.R;
 import com.hotdog.hotapp.activity.HomeActivity;
-import com.hotdog.hotapp.network.SafeAsyncTask;
+import com.hotdog.hotapp.other.network.SafeAsyncTask;
 import com.hotdog.hotapp.other.CircleTransform;
 import com.hotdog.hotapp.other.Util;
 import com.hotdog.hotapp.service.UploadService;
@@ -56,7 +56,7 @@ public class MypageProfileFragment extends Fragment {
     private String mImgPath = null;
     private String mImgTitle = null;
     private Bitmap bm;
-
+    private File saveFile;
 
     @Nullable
     @Override
@@ -135,7 +135,9 @@ public class MypageProfileFragment extends Fragment {
             public void onClick(View view) {
                 joinCheck = true;
                 nicknameNew = edittext_nickname.getText().toString();
-
+                if (saveFile != null) {
+                    new UploadTask(saveFile, userVo).execute();
+                }
                 // 닉네임 체크
                 if (nicknameNew.length() < 2) {
                     textview_nicknameEr2.setVisibility(view.VISIBLE);
@@ -223,8 +225,10 @@ public class MypageProfileFragment extends Fragment {
                 try {
                     bm = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
 
-                    File saveFile = new File(mImgPath);
-                    new UploadTask(saveFile, userVo).execute();
+                    saveFile = new File(mImgPath);
+                    profile_picture.setImageBitmap(bm);
+
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -271,15 +275,6 @@ public class MypageProfileFragment extends Fragment {
         @Override
         protected void onSuccess(String url_image) throws Exception {
 
-            String urlProfileImg = urlimg + "/" + url_image;
-
-            // Loading profile image
-            Glide.with(getActivity()).load(urlProfileImg)
-                    .crossFade()
-                    .thumbnail(0.5f)
-                    .bitmapTransform(new CircleTransform(getActivity().getApplication()))
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(profile_picture);
             Toast.makeText(getActivity().getApplicationContext(), "사진이 수정됬습니다.", Toast.LENGTH_LONG).show();
         }
 
@@ -325,7 +320,6 @@ public class MypageProfileFragment extends Fragment {
         public String call() throws Exception {
 
             userService = new UserService();
-
             // 통신 할 값 vo 저장
             userVoNew = new UserVo();
             userVoNew.setUsers_no(userVo.getUsers_no());
@@ -342,17 +336,14 @@ public class MypageProfileFragment extends Fragment {
 
         @Override
         protected void onSuccess(String flag) throws Exception {
-
             // 회원 수정
             if ("success".equals(flag)) {
-                //Util.setUserVo("userData", getActivity(), userVoNew);
                 Intent intent = new Intent(getActivity().getApplicationContext(), HomeActivity.class);
                 intent.putExtra("userNo", userVo.getUsers_no());
                 intent.putExtra("callback", "mypage");
                 startActivity(intent);
                 getActivity().finish();
             } else {
-                Toast.makeText(getActivity().getApplicationContext(), "에러, 나중에 다시 해죠", Toast.LENGTH_LONG).show();
             }
         }
     }

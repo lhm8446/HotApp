@@ -23,7 +23,7 @@ import android.widget.ToggleButton;
 import android.widget.VideoView;
 
 import com.hotdog.hotapp.R;
-import com.hotdog.hotapp.network.SafeAsyncTask;
+import com.hotdog.hotapp.other.network.SafeAsyncTask;
 import com.hotdog.hotapp.service.StreamingService;
 
 import net.majorkernelpanic.streaming.Session;

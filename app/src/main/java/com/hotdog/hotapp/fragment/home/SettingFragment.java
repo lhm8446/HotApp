@@ -40,7 +40,6 @@ public class SettingFragment extends Fragment {
                 if (isChecked) {
                     //Token db에 저장
                     String token = FirebaseInstanceId.getInstance().getToken();
-
                     String msg = getString(R.string.msg_token_fmt, token);
                     Log.d(TAG, msg);
                     Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
