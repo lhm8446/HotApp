@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+
+    <TextView
+        android:text="@string/mypageRaspMain_number"
+        android:textSize="17dp"
+        android:textStyle="italic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"/>
+
+    <Button
+        android:text="@string/mypageRaspMain_changeRaspPw"
+        android:layout_width="185dp"
+        android:layout_height="41dp"
+        android:background="@drawable/whitebox"
+        android:layout_margin="10dp"
+        android:id="@+id/button1" />
+
+    <Button
+        android:text="@string/mypageRaspMain_changeRaspNum"
+        android:layout_width="185dp"
+        android:layout_height="41dp"
+        android:background="@drawable/whitebox"
+        android:layout_margin="10dp"
+        android:id="@+id/button2" />
+
+    <Button
+        android:text="@string/mypageRaspMain_dropRasp"
+        android:layout_width="185dp"
+        android:layout_height="41dp"
+        android:background="@drawable/whitebox"
+        android:layout_margin="10dp"
+        android:id="@+id/button3" />
+
+</LinearLayout>

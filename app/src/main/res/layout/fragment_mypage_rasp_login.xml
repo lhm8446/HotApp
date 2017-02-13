@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/mypageRaspLogin_title"
+        android:textStyle="bold"
+        android:textColor="#2A78E4"
+        android:layout_margin="20dp"/>
+
+    <EditText
+        android:layout_width="225dp"
+        android:layout_height="25dp"
+        android:background="@drawable/whitebox"
+        android:layout_marginTop="20dp"
+
+        android:padding="5dp"
+        android:hint="@string/mypageRaspLogin_raspPwHint"
+        android:textSize="13dp"/>
+
+    <TextView
+        android:text="@string/mypageRaspLogin_raspPwError"
+        android:textColor="#f00"
+        android:textSize="12dp"
+        android:layout_width="214dp"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:text="@string/mypageRaspLogin_okButton"
+        android:layout_width="53dp"
+        android:layout_height="30dp"
+        android:layout_margin="20dp"
+        android:id="@+id/button"
+        android:textSize="12dp"
+        android:background="@drawable/blackbox"/>
+
+
+</LinearLayout>

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="230dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="40dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:weightSum="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/mypagePet_pictureTitle"
+                android:textSize="15dp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/petImage"
+                android:layout_width="140dp"
+                android:layout_height="185dp"
+                android:layout_marginTop="20dp" />
+
+            <Button
+                android:id="@+id/search_picture"
+                android:layout_width="70dp"
+                android:layout_height="25dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/blackbox"
+                android:text="@string/mypagePet_findButton"
+                android:textSize="13dp" />
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50dp"
+                android:text="@string/mypagePet_petTitle"
+                android:textSize="15dp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/petName"
+                android:layout_width="220dp"
+                android:layout_height="25dp"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/blackbox"
+                android:hint="@string/mypagePet_nameHint"
+                android:inputType="textPersonName"
+                android:padding="5dp"
+                android:textSize="13dp" />
+
+            <TextView
+                android:id="@+id/petNameEr"
+                android:layout_width="213dp"
+                android:layout_height="wrap_content"
+                android:text="@string/mypagePet_nameError"
+                android:textColor="#f00"
+                android:textSize="12dp"
+                android:visibility="gone" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/mypagePet_petInfo"
+                android:textSize="13dp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/pet_info"
+                android:layout_width="220dp"
+                android:layout_height="25dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/blackbox"
+                android:hint="@string/mypagePet_infoHint"
+                android:inputType="textPersonName"
+                android:padding="5dp"
+                android:textSize="13dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/mypagePet_gender"
+                android:textSize="13dp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <RadioGroup
+                    android:id="@+id/radioSex"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+
+                    <RadioButton
+                        android:id="@+id/radioMale"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:checked="true"
+                        android:text="@string/radio_male"
+                        android:textSize="13dp" />
+
+                    <RadioButton
+                        android:id="@+id/radioFemale"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:text="@string/radio_female"
+                        android:textSize="13dp" />
+
+                </RadioGroup>
+
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/mypagePet_togetherTitle"
+                android:textSize="13dp"
+                android:textStyle="bold" />
+
+
+            <EditText
+                android:id="@+id/co_date"
+                android:layout_width="110dp"
+                android:layout_height="25dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/blackbox"
+                android:inputType="text"
+                android:padding="5dp" />
+
+            <Button
+                android:id="@+id/buttonPet"
+                android:layout_width="70dp"
+                android:layout_height="25dp"
+                android:layout_marginBottom="60dp"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/blackbox"
+                android:text="@string/mypagePet_okButton"
+                android:textSize="13dp" />
+
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+</LinearLayout>
