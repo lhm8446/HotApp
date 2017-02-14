@@ -1,60 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center">
+    android:gravity="center"
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="20dp"
         android:text="@string/mypageRaspChangePw_title"
-        android:textStyle="bold"
         android:textColor="#2A78E4"
-        android:layout_margin="20dp"/>
+        android:textStyle="bold" />
 
     <EditText
+        android:id="@+id/editSecPass"
         android:layout_width="225dp"
         android:layout_height="25dp"
-        android:background="@drawable/whitebox"
-        android:layout_marginTop="20dp"
         android:layout_marginBottom="5dp"
-
-        android:padding="5dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/whitebox"
         android:hint="@string/mypageRaspChangePw_raspPwHint"
-        android:textSize="13dp"/>
-
-
+        android:inputType="numberPassword"
+        android:padding="5dp"
+        android:textSize="13dp" />
 
     <EditText
+        android:id="@+id/editSecPassChk"
         android:layout_width="225dp"
         android:layout_height="25dp"
-        android:background="@drawable/whitebox"
         android:layout_marginTop="5dp"
-
-        android:padding="5dp"
+        android:background="@drawable/whitebox"
         android:hint="@string/mypageRaspChangePw_raspPwCheckHint"
-        android:textSize="13dp"/>
+        android:inputType="numberPassword"
+        android:padding="5dp"
+        android:textSize="13dp" />
 
     <TextView
+        android:id="@+id/secChangeErr"
+        android:layout_width="213dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="@string/mypageRaspChangePw_raspPwError"
         android:textColor="#f00"
         android:textSize="12dp"
-        android:layout_width="213dp"
-        android:layout_height="wrap_content"/>
+        android:visibility="gone" />
 
     <TextView
+        android:id="@+id/secChangeErr1"
+        android:layout_width="213dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="@string/mypageRaspChangePw_raspPwCheckError"
         android:textColor="#f00"
         android:textSize="12dp"
-        android:layout_width="213dp"
-        android:layout_height="wrap_content"/>
+        android:visibility="gone" />
 
     <Button
-        android:text="@string/mypageRaspChangePw_okButton"
+        android:id="@+id/secChange"
         android:layout_width="53dp"
         android:layout_height="30dp"
         android:layout_margin="30dp"
-        android:id="@+id/button"
-        android:textSize="12dp"
-        android:background="@drawable/blackbox"/>
+        android:background="@drawable/blackbox"
+        android:text="@string/mypageRaspChangePw_okButton"
+        android:textSize="12dp" />
 </LinearLayout>

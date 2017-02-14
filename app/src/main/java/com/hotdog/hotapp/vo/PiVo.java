@@ -6,9 +6,10 @@ package com.hotdog.hotapp.vo;
 
 public class PiVo {
     private int users_no;
+    private String token;
     private String device_num;
-    private String ip_address;
     private int temperature;
+    private int humidity;
 
     public int getUsers_no() {
         return users_no;
@@ -16,6 +17,14 @@ public class PiVo {
 
     public void setUsers_no(int users_no) {
         this.users_no = users_no;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public String getDevice_num() {
@@ -26,14 +35,6 @@ public class PiVo {
         this.device_num = device_num;
     }
 
-    public String getIp_address() {
-        return ip_address;
-    }
-
-    public void setIp_address(String ip_address) {
-        this.ip_address = ip_address;
-    }
-
     public int getTemperature() {
         return temperature;
     }
@@ -42,13 +43,22 @@ public class PiVo {
         this.temperature = temperature;
     }
 
+    public int getHumidity() {
+        return humidity;
+    }
+
+    public void setHumidity(int humidity) {
+        this.humidity = humidity;
+    }
+
     @Override
     public String toString() {
         return "PiVo{" +
                 "users_no=" + users_no +
+                ", token='" + token + '\'' +
                 ", device_num='" + device_num + '\'' +
-                ", ip_address='" + ip_address + '\'' +
                 ", temperature=" + temperature +
+                ", humidity=" + humidity +
                 '}';
     }
 }

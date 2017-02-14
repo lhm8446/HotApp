@@ -65,9 +65,9 @@ public class UserService {
             System.out.println("----- UserVo nickname checked ----");
         }
 
-        JSONResultEmailCheck jsonResultEmailCheck = fromJSON(httpRequest, JSONResultEmailCheck.class);
+        JSONResultNicknameCheck jSONResultNicknameCheck = fromJSON(httpRequest, JSONResultNicknameCheck.class);
 
-        return jsonResultEmailCheck.getData();
+        return jSONResultNicknameCheck.getData();
     }
 
     // (회원가입)유저정보 저장
@@ -84,9 +84,8 @@ public class UserService {
             System.out.println("----- Users login checked ----");
         }
 
-        JSONResultUserCheck jsonResultUserCheck = fromJSON(httpRequest, JSONResultUserCheck.class);
-        System.out.println(jsonResultUserCheck.getData());
-        return jsonResultUserCheck.getData();
+        JSONResultUserInsert jSONResultUserInsert = fromJSON(httpRequest, JSONResultUserInsert.class);
+        return jSONResultUserInsert.getData();
     }
 
     // 유저정보 불러오기
@@ -100,10 +99,9 @@ public class UserService {
             System.out.println("----- Users login checked ----");
         }
 
-        JSONResultUserCheck jsonResultUserCheck = fromJSON(httpRequest, JSONResultUserCheck.class);
+        JSONResultUserGet jSONResultUserGet = fromJSON(httpRequest, JSONResultUserGet.class);
 
-        System.out.println(jsonResultUserCheck.getData());
-        return jsonResultUserCheck.getData();
+        return jSONResultUserGet.getData();
     }
 
     //유저 이미지 제외 정보 수정
@@ -120,8 +118,8 @@ public class UserService {
             System.out.println("----- UserVo email checked ----");
         }
 
-        JSONResultEmailCheck jsonResultEmailCheck = fromJSON(httpRequest, JSONResultEmailCheck.class);
-        return jsonResultEmailCheck.getData();
+        JSONResultUserUpdate jSONResultUserUpdate = fromJSON(httpRequest, JSONResultUserUpdate.class);
+        return jSONResultUserUpdate.getData();
     }
 
     //2차 비밀번호 등록 유무 확인
@@ -152,8 +150,8 @@ public class UserService {
         if (httpRequest.form(data).created()) {
         }
 
-        JSONResultSecPassChk jSONResultSecPassChk = fromJSON(httpRequest, JSONResultSecPassChk.class);
-        return jSONResultSecPassChk.getData();
+        JSONResultSecPassReg jSONResultSecPassReg = fromJSON(httpRequest, JSONResultSecPassReg.class);
+        return jSONResultSecPassReg.getData();
     }
 
     //2차 비밀번호 로그인
@@ -167,8 +165,8 @@ public class UserService {
         if (httpRequest.form(data).created()) {
         }
 
-        JSONResultSecPassChk jSONResultSecPassChk = fromJSON(httpRequest, JSONResultSecPassChk.class);
-        return jSONResultSecPassChk.getData();
+        JSONResultSecPassLogin jSONResultSecPassLogin = fromJSON(httpRequest, JSONResultSecPassLogin.class);
+        return jSONResultSecPassLogin.getData();
     }
 
     // 펫 정보 불러오기
@@ -183,7 +181,6 @@ public class UserService {
             System.out.println("----- Pet loading ----");
         }
         JSONResultPetCheck jsonResultPetCheck = fromJSON(httpRequest, JSONResultPetCheck.class);
-        System.out.println(jsonResultPetCheck.getData());
         return jsonResultPetCheck.getData();
     }
 
@@ -203,19 +200,28 @@ public class UserService {
 
         if (httpRequest.form(data).created()) {
             System.out.println("----- Pet update ----");
-        } else {
-            System.out.println(httpRequest.body());
         }
 
         JSONResultPetUpdate jSONResultPetUpdate = fromJSON(httpRequest, JSONResultPetUpdate.class);
-        System.out.println(httpRequest.body());
         return jSONResultPetUpdate.getData();
     }
 
     private class JSONResultUserCheck extends JSONResult<UserVo> {
     }
 
+    private class JSONResultUserGet extends JSONResult<UserVo> {
+    }
+
     private class JSONResultEmailCheck extends JSONResult<String> {
+    }
+
+    private class JSONResultUserUpdate extends JSONResult<String> {
+    }
+
+    private class JSONResultNicknameCheck extends JSONResult<String> {
+    }
+
+    private class JSONResultUserInsert extends JSONResult<UserVo> {
     }
 
     private class JSONResultPetCheck extends JSONResult<PetVo> {
@@ -225,6 +231,12 @@ public class UserService {
     }
 
     private class JSONResultSecPassChk extends JSONResult<String> {
+    }
+
+    private class JSONResultSecPassReg extends JSONResult<String> {
+    }
+
+    private class JSONResultSecPassLogin extends JSONResult<String> {
     }
 
     protected <V> V fromJSON(HttpRequest request, Class<V> target) {

@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.hotdog.hotapp.R;
 import com.hotdog.hotapp.other.Util;
 import com.hotdog.hotapp.other.network.SafeAsyncTask;
-import com.hotdog.hotapp.service.PiService;
 import com.hotdog.hotapp.service.UserService;
 import com.hotdog.hotapp.vo.PiVo;
 import com.hotdog.hotapp.vo.UserVo;
@@ -25,7 +24,7 @@ public class StreamSecFragment extends Fragment {
     private Button buttonSeclogin;
     private UserService userService;
     private UserVo userVo;
-    private PiService piService;
+    private PiVo piVo;
     private int secpass;
 
     @Nullable
@@ -40,7 +39,8 @@ public class StreamSecFragment extends Fragment {
         editTextPassword = (EditText) rootView.findViewById(R.id.editPassword);
 
         userVo = Util.getUserVo("userData", getActivity());
-        new GetPiInfoAsyncTask().execute();
+        piVo = Util.getPiVo("piData", getActivity());
+        textIpAddress.setText(piVo.getDevice_num());
 
 
         buttonSeclogin.setOnClickListener(new View.OnClickListener() {
@@ -90,25 +90,4 @@ public class StreamSecFragment extends Fragment {
         }
     }
 
-    //pi 정보 받기
-    private class GetPiInfoAsyncTask extends SafeAsyncTask<PiVo> {
-        @Override
-        public PiVo call() throws Exception {
-            piService = new PiService();
-            return piService.getinfo(userVo.getUsers_no());
-        }
-
-        @Override
-        protected void onException(Exception e) throws RuntimeException {
-            super.onException(e);
-            System.out.println("-------------------- 에러 ------------------- " + e);
-        }
-
-        @Override
-        protected void onSuccess(PiVo piVo) throws Exception {
-            Util.setPiVo("piData", getActivity(), piVo);
-
-            textIpAddress.setText(piVo.getIp_address());
-        }
-    }
 }

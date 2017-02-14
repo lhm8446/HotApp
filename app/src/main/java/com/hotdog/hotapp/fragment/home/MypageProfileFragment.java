@@ -36,7 +36,6 @@ public class MypageProfileFragment extends Fragment {
 
     private View view;
     private UserService userService;
-    private Boolean joinCheck;
 
     private Button search_picture, userUpdate, buttonQuit;
 
@@ -105,25 +104,9 @@ public class MypageProfileFragment extends Fragment {
                         return;
                     } else {
                         textview_nicknameEr2.setVisibility(view.GONE);
+                        new UserNicknameAsyncTask().execute();
                     }
 
-                    new UserNicknameAsyncTask().execute();
-                }
-            }
-        });
-
-        edittext_now_pass_word.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                // 현재 비밀번호 확인
-                if (!b) {
-
-                    if (userVo.getPass_word().equals(edittext_now_pass_word.getText().toString())) {
-                        textview_now_pass_wordEr.setVisibility(view.GONE);
-                    } else {
-                        textview_now_pass_wordEr.setVisibility(view.VISIBLE);
-                        return;
-                    }
 
                 }
             }
@@ -133,11 +116,9 @@ public class MypageProfileFragment extends Fragment {
         userUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                joinCheck = true;
                 nicknameNew = edittext_nickname.getText().toString();
-                if (saveFile != null) {
-                    new UploadTask(saveFile, userVo).execute();
-                }
+
+
                 // 닉네임 체크
                 if (nicknameNew.length() < 2) {
                     textview_nicknameEr2.setVisibility(view.VISIBLE);
@@ -145,9 +126,7 @@ public class MypageProfileFragment extends Fragment {
                 } else {
                     textview_nicknameEr2.setVisibility(view.GONE);
                 }
-                if (!nicknameNew.equals(userVo.getNickname())) {
-                    new UserNicknameAsyncTask().execute();
-                }
+
                 // 현재 비밀번호 확인
                 if (edittext_now_pass_word.getText().toString().length() > 0) {
                     if (userVo.getPass_word().equals(edittext_now_pass_word.getText().toString())) {
@@ -173,10 +152,13 @@ public class MypageProfileFragment extends Fragment {
                 } else {
                     pass_wordNew = userVo.getPass_word();
                 }
-
-                if (joinCheck) {
-                    // 회원가입 체크 통신
+                if (!nicknameNew.equals(userVo.getNickname())) {
+                    new UserNicknameAsyncTask().execute();
+                } else {
                     new UserModifytAsyncTask().execute();
+                    if (saveFile != null) {
+                        new UploadTask(saveFile, userVo).execute();
+                    }
                 }
             }
         });
@@ -304,12 +286,11 @@ public class MypageProfileFragment extends Fragment {
         protected void onSuccess(String flag) throws Exception {
 
             // 닉네임 존재하면 'no' 아니면 'yes' 리턴
-            if ("yes".equals(flag)) {
-                textview_nicknameEr.setVisibility(view.GONE);
-                joinCheck = true;
-            } else {
+            if ("no".equals(flag)) {
                 textview_nicknameEr.setVisibility(view.VISIBLE);
-                joinCheck = false;
+            } else {
+                textview_nicknameEr.setVisibility(view.GONE);
+                new UserModifytAsyncTask().execute();
             }
         }
     }
@@ -338,6 +319,9 @@ public class MypageProfileFragment extends Fragment {
         protected void onSuccess(String flag) throws Exception {
             // 회원 수정
             if ("success".equals(flag)) {
+                if (saveFile != null) {
+                    new UploadTask(saveFile, userVo).execute();
+                }
                 Intent intent = new Intent(getActivity().getApplicationContext(), HomeActivity.class);
                 intent.putExtra("userNo", userVo.getUsers_no());
                 intent.putExtra("callback", "mypage");
@@ -346,9 +330,5 @@ public class MypageProfileFragment extends Fragment {
             } else {
             }
         }
-    }
-
-    private void changeFragment() {
-        getFragmentManager().beginTransaction().replace(R.id.frame, new MypageMainFragment()).addToBackStack(null).commit();
     }
 }

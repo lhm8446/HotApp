@@ -94,25 +94,20 @@ public class Util {
         fm.beginTransaction().replace(R.id.frame, (android.support.v4.app.Fragment) fragment).addToBackStack(null).commit();
     }
 
-    public static void setUserVo(String key, Context context, UserVo userVo) {
-        SharedPreferences data = context.getSharedPreferences(key, 0);
+    public static void logout(Context context) {
+        SharedPreferences data = context.getSharedPreferences("userData", 0);
         SharedPreferences.Editor editor = data.edit();
-        if (userVo.getUsers_no() != 0) {
-            editor.putInt("users_no", userVo.getUsers_no());
-        }
-        if (userVo.getNickname() != null) {
-            editor.putString("nickname", userVo.getNickname());
-        }
-        if (userVo.getEmail() != null) {
-            editor.putString("email", userVo.getEmail());
-        }
-        if (userVo.getUsers_image() != null) {
-            editor.putString("users_image", userVo.getUsers_image());
-        }
-        if (userVo.getPass_word() != null) {
-            editor.putString("pass_word", userVo.getPass_word());
-        }
-        editor.commit();
+        editor.clear();
+
+        data = context.getSharedPreferences("petData", 0);
+        editor = data.edit();
+        editor.clear();
+        data = context.getSharedPreferences("piData", 0);
+        editor = data.edit();
+        editor.clear();
+        data = context.getSharedPreferences("piData", 0);
+        editor = data.edit();
+        editor.clear();
     }
 
     public static void setFirstUserVo(String key, Context context, UserVo userVo) {
@@ -128,14 +123,6 @@ public class Util {
         editor.commit();
     }
 
-
-    public static void setSecPass(String key, Context context, int secPass) {
-        SharedPreferences data = context.getSharedPreferences(key, 0);
-        SharedPreferences.Editor editor = data.edit();
-        editor.putInt("ser_pass_word", secPass);
-        editor.commit();
-    }
-
     public static UserVo getUserVo(String key, Context context) {
         SharedPreferences data = context.getSharedPreferences(key, 0);
 
@@ -146,36 +133,6 @@ public class Util {
         userVo.setUsers_image(data.getString("users_image", ""));
         userVo.setPass_word(data.getString("pass_word", ""));
         return userVo;
-    }
-
-    public static void setPetVo(String key, Context context, PetVo petVo) {
-        SharedPreferences data = context.getSharedPreferences(key, 0);
-        SharedPreferences.Editor editor = data.edit();
-        if (petVo.getPet_no() != 0) {
-            editor.putInt("pet_no", petVo.getPet_no());
-        }
-        if (petVo.getName() != null) {
-            editor.putString("name", petVo.getName());
-        }
-        if (petVo.getInfo() != null) {
-            editor.putString("info", petVo.getInfo());
-        }
-        if (petVo.getGender() != null) {
-            editor.putString("gender", petVo.getGender());
-        }
-        if (petVo.getAge() != null) {
-            editor.putString("age", petVo.getAge());
-        }
-        if (petVo.getCo_date() != null) {
-            editor.putString("co_date", petVo.getCo_date());
-        }
-        if (petVo.getPet_image() != null) {
-            editor.putString("pet_image", petVo.getPet_image());
-        }
-        if (petVo.getUsers_no() != 0) {
-            editor.putInt("users_no", petVo.getUsers_no());
-        }
-        editor.commit();
     }
 
     public static void setFirstPetVo(String key, Context context, PetVo petVo) {
@@ -215,8 +172,8 @@ public class Util {
         editor.clear();
 
         editor.putInt("users_no", piVo.getUsers_no());
-        editor.putString("device_num", piVo.getDevice_num());
-        editor.putString("ip_address", piVo.getIp_address());
+        editor.putString("device_num", piVo.getToken());
+        editor.putString("ip_address", piVo.getDevice_num());
         editor.putInt("temperature", piVo.getTemperature());
         editor.commit();
     }
@@ -226,11 +183,12 @@ public class Util {
 
         PiVo piVo = new PiVo();
         piVo.setUsers_no(data.getInt("users_no", 0));
-        piVo.setDevice_num(data.getString("device_num", ""));
-        piVo.setIp_address(data.getString("ip_address", ""));
+        piVo.setToken(data.getString("device_num", ""));
+        piVo.setDevice_num(data.getString("ip_address", ""));
         piVo.setTemperature(data.getInt("temperature", 0));
 
         return piVo;
     }
+
 
 }

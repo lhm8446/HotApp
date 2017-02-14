@@ -43,7 +43,7 @@ public class MypagePetFragment extends Fragment {
     private PetVo petVo, petVoNew;
 
     private ImageView petImage;
-    private static final String urlimg = "http://150.95.141.66/hotdog/hotdog/image/pet/";
+    private static final String urlimg = "http://150.95.141.66/hotdog/hotdog/image/user/";
     private final int REQ_CODE_SELECT_IMAGE = 1001;
 
     private TextView petNameEr, petAge, co_Date;
@@ -65,8 +65,8 @@ public class MypagePetFragment extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_mypage_pet, container, false);
 
         petVo = Util.getPetVo("petData", getActivity());
-        petImage = (ImageView) rootView.findViewById(R.id.petImage);
 
+        petImage = (ImageView) rootView.findViewById(R.id.petImage);
         petName = (EditText) rootView.findViewById(R.id.petName);
         petNameEr = (TextView) rootView.findViewById(R.id.petNameEr);
         radioSexGroup = (RadioGroup) rootView.findViewById(R.id.radioSex);
@@ -78,11 +78,11 @@ public class MypagePetFragment extends Fragment {
         buttonPet = (Button) rootView.findViewById(R.id.buttonPet);
         petAge = (TextView) rootView.findViewById(R.id.petAge);
 
-
         petName.setText(petVo.getName());
         pet_info.setText(petVo.getInfo());
         petAge.setText(petVo.getAge());
         co_Date.setText(petVo.getCo_date().toString());
+
         if ("male".equals(petVo.getGender())) {
             radioMaleButton.setChecked(true);
             radioFemaleButton.setChecked(false);
@@ -95,6 +95,12 @@ public class MypagePetFragment extends Fragment {
         loadPet_picture();
         cal = Calendar.getInstance(TimeZone.getDefault());
 
+        init();
+
+        return rootView;
+    }
+
+    private void init() {
         search_picture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -113,12 +119,21 @@ public class MypagePetFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                DatePickerDialog datePicker;
-                datePicker = new DatePickerDialog(getActivity(),
-                        datePickerListener,
-                        cal.get(Calendar.YEAR),
-                        cal.get(Calendar.MONTH),
-                        cal.get(Calendar.DAY_OF_MONTH));
+                DatePickerDialog datePicker = null;
+                if ("".equals(petAge.getText().toString())) {
+                    datePicker = new DatePickerDialog(getActivity(),
+                            datePickerListener,
+                            cal.get(Calendar.YEAR),
+                            cal.get(Calendar.MONTH),
+                            cal.get(Calendar.DAY_OF_MONTH));
+                } else {
+                    String[] strArr = petAge.getText().toString().split("/");
+                    datePicker = new DatePickerDialog(getActivity(),
+                            datePickerListener,
+                            Integer.parseInt(strArr[2]),
+                            Integer.parseInt(strArr[1]) - 1,
+                            Integer.parseInt(strArr[0]));
+                }
                 datePicker.setCancelable(false);
                 datePicker.setTitle("Select the date");
                 datePicker.show();
@@ -129,12 +144,22 @@ public class MypagePetFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                DatePickerDialog datePicker;
-                datePicker = new DatePickerDialog(getActivity(),
-                        datePickerListener1,
-                        cal.get(Calendar.YEAR),
-                        cal.get(Calendar.MONTH),
-                        cal.get(Calendar.DAY_OF_MONTH));
+                DatePickerDialog datePicker = null;
+                if ("".equals(co_Date.getText().toString())) {
+                    datePicker = new DatePickerDialog(getActivity(),
+                            datePickerListener1,
+                            cal.get(Calendar.YEAR),
+                            cal.get(Calendar.MONTH),
+                            cal.get(Calendar.DAY_OF_MONTH));
+                } else {
+                    String[] strArr = co_Date.getText().toString().split("/");
+                    datePicker = new DatePickerDialog(getActivity(),
+                            datePickerListener1,
+                            Integer.parseInt(strArr[2]),
+                            Integer.parseInt(strArr[1]) - 1,
+                            Integer.parseInt(strArr[0]));
+                }
+
                 datePicker.setCancelable(false);
                 datePicker.setTitle("Select the date");
                 datePicker.show();
@@ -156,14 +181,14 @@ public class MypagePetFragment extends Fragment {
                 if (radioSexGroup.getCheckedRadioButtonId() == R.id.radioMale) {
                     petVoNew.setGender("male");
                 } else if (radioSexGroup.getCheckedRadioButtonId() == R.id.radioFemale) {
-                    petVoNew.setGender("feMale");
+                    petVoNew.setGender("female");
                 }
                 petVoNew.setUsers_no(petVo.getUsers_no());
                 petVoNew.setName(petName.getText().toString());
 
                 petVoNew.setInfo(pet_info.getText().toString());
                 petVoNew.setCo_date(co_Date.getText().toString());
-
+                petVoNew.setAge(petAge.getText().toString());
                 if (saveFile != null) {
                     new UploadTask(saveFile, petVoNew).execute();
                 }
@@ -171,8 +196,8 @@ public class MypagePetFragment extends Fragment {
             }
         });
 
-        return rootView;
     }
+
 
     private DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
 
@@ -181,6 +206,12 @@ public class MypagePetFragment extends Fragment {
             String year1 = String.valueOf(selectedYear);
             String month1 = String.valueOf(selectedMonth + 1);
             String day1 = String.valueOf(selectedDay);
+            if (month1.length() == 1) {
+                month1 = "0" + month1;
+            }
+            if (day1.length() == 1) {
+                day1 = "0" + day1;
+            }
             petAge.setText(day1 + "/" + month1 + "/" + year1);
 
         }
@@ -192,6 +223,12 @@ public class MypagePetFragment extends Fragment {
             String year1 = String.valueOf(selectedYear);
             String month1 = String.valueOf(selectedMonth + 1);
             String day1 = String.valueOf(selectedDay);
+            if (month1.length() == 1) {
+                month1 = "0" + month1;
+            }
+            if (day1.length() == 1) {
+                day1 = "0" + day1;
+            }
             co_Date.setText(day1 + "/" + month1 + "/" + year1);
 
         }
@@ -229,8 +266,10 @@ public class MypagePetFragment extends Fragment {
 
                 try {
                     bm = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
-                    petImage.setImageBitmap(bm);
                     saveFile = new File(mImgPath);
+
+                    petImage.setImageBitmap(bm);
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -304,7 +343,6 @@ public class MypagePetFragment extends Fragment {
 
         @Override
         protected void onSuccess(String flag) throws Exception {
-
             if ("success".equals(flag)) {
                 Intent intent = new Intent(getActivity().getApplicationContext(), HomeActivity.class);
                 intent.putExtra("userNo", petVo.getUsers_no());

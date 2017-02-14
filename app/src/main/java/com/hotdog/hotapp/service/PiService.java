@@ -24,17 +24,53 @@ public class PiService {
 
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("users_no", piVo.getUsers_no());
+        data.put("token", piVo.getToken());
         data.put("device_num", piVo.getDevice_num());
-        data.put("ip_address", piVo.getIp_address());
 
 
         if (httpRequest.form(data).created()) {
             System.out.println(httpRequest.body());
         }
-
+        System.out.println(httpRequest.body());
         JSONResultPiInsert jSONResultPiInsert = fromJSON(httpRequest, JSONResultPiInsert.class);
 
         return jSONResultPiInsert.getData();
+    }
+
+    // pi 정보 입력
+    public String piDevUpdate(PiVo piVo) {
+        String url = SERVER_URL + "/app/raspberry/devupdate";
+        HttpRequest httpRequest = HttpRequest.post(url);
+
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("users_no", piVo.getUsers_no());
+        data.put("device_num", piVo.getDevice_num());
+
+
+        if (httpRequest.form(data).created()) {
+            System.out.println(httpRequest.body());
+        }
+        JSONResultpiDevUpdate jSONResultpiDevUpdate = fromJSON(httpRequest, JSONResultpiDevUpdate.class);
+
+        return jSONResultpiDevUpdate.getData();
+    }
+
+    // pi 정보 입력
+    public String piTokenUpdate(PiVo piVo) {
+        String url = SERVER_URL + "/app/raspberry/tokenupdate";
+        HttpRequest httpRequest = HttpRequest.post(url);
+
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("users_no", piVo.getUsers_no());
+        data.put("token", piVo.getToken());
+
+        if (httpRequest.form(data).created()) {
+            System.out.println(httpRequest.body());
+        }
+        System.out.println(httpRequest.body());
+        JSONResultpiTokenUpdate jSONResultpiTokenUpdate = fromJSON(httpRequest, JSONResultpiTokenUpdate.class);
+
+        return jSONResultpiTokenUpdate.getData();
     }
 
     // pi 정보 입력
@@ -54,6 +90,11 @@ public class PiService {
         return jSONResultGetinfo.getData();
     }
 
+    private class JSONResultpiTokenUpdate extends JSONResult<String> {
+    }
+
+    private class JSONResultpiDevUpdate extends JSONResult<String> {
+    }
 
     private class JSONResultPiInsert extends JSONResult<String> {
     }

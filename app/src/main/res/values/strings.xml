@@ -246,22 +246,17 @@
     <string name="mypageRaspLogin_okButton">확인</string>
 
     <!-- 기기페이지 비밀번호 변경 -->
-    <string name="mypageRaspChangePw_title">보안 비밀번호를 설정해주세요</string>
-    <string name="mypageRaspChangePw_raspPwHint">설정할 보안 비밀번호 입력</string>
+    <string name="mypageRaspChangePw_title">보안 비밀번호 변경</string>
+    <string name="mypageRaspChangePw_raspPwHint">설정할 보안 새로운 비밀번호 입력</string>
     <string name="mypageRaspChangePw_raspPwCheckHint">보안 비밀번호 확인</string>
-    <string name="mypageRaspChangePw_raspPwError">비밀번호가 올바르지 않습니다.</string>
+    <string name="mypageRaspChangePw_raspPwError">4자리 이상 입력하세요.</string>
     <string name="mypageRaspChangePw_raspPwCheckError">비밀번호가 일치하지 않습니다.</string>
-    <string name="mypageRaspChangePw_okButton">확인</string>
+    <string name="mypageRaspChangePw_okButton">변경</string>
 
     <!-- 기기페이지 기기변경 -->
-    <string name="mypageRaspChangeRasp_title">보안 비밀번호를 설정해주세요.</string>
-    <string name="mypageRaspChangeRasp_raspNumHint">핫도기 기기번호 입력</string>
+    <string name="mypageRaspChangeRasp_title">기기번호 변경</string>
     <string name="mypageRaspChangeRasp_raspNumError">기기번호가 올바르지 않습니다.</string>
-    <string name="mypageRaspChangeRasp_raspPwHint">설정할 보안 비밀번호 입력</string>
-    <string name="mypageRaspChangeRasp_raspPwCheckHint">보안 비밀번호 확인</string>
-    <string name="mypageRaspChangeRasp_raspPwError">비밀번호가 올바르지 않습니다.</string>
-    <string name="mypageRaspChangeRasp_raspPwCheckError">비밀번호가 일치하지 않습니다.</string>
-    <string name="mypageRaspChangeRasp_okButton">확인</string>
+    <string name="mypageRaspChangeRasp_okButton">변경</string>
 
     <!-- 기기페이지 수정 완료 -->
     <string name="mypageRaspChangeOk_topLine">보안 설정</string>

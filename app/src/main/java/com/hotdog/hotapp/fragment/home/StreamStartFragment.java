@@ -70,12 +70,13 @@ public class StreamStartFragment extends Fragment {
                     if (secpass == secpass2) {
                         String token = FirebaseInstanceId.getInstance().getToken();
                         piVo = new PiVo();
-                        piVo.setIp_address(ip_address);
-                        piVo.setDevice_num(token);
+                        piVo.setDevice_num(ip_address);
+                        piVo.setToken(token);
                         piVo.setUsers_no(userVo.getUsers_no());
                         userVo.setSec_pass_word(secpass);
                         new RegisterSecAsyncTask().execute();
-                        new PiInsertAsyncTask().execute();
+
+                        Util.changeHomeFragment(getFragmentManager(), new StreamSecFragment());
                         secPassErr.setVisibility(view.GONE);
                     } else {
                         secPassErr.setVisibility(view.VISIBLE);
@@ -111,8 +112,7 @@ public class StreamStartFragment extends Fragment {
 
         @Override
         protected void onSuccess(String flag) throws Exception {
-            System.out.println("RegisterSecAsyncTask success");
-
+            new PiInsertAsyncTask().execute();
         }
     }
 
@@ -127,9 +127,7 @@ public class StreamStartFragment extends Fragment {
 
         @Override
         protected void onSuccess(String s) throws Exception {
-            System.out.println("PiInsertAsyncTask success");
-            //Util.changeHomeFragment(getFragmentManager(), new StreamSecFragment());
-            getFragmentManager().beginTransaction().replace(R.id.frame, new StreamSecFragment()).commit();
+
         }
 
         @Override

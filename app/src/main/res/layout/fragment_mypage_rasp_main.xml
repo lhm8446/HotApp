@@ -1,40 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center">
+    android:gravity="center"
+    android:orientation="vertical">
 
     <TextView
-        android:text="@string/mypageRaspMain_number"
-        android:textSize="17dp"
-        android:textStyle="italic"
+        android:id="@+id/raspDevice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp"/>
+        android:layout_marginBottom="30dp"
+        android:text="@string/mypageRaspMain_number"
+        android:textSize="17dp"
+        android:textStyle="italic" />
 
     <Button
-        android:text="@string/mypageRaspMain_changeRaspPw"
+        android:id="@+id/secPassChange"
         android:layout_width="185dp"
         android:layout_height="41dp"
-        android:background="@drawable/whitebox"
         android:layout_margin="10dp"
-        android:id="@+id/button1" />
+        android:background="@drawable/whitebox"
+        android:text="@string/mypageRaspMain_changeRaspPw" />
 
     <Button
-        android:text="@string/mypageRaspMain_changeRaspNum"
+        android:id="@+id/DeviceNumChange"
         android:layout_width="185dp"
         android:layout_height="41dp"
-        android:background="@drawable/whitebox"
         android:layout_margin="10dp"
-        android:id="@+id/button2" />
+        android:background="@drawable/whitebox"
+        android:text="@string/mypageRaspMain_changeRaspNum" />
 
     <Button
-        android:text="@string/mypageRaspMain_dropRasp"
+        android:id="@+id/DeviceNumDelete"
         android:layout_width="185dp"
         android:layout_height="41dp"
-        android:background="@drawable/whitebox"
         android:layout_margin="10dp"
-        android:id="@+id/button3" />
+        android:background="@drawable/whitebox"
+        android:text="@string/mypageRaspMain_dropRasp" />
 
 </LinearLayout>

@@ -14,10 +14,14 @@ import android.widget.Toast;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.hotdog.hotapp.R;
+import com.hotdog.hotapp.other.network.SafeAsyncTask;
+import com.hotdog.hotapp.service.PiService;
+import com.hotdog.hotapp.vo.PiVo;
 
 public class SettingFragment extends Fragment {
 
     private static final String TAG = "SettingFragment";
+    private PiService piService;
 
 
     @Nullable
@@ -55,5 +59,28 @@ public class SettingFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    //pi token 변경
+    private class PiTokenUpdateAsyncTask extends SafeAsyncTask<String> {
+
+        @Override
+        public String call() throws Exception {
+            piService = new PiService();
+            PiVo piVo = new PiVo();
+            //piVo.setUsers_no();
+            piVo.setToken(FirebaseInstanceId.getInstance().getToken());
+            return piService.piTokenUpdate(piVo);
+        }
+
+        @Override
+        protected void onSuccess(String s) throws Exception {
+
+        }
+
+        @Override
+        protected void onException(Exception e) throws RuntimeException {
+            super.onException(e);
+        }
     }
 }

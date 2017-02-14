@@ -7,34 +7,51 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.hotdog.hotapp.R;
+import com.hotdog.hotapp.other.Util;
+import com.hotdog.hotapp.vo.PiVo;
+import com.hotdog.hotapp.vo.UserVo;
 
 public class MypageRaspMainFragment extends Fragment {
+
+    private TextView raspDevice;
+    private Button secPassChange, DeviceNumChange, DeviceNumDelete;
+    private UserVo userVo;
+    private PiVo piVo;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_mypage_rasp_main, container, false);
 
-        Button button1 = (Button)rootView.findViewById(R.id.button1);
-        button1.setOnClickListener(new View.OnClickListener() {
+        raspDevice = (TextView) rootView.findViewById(R.id.raspDevice);
+
+        secPassChange = (Button) rootView.findViewById(R.id.secPassChange);
+        DeviceNumChange = (Button) rootView.findViewById(R.id.DeviceNumChange);
+        DeviceNumDelete = (Button) rootView.findViewById(R.id.DeviceNumDelete);
+
+        userVo = Util.getUserVo("userData", getActivity());
+        piVo = Util.getPiVo("piData", getActivity());
+
+        raspDevice.setText(piVo.getDevice_num());
+
+        secPassChange.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                changeRaspChangePwFragment();
+                Util.changeHomeFragment(getFragmentManager(), new MypageRaspChangePwFragment());
             }
         });
 
-        Button button2 = (Button)rootView.findViewById(R.id.button2);
-        button1.setOnClickListener(new View.OnClickListener() {
+        DeviceNumChange.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                changeRaspFragment();
+                Util.changeHomeFragment(getFragmentManager(), new MypageRaspChangeRaspFragment());
             }
         });
 
-        Button button3 = (Button)rootView.findViewById(R.id.button3);
-        button3.setOnClickListener(new View.OnClickListener() {
+        DeviceNumDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -44,10 +61,5 @@ public class MypageRaspMainFragment extends Fragment {
         return rootView;
     }
 
-    private void changeRaspChangePwFragment() {
-        getFragmentManager().beginTransaction().replace(R.id.frame, new MypageRaspChangePwFragment()).addToBackStack(null).commit();
-    }
-    private void changeRaspFragment() {
-        getFragmentManager().beginTransaction().replace(R.id.frame, new MypageRaspChangeRaspFragment()).addToBackStack(null).commit();
-    }
+
 }

@@ -56,8 +56,11 @@ public class UploadService {
             Log.d("2", "uploadPetImage: yes");
         }
 
-        JSONResultImage jSONResultImage = fromJSON(request, JSONResultImage.class);
-        return jSONResultImage.getData();
+        JSONResultPetImage jSONResultPetImage = fromJSON(request, JSONResultPetImage.class);
+        return jSONResultPetImage.getData();
+    }
+
+    private class JSONResultPetImage extends JSONResult<String> {
     }
 
     private class JSONResultImage extends JSONResult<String> {

@@ -27,11 +27,13 @@ import com.hotdog.hotapp.fragment.home.SettingFragment;
 import com.hotdog.hotapp.fragment.home.StreamSecFragment;
 import com.hotdog.hotapp.fragment.home.StreamStartFragment;
 import com.hotdog.hotapp.fragment.home.VodFragment;
-import com.hotdog.hotapp.other.network.SafeAsyncTask;
 import com.hotdog.hotapp.other.CircleTransform;
 import com.hotdog.hotapp.other.Util;
+import com.hotdog.hotapp.other.network.SafeAsyncTask;
+import com.hotdog.hotapp.service.PiService;
 import com.hotdog.hotapp.service.UserService;
 import com.hotdog.hotapp.vo.PetVo;
+import com.hotdog.hotapp.vo.PiVo;
 import com.hotdog.hotapp.vo.UserVo;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -42,7 +44,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private PetVo petVo;
 
     private UserService userService;
-
+    private PiService piService;
 
     private NavigationView navigationView;
     private DrawerLayout drawer;
@@ -123,6 +125,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         // 회원 로그인정보 불러오기
         Intent intent = getIntent();
         users_no = intent.getIntExtra("userNo", -1);
+        callback = intent.getStringExtra("callback");
         new UserGetAsyncTask().execute();
     }
 
@@ -152,7 +155,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_logout) {
+            Util.logout(getApplicationContext());
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(intent);
+            finish();
             return true;
         }
 
@@ -167,7 +174,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         if (id == R.id.home) {
             popClear();
-            Util.changeHomeFragment(getSupportFragmentManager(), new HomeFragment());
+            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+            intent.putExtra("userNo", petVo.getUsers_no());
+            startActivity(intent);
+            finish();
         } else if (id == R.id.nav_streaming) {
             popClear();
             new SecPassChkAsyncTask().execute();
@@ -287,7 +297,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         protected void onSuccess(UserVo userVo) throws Exception {
 
             Util.setFirstUserVo("userData", getApplicationContext(), userVo);
-
+            System.out.println(userVo);
             new PetGetAsyncTask().execute();
 
             loadNavHeader();
@@ -295,6 +305,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    //getPet
     private class PetGetAsyncTask extends SafeAsyncTask<PetVo> {
         @Override
         public PetVo call() throws Exception {
@@ -311,11 +322,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         @Override
         protected void onSuccess(PetVo petVo) throws Exception {
             Util.setFirstPetVo("petData", getApplicationContext(), petVo);
+            System.out.println(petVo);
+            new GetPiInfoAsyncTask().execute();
             loadNavHeader();
 
         }
     }
 
+    //이차 비밀번호 유무
     private class SecPassChkAsyncTask extends SafeAsyncTask<String> {
         @Override
         public String call() throws Exception {
@@ -339,6 +353,29 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             } else if ("first".equals(flag)) {
                 Util.changeHomeFragment(getSupportFragmentManager(), new StreamStartFragment());
             }
+        }
+    }
+
+
+    //pi 정보 받기
+    private class GetPiInfoAsyncTask extends SafeAsyncTask<PiVo> {
+        @Override
+        public PiVo call() throws Exception {
+            piService = new PiService();
+            return piService.getinfo(userVo.getUsers_no());
+        }
+
+        @Override
+        protected void onException(Exception e) throws RuntimeException {
+            super.onException(e);
+            System.out.println("-------------------- 에러 ------------------- " + e);
+        }
+
+        @Override
+        protected void onSuccess(PiVo piVo) throws Exception {
+            Util.setPiVo("piData", getApplicationContext(), piVo);
+            System.out.println(piVo);
+
         }
     }
 

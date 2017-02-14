@@ -72,26 +72,19 @@ public class StartActivity extends AppCompatActivity {
 
         // 소개 화면 듀토리얼
         Handler mHandler = new Handler();
-        mHandler.postDelayed(new Runnable() {
-            //Do Something
-            @Override
-            public void run() {
+        if (repeatShow.getBoolean("chk", false)) {
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(intent);
+            finish();
+        } else {
+            FrameLayout layout = (FrameLayout) findViewById(R.id.content);
+            layout.setVisibility(View.GONE);
 
-                if (repeatShow.getBoolean("chk", false)) {
-                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                    startActivity(intent);
-                    finish();
-                } else {
-                    FrameLayout layout = (FrameLayout) findViewById(R.id.content);
-                    layout.setVisibility(View.GONE);
-
-                    mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-                    // Set up the ViewPager with the sections adapter.
-                    mViewPager = (ViewPager) findViewById(R.id.container);
-                    mViewPager.setAdapter(mSectionsPagerAdapter);
-                }
-            }
-        }, 1000); //
+            mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+            // Set up the ViewPager with the sections adapter.
+            mViewPager = (ViewPager) findViewById(R.id.container);
+            mViewPager.setAdapter(mSectionsPagerAdapter);
+        }
 
 
     }
