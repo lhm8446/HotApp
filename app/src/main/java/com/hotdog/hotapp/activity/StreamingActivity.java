@@ -1,20 +1,13 @@
 package com.hotdog.hotapp.activity;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.content.pm.PackageManager;
 import android.hardware.Camera.CameraInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.View;
@@ -31,6 +24,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hotdog.hotapp.R;
+import com.hotdog.hotapp.other.Util;
+import com.hotdog.hotapp.vo.UserVo;
 
 import net.majorkernelpanic.streaming.Session;
 import net.majorkernelpanic.streaming.SessionBuilder;
@@ -62,11 +57,11 @@ public class StreamingActivity extends Activity implements
     private ProgressBar mProgressBar;
     private Session mSession;
     private RtspClient mClient;
-    private SharedPreferences baseSetting;
-    private String nickname, ipNumber;
-    private int secPasss;
-    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 32;
-    private static final int MY_PERMISSIONS_RECORD_AUDIO = 33;
+    private UserVo userVo;
+    private int secPass;
+    private String nickname;
+    private SharedPreferences mPrefs;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,14 +88,13 @@ public class StreamingActivity extends Activity implements
         mButtonVideo.setOnClickListener(this);
         mButtonFlash.setTag("off");
 
-        checkPermission(this);
+        userVo = Util.getUserVo("userData", getApplicationContext());
+        nickname = userVo.getNickname();
+        secPass = userVo.getSec_pass_word();
 
-        SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(StreamingActivity.this);
+        Util.checkCameraPermission(this);
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(StreamingActivity.this);
 
-        baseSetting = this.getSharedPreferences("setting", 0);
-        nickname = baseSetting.getString("nickname", "none");
-        ipNumber = baseSetting.getString("ipnumber", "");
-        secPasss = baseSetting.getInt("secpass", 0);
 
         // Configures the SessionBuilder
         mSession = SessionBuilder.getInstance()
@@ -130,7 +124,6 @@ public class StreamingActivity extends Activity implements
 
         mSurfaceView.getHolder().addCallback(this);
         selectQuality();
-        // mSession.setVideoQuality(new VideoQuality(352, 288, 30, 300000));
         mSession.setPreviewOrientation(90);
         mSession.configure();
 
@@ -141,43 +134,6 @@ public class StreamingActivity extends Activity implements
             mSession.switchCamera();
         }
 
-
-    }
-
-    //    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    public static boolean checkPermission(final Context context) {
-        int currentAPIVersion = Build.VERSION.SDK_INT;
-        if (currentAPIVersion >= android.os.Build.VERSION_CODES.M) {
-
-            //READ_EXTERNAL_STORAGE( 사용권한이 없을 경우  -1)
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-
-                // 최초 권한 요청인지, 혹은 사용자에 의한 재요청인지 확인
-                if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.RECORD_AUDIO)) {
-                    // 사용자가 임의로 권한을 취소 시킨경우, 권한 재요청
-                    ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.RECORD_AUDIO}, StreamingActivity.MY_PERMISSIONS_RECORD_AUDIO);
-                } else {
-                    //최초로 권한을 요청하는경우 (첫실행)
-                    ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.RECORD_AUDIO}, StreamingActivity.MY_PERMISSIONS_RECORD_AUDIO);
-                    return false;
-                }
-            }
-
-            //CAMERA
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.CAMERA)) {
-                    ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.CAMERA}, StreamingActivity.MY_PERMISSIONS_REQUEST_CAMERA);
-
-                } else {
-                    ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.CAMERA}, StreamingActivity.MY_PERMISSIONS_REQUEST_CAMERA);
-                    return false;
-                }
-            }
-            return true;
-        } else {
-            //사용 권한이 있음을 확인한 경우.
-            return true;
-        }
     }
 
 
@@ -260,8 +216,8 @@ public class StreamingActivity extends Activity implements
             String ip, port, path;
 
             // We save the content user inputs in Shared Preferences
-            SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(StreamingActivity.this);
-            Editor editor = mPrefs.edit();
+            mPrefs = PreferenceManager.getDefaultSharedPreferences(StreamingActivity.this);
+            editor = mPrefs.edit();
 
             // We parse the URI written in the Editext
             Pattern uri = Pattern.compile("rtsp://(.+):(\\d*)/(.+)");
@@ -269,7 +225,7 @@ public class StreamingActivity extends Activity implements
             port = "1935";
             path = "live/" + nickname + "/stream";
 
-            mClient.setCredentials(nickname, secPasss + "");
+            mClient.setCredentials(nickname, secPass + "");
             mClient.setServerAddress(ip, Integer.parseInt(port));
             mClient.setStreamPath("/" + path);
             mClient.startStream();

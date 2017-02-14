@@ -2,6 +2,7 @@ package com.hotdog.hotapp.fragment.login;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,11 +14,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.hotdog.hotapp.R;
+import com.hotdog.hotapp.activity.HomeActivity;
 import com.hotdog.hotapp.activity.JoinActivity;
 import com.hotdog.hotapp.activity.LoginActivity;
-import com.hotdog.hotapp.other.network.SafeAsyncTask;
 import com.hotdog.hotapp.other.Util;
+import com.hotdog.hotapp.other.network.SafeAsyncTask;
 import com.hotdog.hotapp.service.UserService;
+import com.hotdog.hotapp.vo.UserVo;
 
 import static com.hotdog.hotapp.R.layout.fragment_login_em;
 
@@ -29,6 +32,8 @@ public class LoginEmFragment extends Fragment {
     private ViewGroup rootView;
     private UserService userService;
     private Button buttonEm, signUp;
+    private SharedPreferences auto;
+    private SharedPreferences.Editor editor;
 
     @Nullable
     @Override
@@ -36,8 +41,12 @@ public class LoginEmFragment extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(fragment_login_em, container, false);
         emailError = (TextView) rootView.findViewById(R.id.emailError);
         editEmail = (EditText) rootView.findViewById(R.id.editEmail);
-
         buttonEm = (Button) rootView.findViewById(R.id.buttonEm);
+        auto = getActivity().getSharedPreferences("auto", 0);
+        editEmail.setText(auto.getString("email", ""));
+        if (auto.getBoolean("auto", false)) {
+            new UserEmailPasswordAsyncTask().execute();
+        }
         buttonEm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -48,7 +57,6 @@ public class LoginEmFragment extends Fragment {
             }
         });
 
-
         signUp = (Button) rootView.findViewById(R.id.signUp);
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,6 +65,7 @@ public class LoginEmFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
 
         return rootView;
     }
@@ -91,5 +100,34 @@ public class LoginEmFragment extends Fragment {
         }
     }
 
+    private class UserEmailPasswordAsyncTask extends SafeAsyncTask<UserVo> {
+        @Override
+        public UserVo call() throws Exception {
+
+            // 통신 완료 후 리턴값 저장
+            userService = new UserService();
+            UserVo userVo = userService.userEmailPasswordCheck(auto.getString("email", ""), auto.getString("password", ""));
+
+            return userVo;
+        }
+
+        @Override
+        protected void onException(Exception e) throws RuntimeException {
+            super.onException(e);
+            System.out.println("-------------------- 에러 ------------------- " + e);
+        }
+
+        @Override
+        protected void onSuccess(UserVo userVo) throws Exception {
+
+            // 로그인 안되면 '-1' 리턴
+            if (userVo.getUsers_no() != -1) {
+                Intent intent = new Intent(getActivity().getApplicationContext(), HomeActivity.class);
+                intent.putExtra("userNo", userVo.getUsers_no());
+                startActivity(intent);
+                getActivity().finish();
+            }
+        }
+    }
 
 }

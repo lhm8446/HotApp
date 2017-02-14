@@ -2,7 +2,6 @@ package com.hotdog.hotapp.fragment.home;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -23,9 +22,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.hotdog.hotapp.R;
 import com.hotdog.hotapp.activity.HomeActivity;
-import com.hotdog.hotapp.other.network.SafeAsyncTask;
 import com.hotdog.hotapp.other.CircleTransform;
 import com.hotdog.hotapp.other.Util;
+import com.hotdog.hotapp.other.network.SafeAsyncTask;
 import com.hotdog.hotapp.service.UploadService;
 import com.hotdog.hotapp.service.UserService;
 import com.hotdog.hotapp.vo.UserVo;
@@ -39,8 +38,6 @@ public class MypageProfileFragment extends Fragment {
 
     private Button search_picture, userUpdate, buttonQuit;
 
-    private SharedPreferences baseSetting;
-    private SharedPreferences.Editor editor;
     private UserVo userVo, userVoNew;
     private static final String urlimg = "http://150.95.141.66/hotdog/hotdog/image/user/";
     private UploadService uploadService;
@@ -50,7 +47,6 @@ public class MypageProfileFragment extends Fragment {
     private TextView textview_email, textview_nicknameEr, textview_nicknameEr2, textview_now_pass_wordEr, textview_change_pass_wordEr, textview_change_pass_word2Er;
     private ImageView profile_picture;
 
-    private final int MY_PERMISSION_REQUEST_STORAGE = 100;
     private final int REQ_CODE_SELECT_IMAGE = 1001;
     private String mImgPath = null;
     private String mImgTitle = null;
@@ -61,6 +57,7 @@ public class MypageProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_mypage_profile, container, false);
+        Util.checkStoragePermission(getActivity());
         userVo = Util.getUserVo("userData", getActivity());
 
 

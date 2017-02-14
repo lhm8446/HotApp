@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
@@ -23,6 +25,26 @@ public class Util {
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 32;
     private static final int MY_PERMISSIONS_RECORD_AUDIO = 33;
     private static final int MY_PERMISSIONS_READ_EXTERNAL_STORAGE = 34;
+    private static int TYPE_WIFI = 1;
+    private static int TYPE_MOBILE = 2;
+    private static int TYPE_NOT_CONNECTED = 0;
+
+
+    public static int getConnectivityStatus(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if (null != activeNetwork) {
+            if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI)
+                return TYPE_WIFI;
+
+            if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE)
+                return TYPE_MOBILE;
+        }
+        return TYPE_NOT_CONNECTED;
+    }
+
 
     public static boolean checkAudioPermission(final Context context) {
         int currentAPIVersion = Build.VERSION.SDK_INT;
@@ -98,16 +120,23 @@ public class Util {
         SharedPreferences data = context.getSharedPreferences("userData", 0);
         SharedPreferences.Editor editor = data.edit();
         editor.clear();
+        editor.commit();
 
         data = context.getSharedPreferences("petData", 0);
         editor = data.edit();
         editor.clear();
+        editor.commit();
+
         data = context.getSharedPreferences("piData", 0);
         editor = data.edit();
         editor.clear();
-        data = context.getSharedPreferences("piData", 0);
+        editor.commit();
+
+        data = context.getSharedPreferences("auto", 0);
         editor = data.edit();
         editor.clear();
+        editor.commit();
+
     }
 
     public static void setFirstUserVo(String key, Context context, UserVo userVo) {

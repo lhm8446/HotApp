@@ -11,8 +11,6 @@ public class LoginActivity extends AppCompatActivity {
     // 이메일 로그인 시 '최종 로그인' 사용을 위해 저장 ( sharedpreference 구현 x )
     public static String presentEm;
 
-    // 최종 로그인 시 유저 번호 받아 오기
-    public static int users_no;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

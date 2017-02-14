@@ -67,7 +67,6 @@ public class PiService {
         if (httpRequest.form(data).created()) {
             System.out.println(httpRequest.body());
         }
-        System.out.println(httpRequest.body());
         JSONResultpiTokenUpdate jSONResultpiTokenUpdate = fromJSON(httpRequest, JSONResultpiTokenUpdate.class);
 
         return jSONResultpiTokenUpdate.getData();

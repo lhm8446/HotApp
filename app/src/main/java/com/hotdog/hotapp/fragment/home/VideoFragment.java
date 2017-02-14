@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,38 +22,34 @@ import android.widget.ToggleButton;
 import android.widget.VideoView;
 
 import com.hotdog.hotapp.R;
+import com.hotdog.hotapp.other.Util;
 import com.hotdog.hotapp.other.network.SafeAsyncTask;
 import com.hotdog.hotapp.service.StreamingService;
-
-import net.majorkernelpanic.streaming.Session;
-import net.majorkernelpanic.streaming.SessionBuilder;
-import net.majorkernelpanic.streaming.audio.AudioQuality;
-import net.majorkernelpanic.streaming.rtsp.RtspClient;
+import com.hotdog.hotapp.vo.PiVo;
+import com.hotdog.hotapp.vo.UserVo;
 
 import java.io.File;
 import java.io.IOException;
 
-public class VideoFragment extends Fragment implements RtspClient.Callback,
-        Session.Callback {
-    private Session mSession;
-    private RtspClient mClient;
-    ToggleButton toggleVoice;
-    TextView textBitrate;
-    VideoView videoView;
-    StreamingService streamingService;
-    SharedPreferences baseSetting;
-    String nickname, ipNumber;
-    int secPasss;
-    String VideoURL;
-    ProgressBar mProgressBar;
-    MediaRecorder recorder;
-    MediaController mediacontroller;
-    Uri video;
+public class VideoFragment extends Fragment {
+    private ToggleButton toggleVoice;
+    private TextView textBitrate;
+    private VideoView videoView;
+    private StreamingService streamingService;
+    private String VideoURL;
+    private ProgressBar mProgressBar;
+    private MediaRecorder recorder;
+    private MediaController mediacontroller;
+    private Uri video;
+    private SharedPreferences wifiChk;
+    private UserVo userVo;
+    private PiVo piVo;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_video, container, false);
+        Util.checkStoragePermission(getActivity());
         videoView = (VideoView) rootView.findViewById(R.id.videoView2);
         toggleVoice = (ToggleButton) rootView.findViewById(R.id.toggleVoice);
         Button buttonRight = (Button) rootView.findViewById(R.id.buttonRight);
@@ -69,16 +64,16 @@ public class VideoFragment extends Fragment implements RtspClient.Callback,
         toggleRec.setText("");
         toggleRec.setTextOn("rec");
 
+        wifiChk = getActivity().getSharedPreferences("wifiChk", 0);
+        int wifi = Util.getConnectivityStatus(getActivity());
+
         streamingService = new StreamingService();
-        //audioInit();
+
+        userVo = Util.getUserVo("userData", getActivity());
+        piVo = Util.getPiVo("piData", getActivity());
 
 
-        baseSetting = this.getActivity().getSharedPreferences("setting", 0);
-        nickname = baseSetting.getString("nickname", "none");
-        ipNumber = baseSetting.getString("ipnumber", "");
-        secPasss = baseSetting.getInt("secpass", 0);
-
-        VideoURL = "rtsp://150.95.141.66:1935/live/" + nickname + "/stream";
+        VideoURL = "rtsp://150.95.141.66:1935/live/" + userVo.getNickname() + "/stream";
 
 
         toggleVoice.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -95,19 +90,19 @@ public class VideoFragment extends Fragment implements RtspClient.Callback,
         buttonLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new PiControllAsyncTask("left", ipNumber).execute();
+                new PiControllAsyncTask("left", piVo.getDevice_num()).execute();
             }
         });
         buttonCenter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new PiControllAsyncTask("center", ipNumber).execute();
+                new PiControllAsyncTask("center", piVo.getDevice_num()).execute();
             }
         });
         buttonRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new PiControllAsyncTask("right", ipNumber).execute();
+                new PiControllAsyncTask("right", piVo.getDevice_num()).execute();
             }
         });
 
@@ -124,8 +119,8 @@ public class VideoFragment extends Fragment implements RtspClient.Callback,
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
 
-                new PiControllAsyncTask("streamstop", ipNumber).execute();
-                new PiControllAsyncTask("stream", ipNumber).execute();
+                new PiControllAsyncTask("streamstop", piVo.getDevice_num()).execute();
+                new PiControllAsyncTask("stream", piVo.getDevice_num()).execute();
 
                 new Thread(new Runnable() {
                     @Override
@@ -136,7 +131,7 @@ public class VideoFragment extends Fragment implements RtspClient.Callback,
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        new PiControllAsyncTask(nickname + "," + secPasss, ipNumber).execute();
+                        new PiControllAsyncTask(userVo.getNickname() + "," + userVo.getSec_pass_word(), piVo.getDevice_num()).execute();
                     }
                 }).start();
                 return false;
@@ -154,40 +149,6 @@ public class VideoFragment extends Fragment implements RtspClient.Callback,
         return rootView;
     }
 
-    public void audioInit() {
-        mSession = SessionBuilder.getInstance()
-                .setContext(getActivity())
-                .setAudioEncoder(SessionBuilder.AUDIO_AAC)
-                .setAudioQuality(new AudioQuality(8000, 16000))
-                .setVideoEncoder(SessionBuilder.VIDEO_NONE)
-                .setPreviewOrientation(0)
-                .setCallback(this)
-                .build();
-
-        mClient = new RtspClient();
-        mClient.setSession(mSession);
-        mClient.setCallback(this);
-
-    }
-
-    public void toggleStream() {
-        if (!mClient.isStreaming()) {
-            String ip, port, path;
-
-            ip = "150.95.141.66";
-            port = "1935";
-            path = "live/" + nickname + "/audio";
-
-            mClient.setCredentials(nickname, secPasss + "");
-            mClient.setServerAddress(ip, Integer.parseInt(port));
-            mClient.setStreamPath("/" + path);
-            mClient.startStream();
-
-        } else {
-            // Stops the stream and disconnects from the RTSP server
-            mClient.stopStream();
-        }
-    }
 
     public void toggleRecord(boolean isChecked) {
         if (isChecked) {
@@ -218,7 +179,6 @@ public class VideoFragment extends Fragment implements RtspClient.Callback,
 
             String duration =
                     metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-            Log.v("time", duration);
             long dur = Long.parseLong(duration);
             String secondss = String.valueOf((dur % 60000) / 1000);
             int seconds = Integer.parseInt(secondss);
@@ -228,40 +188,6 @@ public class VideoFragment extends Fragment implements RtspClient.Callback,
 
     }
 
-    @Override
-    public void onBitrateUpdate(long bitrate) {
-        textBitrate.setText("" + bitrate / 1000 + " kbps");
-    }
-
-    @Override
-    public void onSessionError(int reason, int streamType, Exception e) {
-
-    }
-
-    @Override
-    public void onPreviewStarted() {
-
-    }
-
-    @Override
-    public void onSessionConfigured() {
-
-    }
-
-    @Override
-    public void onSessionStarted() {
-        toggleVoice.setChecked(true);
-    }
-
-    @Override
-    public void onSessionStopped() {
-        toggleVoice.setChecked(false);
-    }
-
-    @Override
-    public void onRtspUpdate(int message, Exception exception) {
-
-    }
 
     private class PiControllAsyncTask extends SafeAsyncTask<String> {
         String msg;
@@ -310,7 +236,7 @@ public class VideoFragment extends Fragment implements RtspClient.Callback,
         @Override
         protected void onSuccess(final String filename) throws Exception {
             Toast.makeText(getActivity(), filename, Toast.LENGTH_SHORT).show();
-            new PiControllAsyncTask("audio", ipNumber).execute();
+            new PiControllAsyncTask("audio", piVo.getDevice_num()).execute();
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -320,7 +246,7 @@ public class VideoFragment extends Fragment implements RtspClient.Callback,
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    new PiControllAsyncTask(filename, ipNumber).execute();
+                    new PiControllAsyncTask(filename, piVo.getDevice_num()).execute();
                 }
             }).start();
 
@@ -333,7 +259,7 @@ public class VideoFragment extends Fragment implements RtspClient.Callback,
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    new PiControllAsyncTask("audiostop", ipNumber).execute();
+                    new PiControllAsyncTask("audiostop", piVo.getDevice_num()).execute();
                 }
             }).start();
 
