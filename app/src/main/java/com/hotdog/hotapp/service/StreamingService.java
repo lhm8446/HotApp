@@ -14,9 +14,6 @@ import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by tydrk on 2017-01-26.
- */
 
 public class StreamingService {
     private final String SERVER_URL = "http://150.95.141.66:80/test/cgi-bin";
@@ -25,7 +22,7 @@ public class StreamingService {
         String url = SERVER_URL + "/send.py";
         HttpRequest httpRequest = HttpRequest.post(url);
 
-        Map<String, String> data = new HashMap<String, String>();
+        Map<String, String> data = new HashMap();
         data.put("msg", msg);
         data.put("ip", ip + "");
 
@@ -40,20 +37,17 @@ public class StreamingService {
     }
 
     public Integer recStart(String nickname, int users_no) {
-        String url = "http://hotdog:hotdog@150.95.141.66:8086/livestreamrecord?app=live/" + nickname + "&streamname=stream&action=startRecording&outputPath=/upload/" + users_no;
-        String url1 = "http://admin:admin@150.95.141.66:8086/livestreamrecord?app=live/nap12&streamname=stream&action=startRecording&outputPath=/upload/5";
-        int response = HttpRequest.get(url1).code();
-
-        return response;
+        String url = "http://150.95.141.66:8086/livestreamrecord?app=live/" + nickname + "&streamname=stream&action=startRecording&outputPath=/upload/" + users_no;
+        HttpRequest httpRequest = HttpRequest.get(url).contentType("application/x-www-form-urlencoded");
+        System.out.println("____________________________" + httpRequest);
+        return httpRequest.code();
     }
 
     public Integer recStop(String nickname) {
-        String url = "http://hotdog:hotdog@150.95.141.66:8086/livestreamrecord?app=live/" + nickname + "&streamname=stream&action=stopRecording";
-        String url1 = "http://admin:admin@150.95.141.66:8086/livestreamrecord?app=live/nap12&streamname=stream&action=stopRecording";
-
-        int response = HttpRequest.get(url1).code();
-
-        return response;
+        String url = "http://150.95.141.66:8086/livestreamrecord?app=live/" + nickname + "&streamname=stream&action=stopRecording";
+        HttpRequest httpRequest = HttpRequest.get(url).contentType("application/x-www-form-urlencoded");
+        System.out.println("____________________________" + httpRequest);
+        return httpRequest.code();
     }
 
     public String audioUpload(File file) throws IOException {
