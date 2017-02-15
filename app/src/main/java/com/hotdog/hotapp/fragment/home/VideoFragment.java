@@ -12,13 +12,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 import android.widget.VideoView;
 
 import com.hotdog.hotapp.R;
@@ -32,8 +29,6 @@ import java.io.File;
 import java.io.IOException;
 
 public class VideoFragment extends Fragment {
-    private ToggleButton toggleVoice;
-    private TextView textBitrate;
     private VideoView videoView;
     private StreamingService streamingService;
     private String VideoURL;
@@ -44,45 +39,62 @@ public class VideoFragment extends Fragment {
     private SharedPreferences wifiChk;
     private UserVo userVo;
     private PiVo piVo;
+    private ImageButton buttonRight, buttonLeft, buttonCenter, toggleVoice, toggleRec;
+    private Boolean isChecked, isChecked1;
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_video, container, false);
         Util.checkStoragePermission(getActivity());
         videoView = (VideoView) rootView.findViewById(R.id.videoView2);
-        toggleVoice = (ToggleButton) rootView.findViewById(R.id.toggleVoice);
-        Button buttonRight = (Button) rootView.findViewById(R.id.buttonRight);
-        Button buttonLeft = (Button) rootView.findViewById(R.id.buttonLeft);
-        Button buttonCenter = (Button) rootView.findViewById(R.id.buttonCenter);
-        ToggleButton toggleRec = (ToggleButton) rootView.findViewById(R.id.toggleRec);
-        textBitrate = (TextView) rootView.findViewById(R.id.bitrate);
+        toggleVoice = (ImageButton) rootView.findViewById(R.id.toggleVoice);
+        buttonRight = (ImageButton) rootView.findViewById(R.id.buttonRight);
+        buttonLeft = (ImageButton) rootView.findViewById(R.id.buttonLeft);
+        buttonCenter = (ImageButton) rootView.findViewById(R.id.buttonCenter);
+        toggleRec = (ImageButton) rootView.findViewById(R.id.toggleRec);
         mProgressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
         mProgressBar.setVisibility(View.VISIBLE);
-        toggleVoice.setText("");
-        toggleVoice.setTextOff("");
-        toggleRec.setText("");
-        toggleRec.setTextOn("rec");
+        isChecked = false;
+        isChecked1 = false;
 
         wifiChk = getActivity().getSharedPreferences("wifiChk", 0);
         int wifi = Util.getConnectivityStatus(getActivity());
 
-        streamingService = new StreamingService();
 
+        streamingService = new StreamingService();
         userVo = Util.getUserVo("userData", getActivity());
         piVo = Util.getPiVo("piData", getActivity());
 
-
         VideoURL = "rtsp://150.95.141.66:1935/live/" + userVo.getNickname() + "/stream";
 
-
-        toggleVoice.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        toggleVoice.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            public void onClick(View v) {
                 if (isChecked) {
-                    toggleRecord(isChecked);
+                    isChecked = false;
+                    toggleAudio(isChecked);
+                    toggleVoice.setImageResource(R.drawable.microphoneblack);
                 } else {
-                    toggleRecord(isChecked);
+                    isChecked = true;
+                    toggleAudio(isChecked);
+                    toggleVoice.setImageResource(R.drawable.microphonered);
+                }
+            }
+        });
+        toggleRec.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isChecked1) {
+                    isChecked1 = false;
+                    toggleRec(isChecked1);
+                    toggleRec.setImageResource(R.drawable.recordblack);
+
+                } else {
+                    isChecked1 = true;
+                    toggleRec(isChecked1);
+                    toggleRec.setImageResource(R.drawable.recordred);
+
                 }
             }
         });
@@ -109,19 +121,17 @@ public class VideoFragment extends Fragment {
         // Start the MediaController
         mediacontroller = new MediaController(getActivity());
         mediacontroller.setAnchorView(videoView);
+
         // Get the URL from String VideoURL
         video = Uri.parse(VideoURL);
         videoView.setMediaController(mediacontroller);
         videoView.setVideoURI(video);
-
         videoView.requestFocus();
         videoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
-
                 new PiControllAsyncTask("streamstop", piVo.getDevice_num()).execute();
                 new PiControllAsyncTask("stream", piVo.getDevice_num()).execute();
-
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -149,8 +159,16 @@ public class VideoFragment extends Fragment {
         return rootView;
     }
 
+    public void toggleRec(boolean isChecked) {
+        if (isChecked) {
+            new RecAsyncTask().execute();
+        } else {
+            new RecStopAsyncTask().execute();
+        }
+    }
 
-    public void toggleRecord(boolean isChecked) {
+
+    public void toggleAudio(boolean isChecked) {
         if (isChecked) {
             recorder = new MediaRecorder();
             recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -187,7 +205,6 @@ public class VideoFragment extends Fragment {
         }
 
     }
-
 
     private class PiControllAsyncTask extends SafeAsyncTask<String> {
         String msg;
@@ -240,9 +257,8 @@ public class VideoFragment extends Fragment {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    // TODO Auto-generated method stub
                     try {
-                        Thread.sleep(500);
+                        Thread.sleep(200);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -253,7 +269,6 @@ public class VideoFragment extends Fragment {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    // TODO Auto-generated method stub
                     try {
                         Thread.sleep(seconds * 2000);
                     } catch (InterruptedException e) {
@@ -263,6 +278,42 @@ public class VideoFragment extends Fragment {
                 }
             }).start();
 
+        }
+    }
+
+    private class RecAsyncTask extends SafeAsyncTask<Integer> {
+
+        @Override
+        public Integer call() throws Exception {
+            return streamingService.recStart(userVo.getNickname(), userVo.getUsers_no());
+        }
+
+        @Override
+        protected void onException(Exception e) throws RuntimeException {
+            super.onException(e);
+        }
+
+        @Override
+        protected void onSuccess(Integer flag) throws Exception {
+            Toast.makeText(getActivity(), "녹화 시작", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private class RecStopAsyncTask extends SafeAsyncTask<Integer> {
+
+        @Override
+        public Integer call() throws Exception {
+            return streamingService.recStop(userVo.getNickname());
+        }
+
+        @Override
+        protected void onException(Exception e) throws RuntimeException {
+            super.onException(e);
+        }
+
+        @Override
+        protected void onSuccess(Integer flag) throws Exception {
+            Toast.makeText(getActivity(), "녹화 종료", Toast.LENGTH_SHORT).show();
         }
     }
 }

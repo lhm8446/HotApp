@@ -39,6 +39,23 @@ public class StreamingService {
         return jsonResultpicontroller.getData();
     }
 
+    public Integer recStart(String nickname, int users_no) {
+        String url = "http://hotdog:hotdog@150.95.141.66:8086/livestreamrecord?app=live/" + nickname + "&streamname=stream&action=startRecording&outputPath=/upload/" + users_no;
+        String url1 = "http://admin:admin@150.95.141.66:8086/livestreamrecord?app=live/nap12&streamname=stream&action=startRecording&outputPath=/upload/5";
+        int response = HttpRequest.get(url1).code();
+
+        return response;
+    }
+
+    public Integer recStop(String nickname) {
+        String url = "http://hotdog:hotdog@150.95.141.66:8086/livestreamrecord?app=live/" + nickname + "&streamname=stream&action=stopRecording";
+        String url1 = "http://admin:admin@150.95.141.66:8086/livestreamrecord?app=live/nap12&streamname=stream&action=stopRecording";
+
+        int response = HttpRequest.get(url1).code();
+
+        return response;
+    }
+
     public String audioUpload(File file) throws IOException {
         String url = "http://150.95.141.66/hotdog/user/app/audioupload";
         HttpRequest httpRequest = HttpRequest.post(url);

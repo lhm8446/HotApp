@@ -10,7 +10,7 @@
     <VideoView
         android:id="@+id/videoView2"
         android:layout_width="wrap_content"
-        android:layout_height="537dp" />
+        android:layout_height="match_parent" />
 
     <TextView
         android:id="@+id/bitrate"
@@ -25,58 +25,57 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="61dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="@android:color/darker_gray"
-        android:foreground="@android:color/transparent"
+        android:background="@android:color/transparent"
         android:orientation="horizontal">
 
-        <ToggleButton
+        <ImageButton
             android:id="@+id/toggleVoice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/voicechk"
-            />
+            android:src="@drawable/microphoneblack" />
 
-        <Button
+        <ImageButton
             android:id="@+id/buttonLeft"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/left" />
+            android:src="@drawable/left" />
 
-        <Button
+        <ImageButton
             android:id="@+id/buttonCenter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/center" />
+            android:src="@drawable/center" />
 
-        <Button
+        <ImageButton
             android:id="@+id/buttonRight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/right" />
+            android:src="@drawable/right" />
 
-        <ToggleButton
+        <ImageButton
             android:id="@+id/toggleRec"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/recchk" />
+            android:src="@drawable/recordblack" />
     </LinearLayout>
+
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent">
 
         <ProgressBar
-            android:visibility="gone"
-            android:layout_gravity="center"
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:progressDrawable="@drawable/progress_large_white" />
+            android:layout_gravity="center"
+            android:progressDrawable="@drawable/progress_large_white"
+            android:visibility="gone" />
     </FrameLayout>
 </FrameLayout>
