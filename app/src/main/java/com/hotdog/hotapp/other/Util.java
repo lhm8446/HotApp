@@ -116,6 +116,10 @@ public class Util {
         fm.beginTransaction().replace(R.id.frame, (android.support.v4.app.Fragment) fragment).addToBackStack(null).commit();
     }
 
+    public static void changeHomeFragment(FragmentManager fm, Object fragment, String tag) {
+        fm.beginTransaction().replace(R.id.frame, (android.support.v4.app.Fragment) fragment, tag).addToBackStack(null).commit();
+    }
+
     public static void logout(Context context) {
         SharedPreferences data = context.getSharedPreferences("userData", 0);
         SharedPreferences.Editor editor = data.edit();

@@ -49,7 +49,7 @@ public class LoginPwFragment extends Fragment {
         find = (Button) rootView.findViewById(R.id.find);
         auto = getActivity().getSharedPreferences("auto", 0);
         editor = auto.edit();
-
+        flag = false;
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override

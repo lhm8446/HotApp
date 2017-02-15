@@ -59,7 +59,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/blackbox"
                 android:padding="5dp"
-                android:text="@string/mypageProfile_email"
+                android:text=""
                 android:textSize="13dp"
                 android:textStyle="bold" />
 
@@ -161,24 +161,6 @@
                 android:text="@string/mypageProfile_userButton"
                 android:textSize="13dp" />
 
-            <TextView
-                android:id="@+id/textView4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="50dp"
-                android:text="@string/mypageProfile_userDeleteTitle"
-                android:textSize="15dp"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/buttonQuit"
-                android:layout_width="70dp"
-                android:layout_height="25dp"
-                android:layout_marginBottom="60dp"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/blackbox"
-                android:text="@string/mypageProfile_userDeleteButton"
-                android:textSize="13dp" />
 
         </LinearLayout>
     </ScrollView>

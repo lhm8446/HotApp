@@ -84,8 +84,6 @@ public class PiService {
         }
 
         JSONResultGetinfo jSONResultGetinfo = fromJSON(httpRequest, JSONResultGetinfo.class);
-        System.out.println("==================" + jSONResultGetinfo.getData());
-
         return jSONResultGetinfo.getData();
     }
 

@@ -17,6 +17,7 @@ import java.util.Map;
 
 public class UserService {
     private final String SERVER_URL = "http://150.95.141.66:80/hotdog";
+    //private final String SERVER_URL = "http://192.168.1.29:8088/hotdog";
 
     // (로그인, 회원가입)이메일 체크
     public String userEmailCheck(String email) {
@@ -102,7 +103,8 @@ public class UserService {
         JSONResultUserGet jSONResultUserGet = fromJSON(httpRequest, JSONResultUserGet.class);
 
         return jSONResultUserGet.getData();
-    }
+    } // 유저정보 불러오기
+
 
     //유저 이미지 제외 정보 수정
     public String userModify(UserVo userVo) {
@@ -202,8 +204,9 @@ public class UserService {
             System.out.println("----- Pet update ----");
         }
 
-        JSONResultPetUpdate jSONResultPetUpdate = fromJSON(httpRequest, JSONResultPetUpdate.class);
-        return jSONResultPetUpdate.getData();
+        JSONResultUpdatePet jSONResultUpdatePet = fromJSON(httpRequest, JSONResultUpdatePet.class);
+        //System.out.println(httpRequest.body() + " " + jSONResultPetUpdate.getData());
+        return jSONResultUpdatePet.getData();
     }
 
     private class JSONResultUserCheck extends JSONResult<UserVo> {
@@ -227,7 +230,7 @@ public class UserService {
     private class JSONResultPetCheck extends JSONResult<PetVo> {
     }
 
-    private class JSONResultPetUpdate extends JSONResult<String> {
+    private class JSONResultUpdatePet extends JSONResult<String> {
     }
 
     private class JSONResultSecPassChk extends JSONResult<String> {

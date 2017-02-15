@@ -3,10 +3,8 @@ package com.hotdog.hotapp.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -15,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -62,15 +61,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     public static int navItemIndex = 0;
 
     // tags used to attach the fragments
-    private static final String TAG_HOME = "home";
     private String callback;
-    public static String CURRENT_TAG = TAG_HOME;
-
+    public static String CURRENT_TAG;
+    private String HOME_TAG = "nav_home";
+    private String STREAM_TAG = "nav_streaming";
+    private String VOD_TAG = "nav_vod";
+    private String PAGE_TAG = "nav_page";
+    private String SETTING_TAG = "nav_settings";
     // toolbar titles respected to selected nav menu item
-
-    // flag to load home fragment when user presses back key
-    private boolean shouldLoadHomeFragOnBackPress = true;
-    private Handler mHandler;
 
 
     @Override
@@ -83,16 +81,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         dataInit();
         Util.checkAudioPermission(this);
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(HomeActivity.this);
 
         if (savedInstanceState == null) {
-            if ("mypage".equals(callback)) {
-                Util.changeHomeFragment(getSupportFragmentManager(), new MypageMainFragment());
-            } else {
-                Util.changeHomeFragment(getSupportFragmentManager(), new HomeFragment());
-            }
-            loadHomeFragment();
+
         }
 
     }
@@ -101,7 +92,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle("");
-        mHandler = new Handler();
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -113,6 +103,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         imgNavHeaderBg = (ImageView) navHeader.findViewById(R.id.img_header_bg);
         imgProfile = (ImageView) navHeader.findViewById(R.id.img_profile);
         img_pet = (ImageView) navHeader.findViewById(R.id.img_pet);
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(HomeActivity.this);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -133,10 +126,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        FrameLayout homeFragment = (FrameLayout) findViewById(R.id.frame_home);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+        }
+        if (homeFragment != null) {
+            finish();
         }
     }
 
@@ -172,25 +169,27 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
-        if (id == R.id.home) {
+        if (id == R.id.nav_home) {
             popClear();
-            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-            intent.putExtra("userNo", petVo.getUsers_no());
-            startActivity(intent);
-            finish();
+            CURRENT_TAG = HOME_TAG;
+            callback = "";
+            new UserGetAsyncTask().execute();
         } else if (id == R.id.nav_streaming) {
             popClear();
+            CURRENT_TAG = STREAM_TAG;
             new SecPassChkAsyncTask().execute();
         } else if (id == R.id.nav_vod) {
             popClear();
-            Util.changeHomeFragment(getSupportFragmentManager(), new VodFragment());
+            CURRENT_TAG = VOD_TAG;
+            Util.changeHomeFragment(getSupportFragmentManager(), new VodFragment(), VOD_TAG);
         } else if (id == R.id.nav_page) {
             popClear();
-            Util.changeHomeFragment(getSupportFragmentManager(), new MypageMainFragment());
+            CURRENT_TAG = PAGE_TAG;
+            Util.changeHomeFragment(getSupportFragmentManager(), new MypageMainFragment(), PAGE_TAG);
         } else if (id == R.id.nav_settings) {
             popClear();
-            Util.changeHomeFragment(getSupportFragmentManager(), new SettingFragment());
+            CURRENT_TAG = SETTING_TAG;
+            Util.changeHomeFragment(getSupportFragmentManager(), new SettingFragment(), SETTING_TAG);
         } else if (id == R.id.nav_about_us) {
             popClear();
             startActivity(new Intent(HomeActivity.this, AboutUsActivity.class));
@@ -210,11 +209,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void popClear() {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
-        HomeFragment fragment = new HomeFragment();
-        fragmentTransaction.add(R.id.frame, fragment).addToBackStack(null).commit();
+        fm.beginTransaction().add(R.id.frame, new HomeFragment()).addToBackStack(null).commit();
     }
 
 
@@ -255,17 +251,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void loadHomeFragment() {
-
         // selecting appropriate nav menu item
         selectNavMenu();
-
         // if user select the current navigation menu again, don't do anything
         // just close the navigation drawer
         if (getSupportFragmentManager().findFragmentByTag(CURRENT_TAG) != null) {
             drawer.closeDrawers();
             return;
         }
-
         //Closing drawer on item click
         drawer.closeDrawers();
 
@@ -274,6 +267,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    public int getUsers_no() {
+        return users_no;
+    }
 
     private void selectNavMenu() {
         navigationView.getMenu().getItem(navItemIndex).setChecked(true);
@@ -300,9 +296,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             Util.setFirstUserVo("userData", getApplicationContext(), userVo);
             System.out.println(userVo);
             new PetGetAsyncTask().execute();
-
-            loadNavHeader();
-
         }
     }
 
@@ -326,7 +319,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             System.out.println(petVo);
             new GetPiInfoAsyncTask().execute();
             loadNavHeader();
-
+            if ("mypage".equals(callback)) {
+                Util.changeHomeFragment(getSupportFragmentManager(), new MypageMainFragment());
+            } else {
+                Util.changeHomeFragment(getSupportFragmentManager(), new HomeFragment(), HOME_TAG);
+            }
+            loadHomeFragment();
         }
     }
 
@@ -350,9 +348,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         @Override
         protected void onSuccess(String flag) throws Exception {
             if ("exist".equals(flag)) {
-                Util.changeHomeFragment(getSupportFragmentManager(), new StreamSecFragment());
+                Util.changeHomeFragment(getSupportFragmentManager(), new StreamSecFragment(), STREAM_TAG);
             } else if ("first".equals(flag)) {
-                Util.changeHomeFragment(getSupportFragmentManager(), new StreamStartFragment());
+                Util.changeHomeFragment(getSupportFragmentManager(), new StreamStartFragment(), STREAM_TAG);
             }
         }
     }
@@ -363,7 +361,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         @Override
         public PiVo call() throws Exception {
             piService = new PiService();
-            return piService.getinfo(userVo.getUsers_no());
+            return piService.getinfo(users_no);
         }
 
         @Override

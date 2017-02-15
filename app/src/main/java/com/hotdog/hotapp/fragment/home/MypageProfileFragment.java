@@ -36,7 +36,7 @@ public class MypageProfileFragment extends Fragment {
     private View view;
     private UserService userService;
 
-    private Button search_picture, userUpdate, buttonQuit;
+    private Button search_picture, userUpdate;
 
     private UserVo userVo, userVoNew;
     private static final String urlimg = "http://150.95.141.66/hotdog/hotdog/image/user/";
@@ -75,7 +75,6 @@ public class MypageProfileFragment extends Fragment {
 
         userUpdate = (Button) rootView.findViewById(R.id.userUpdate);
         search_picture = (Button) rootView.findViewById(R.id.search_picture);
-        buttonQuit = (Button) rootView.findViewById(R.id.buttonQuit);
         profile_picture = (ImageView) rootView.findViewById(R.id.profile_picture);
 
         textview_email.setText(userVo.getEmail());
@@ -157,14 +156,6 @@ public class MypageProfileFragment extends Fragment {
                         new UploadTask(saveFile, userVo).execute();
                     }
                 }
-            }
-        });
-
-
-        buttonQuit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
             }
         });
 

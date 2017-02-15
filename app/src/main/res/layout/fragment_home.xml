@@ -1,16 +1,69 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frame_home"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background2"
     tools:context="com.hotdog.hotapp.fragment.home.HomeFragment">
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/textCount"
         android:layout_width="match_parent"
         android:layout_height="205dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="50dp"
         android:text="1000일"
         android:textAlignment="center"
         android:textColor="@color/colorPrimary"
         android:textSize="50dp" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom"
+        android:background="@android:color/transparent"
+        android:orientation="horizontal">
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom">
+
+            <com.github.siyamed.shapeimageview.CircularImageView
+                android:id="@+id/userImage"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="50dp"
+                android:layout_marginLeft="20dp"
+                android:src="@drawable/profiledog"
+                app:siBorderColor="@android:color/transparent"
+                app:siBorderWidth="3dp" />
+
+            <tyrantgit.widget.HeartLayout
+                android:id="@+id/heart_layout"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="60dp"
+                android:padding="-30dp"
+                android:paddingLeft="-10dp" />
+
+            <com.github.siyamed.shapeimageview.CircularImageView
+                android:id="@+id/petImage"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="50dp"
+                android:layout_marginRight="20dp"
+                android:src="@drawable/profiledog"
+                app:siBorderColor="@android:color/transparent"
+                app:siBorderWidth="3dp" />
+
+
+        </GridLayout>
+    </LinearLayout>
+
 </FrameLayout>

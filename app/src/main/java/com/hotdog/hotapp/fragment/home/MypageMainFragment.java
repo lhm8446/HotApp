@@ -64,8 +64,10 @@ public class MypageMainFragment extends BaseFragment {
         });
 
         return rootView;
-    }   //2차 존재 여부 확인
+    }
 
+
+    //2차 존재 여부 확인
     private class SecPassChkAsyncTask extends SafeAsyncTask<String> {
         @Override
         public String call() throws Exception {

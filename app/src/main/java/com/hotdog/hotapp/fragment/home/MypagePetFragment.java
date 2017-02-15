@@ -159,7 +159,6 @@ public class MypagePetFragment extends Fragment {
                             Integer.parseInt(strArr[1]) - 1,
                             Integer.parseInt(strArr[0]));
                 }
-
                 datePicker.setCancelable(false);
                 datePicker.setTitle("Select the date");
                 datePicker.show();
@@ -331,7 +330,6 @@ public class MypagePetFragment extends Fragment {
         public String call() throws Exception {
 
             userService = new UserService();
-            System.out.println(petVoNew);
             return userService.updatePet(petVoNew);
         }
 
