@@ -25,7 +25,6 @@ import com.hotdog.hotapp.fragment.home.MypageMainFragment;
 import com.hotdog.hotapp.fragment.home.SettingFragment;
 import com.hotdog.hotapp.fragment.home.StreamSecFragment;
 import com.hotdog.hotapp.fragment.home.StreamStartFragment;
-import com.hotdog.hotapp.fragment.home.VodFragment;
 import com.hotdog.hotapp.other.CircleTransform;
 import com.hotdog.hotapp.other.Util;
 import com.hotdog.hotapp.other.network.SafeAsyncTask;
@@ -135,6 +134,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         if (homeFragment != null) {
             finish();
         }
+
     }
 
     @Override
@@ -179,9 +179,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             CURRENT_TAG = STREAM_TAG;
             new SecPassChkAsyncTask().execute();
         } else if (id == R.id.nav_vod) {
-            popClear();
-            CURRENT_TAG = VOD_TAG;
-            Util.changeHomeFragment(getSupportFragmentManager(), new VodFragment(), VOD_TAG);
+            startActivity(new Intent(HomeActivity.this, VodActivity.class));
+            finish();
         } else if (id == R.id.nav_page) {
             popClear();
             CURRENT_TAG = PAGE_TAG;
@@ -320,7 +319,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             new GetPiInfoAsyncTask().execute();
             loadNavHeader();
             if ("mypage".equals(callback)) {
-                Util.changeHomeFragment(getSupportFragmentManager(), new MypageMainFragment());
+                Util.changeHomeFragment(getSupportFragmentManager(), new MypageMainFragment(), PAGE_TAG);
             } else {
                 Util.changeHomeFragment(getSupportFragmentManager(), new HomeFragment(), HOME_TAG);
             }

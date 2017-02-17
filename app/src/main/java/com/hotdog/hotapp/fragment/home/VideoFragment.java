@@ -1,7 +1,6 @@
 package com.hotdog.hotapp.fragment.home;
 
 import android.content.SharedPreferences;
-import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -60,7 +59,11 @@ public class VideoFragment extends Fragment {
 
         wifiChk = getActivity().getSharedPreferences("wifiChk", 0);
         int wifi = Util.getConnectivityStatus(getActivity());
-
+        if (wifi == 1) {
+            //wifi 연결
+        } else {
+            //2 이면 데이터
+        }
 
         streamingService = new StreamingService();
         userVo = Util.getUserVo("userData", getActivity());
@@ -191,17 +194,8 @@ public class VideoFragment extends Fragment {
             File saveFile = new File(Environment.getExternalStorageDirectory()
                     .getAbsolutePath() + "/myrecord.mp3");
 
-            MediaMetadataRetriever metaRetriever = new MediaMetadataRetriever();
-            metaRetriever.setDataSource(Environment.getExternalStorageDirectory()
-                    .getAbsolutePath() + "/myrecord.mp3");
 
-            String duration =
-                    metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-            long dur = Long.parseLong(duration);
-            String secondss = String.valueOf((dur % 60000) / 1000);
-            int seconds = Integer.parseInt(secondss);
-
-            new AudioUploadAsyncTask(saveFile, seconds).execute();
+            new AudioUploadAsyncTask(saveFile).execute();
         }
 
     }
@@ -233,11 +227,9 @@ public class VideoFragment extends Fragment {
 
     private class AudioUploadAsyncTask extends SafeAsyncTask<String> {
         File file;
-        int seconds;
 
-        AudioUploadAsyncTask(File file, int seconds) {
+        AudioUploadAsyncTask(File file) {
             this.file = file;
-            this.seconds = seconds;
         }
 
         @Override
@@ -266,17 +258,6 @@ public class VideoFragment extends Fragment {
                 }
             }).start();
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(seconds * 2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    new PiControllAsyncTask("audiostop", piVo.getDevice_num()).execute();
-                }
-            }).start();
 
         }
     }

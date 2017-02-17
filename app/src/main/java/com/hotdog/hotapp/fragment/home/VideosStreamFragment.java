@@ -370,7 +370,4 @@ public class VideosStreamFragment extends Fragment implements View.OnClickListen
         mClient.stopStream();
     }
 
-    public void changeFragment() {
-        getFragmentManager().beginTransaction().replace(R.id.frame, new VideosStreamFragment()).commit();
-    }
 }
