@@ -134,7 +134,7 @@ public class HomeFragment extends Fragment {
     }
 
     private int randomColor() {
-        return Color.rgb(mRandom.nextInt(255), mRandom.nextInt(255), mRandom.nextInt(255));
+        return Color.rgb(mRandom.nextInt(255), 0, 0);
     }
 
 
