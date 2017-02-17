@@ -1,5 +1,6 @@
 package com.hotdog.hotapp.fragment.home;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,8 @@ import com.hotdog.hotapp.service.UserService;
 import com.hotdog.hotapp.vo.PiVo;
 import com.hotdog.hotapp.vo.UserVo;
 
+import cn.refactor.lib.colordialog.PromptDialog;
+
 public class StreamSecFragment extends Fragment {
     private View view;
     private EditText editTextPassword;
@@ -26,6 +29,7 @@ public class StreamSecFragment extends Fragment {
     private UserVo userVo;
     private PiVo piVo;
     private int secpass;
+    private SharedPreferences wifiChk;
 
     @Nullable
     @Override
@@ -81,9 +85,25 @@ public class StreamSecFragment extends Fragment {
 
         @Override
         protected void onSuccess(String flag) throws Exception {
+            wifiChk = getActivity().getSharedPreferences("wifiChk", 0);
+            int wifi = Util.getConnectivityStatus(getActivity());
 
             if ("yes".equals(flag)) {
-                Util.changeHomeFragment(getFragmentManager(), new VideoFragment());
+                if (wifi != 1 && wifiChk.getBoolean("chk", false)) {
+                    new PromptDialog(getActivity())
+                            .setDialogType(PromptDialog.DIALOG_TYPE_INFO)
+                            .setAnimationEnable(true)
+                            .setTitleText("info")
+                            .setContentText("wifi 상태가 아닙니다. \n  데이터를 사용하실려면 Settings에서 변경하세요.")
+                            .setPositiveListener("확인", new PromptDialog.OnPositiveListener() {
+                                @Override
+                                public void onClick(PromptDialog dialog) {
+                                    dialog.dismiss();
+                                }
+                            }).show();
+                } else {
+                    Util.changeHomeFragment(getFragmentManager(), new VideoFragment());
+                }
             } else if ("no".equals(flag)) {
                 secPassErr.setVisibility(view.VISIBLE);
             }

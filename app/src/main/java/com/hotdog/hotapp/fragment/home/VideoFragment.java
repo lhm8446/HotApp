@@ -1,6 +1,5 @@
 package com.hotdog.hotapp.fragment.home;
 
-import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -35,7 +34,6 @@ public class VideoFragment extends Fragment {
     private MediaRecorder recorder;
     private MediaController mediacontroller;
     private Uri video;
-    private SharedPreferences wifiChk;
     private UserVo userVo;
     private PiVo piVo;
     private ImageButton buttonRight, buttonLeft, buttonCenter, toggleVoice, toggleRec;
@@ -57,13 +55,6 @@ public class VideoFragment extends Fragment {
         isChecked = false;
         isChecked1 = false;
 
-        wifiChk = getActivity().getSharedPreferences("wifiChk", 0);
-        int wifi = Util.getConnectivityStatus(getActivity());
-        if (wifi == 1) {
-            //wifi 연결
-        } else {
-            //2 이면 데이터
-        }
 
         streamingService = new StreamingService();
         userVo = Util.getUserVo("userData", getActivity());
