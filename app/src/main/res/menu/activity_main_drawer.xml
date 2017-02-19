@@ -28,8 +28,8 @@
                 android:id="@+id/nav_about_us"
                 android:title="@string/activity_title_about_us" />
             <item
-                android:id="@+id/nav_privacy_policy"
-                android:title="@string/privacy_policy" />
+                android:id="@+id/nav_streaming_camera"
+                android:title="@string/activity_title_Streaming" />
         </menu>
     </item>
 </menu>

@@ -48,7 +48,6 @@ public class StreamingActivity extends Activity implements
 
     private ImageButton mButtonVideo;
     private ImageButton mButtonStart;
-    private ImageButton mButtonFlash;
     private ImageButton mButtonCamera;
     private RadioGroup mRadioGroup;
     private FrameLayout mLayoutVideoSettings;
@@ -71,7 +70,6 @@ public class StreamingActivity extends Activity implements
         setContentView(R.layout.activity_streaming);
         mButtonVideo = (ImageButton) findViewById(R.id.videosettings);
         mButtonStart = (ImageButton) findViewById(R.id.start);
-        mButtonFlash = (ImageButton) findViewById(R.id.flash);
         mButtonCamera = (ImageButton) findViewById(R.id.camera);
         mSurfaceView = (SurfaceView) findViewById(R.id.surface);
         mTextBitrate = (TextView) findViewById(R.id.bitrate);
@@ -83,10 +81,8 @@ public class StreamingActivity extends Activity implements
         mRadioGroup.setOnClickListener(this);
 
         mButtonStart.setOnClickListener(this);
-        mButtonFlash.setOnClickListener(this);
         mButtonCamera.setOnClickListener(this);
         mButtonVideo.setOnClickListener(this);
-        mButtonFlash.setTag("off");
 
         userVo = Util.getUserVo("userData", getApplicationContext());
         nickname = userVo.getNickname();
@@ -148,16 +144,6 @@ public class StreamingActivity extends Activity implements
         switch (v.getId()) {
             case R.id.start:
                 toggleStream();
-                break;
-            case R.id.flash:
-                if (mButtonFlash.getTag().equals("on")) {
-                    mButtonFlash.setTag("off");
-                    mButtonFlash.setImageResource(R.drawable.ic_flash_on_holo_light);
-                } else {
-                    mButtonFlash.setImageResource(R.drawable.ic_flash_off_holo_light);
-                    mButtonFlash.setTag("on");
-                }
-                mSession.toggleFlash();
                 break;
             case R.id.camera:
                 mSession.switchCamera();
@@ -256,11 +242,7 @@ public class StreamingActivity extends Activity implements
     @Override
     public void onPreviewStarted() {
         if (mSession.getCamera() == CameraInfo.CAMERA_FACING_FRONT) {
-            mButtonFlash.setEnabled(false);
-            mButtonFlash.setTag("off");
-            mButtonFlash.setImageResource(R.drawable.ic_flash_on_holo_light);
         } else {
-            mButtonFlash.setEnabled(true);
         }
     }
 
@@ -288,10 +270,6 @@ public class StreamingActivity extends Activity implements
         mProgressBar.setVisibility(View.GONE);
         switch (reason) {
             case Session.ERROR_CAMERA_ALREADY_IN_USE:
-                break;
-            case Session.ERROR_CAMERA_HAS_NO_FLASH:
-                mButtonFlash.setImageResource(R.drawable.ic_flash_on_holo_light);
-                mButtonFlash.setTag("off");
                 break;
             case Session.ERROR_INVALID_SURFACE:
                 break;

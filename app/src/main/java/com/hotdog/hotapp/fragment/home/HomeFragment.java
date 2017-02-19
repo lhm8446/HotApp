@@ -75,16 +75,12 @@ public class HomeFragment extends Fragment {
 
         // Loading profile image
         Glide.with(this).load(urlProfileImg)
-                .crossFade()
-                .thumbnail(0.5f)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .asBitmap()
                 .into(userImage);
 
         // Loading profile image
         Glide.with(this).load(urlPetImg)
-                .crossFade()
-                .thumbnail(0.5f)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .asBitmap()
                 .into(petImage);
 
     }

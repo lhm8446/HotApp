@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import com.hotdog.hotapp.R;
-import com.hotdog.hotapp.fragment.vod.ListViewSmallScreenFragment;
+import com.hotdog.hotapp.fragment.vod.VodListFragment;
 import com.hotdog.hotapp.other.Util;
 import com.hotdog.hotapp.other.listvideoplay.ListDataGenerater;
 import com.hotdog.hotapp.other.listvideoplay.VideoModel;
@@ -118,7 +118,7 @@ public class VodActivity extends AppCompatActivity {
             mProgressBar.setVisibility(View.GONE);
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.layout_container, new ListViewSmallScreenFragment(), "ListViewSmallScreenFragment")
+                    .replace(R.id.layout_container, new VodListFragment(), "VodListFragment")
                     .addToBackStack(null)
                     .commit();
         }

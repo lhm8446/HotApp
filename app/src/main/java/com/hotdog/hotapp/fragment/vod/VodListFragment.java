@@ -44,7 +44,7 @@ import com.hotdog.hotapp.other.videomanage.utils.ViewHolder;
  * At 19:22
  */
 
-public class ListViewSmallScreenFragment extends Fragment implements AbsListView.OnScrollListener, View.OnClickListener {
+public class VodListFragment extends Fragment implements AbsListView.OnScrollListener, View.OnClickListener {
 
     public static final String TAG = "ListViewFragment";
 

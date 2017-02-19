@@ -32,11 +32,11 @@
 
             <com.github.siyamed.shapeimageview.CircularImageView
                 android:id="@+id/userImage"
-                android:layout_width="140dp"
+                android:layout_width="130dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
+                android:layout_gravity="bottom|left"
                 android:layout_marginBottom="50dp"
-                android:layout_marginLeft="20dp"
+                android:layout_marginLeft="10dp"
                 android:src="@drawable/profiledog"
                 app:siBorderColor="@android:color/transparent"
                 app:siBorderWidth="3dp" />
@@ -48,20 +48,18 @@
                 android:layout_alignParentRight="true"
                 android:layout_gravity="bottom"
                 android:layout_marginBottom="60dp"
-                android:padding="-30dp"
-                android:paddingLeft="-10dp" />
+                android:padding="-40dp" />
 
             <com.github.siyamed.shapeimageview.CircularImageView
                 android:id="@+id/petImage"
-                android:layout_width="140dp"
+                android:layout_width="130dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
+                android:layout_gravity="bottom|right"
                 android:layout_marginBottom="50dp"
-                android:layout_marginRight="20dp"
+                android:layout_marginRight="10dp"
                 android:src="@drawable/profiledog"
                 app:siBorderColor="@android:color/transparent"
                 app:siBorderWidth="3dp" />
-
 
         </GridLayout>
     </LinearLayout>

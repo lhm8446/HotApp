@@ -40,7 +40,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private int users_no;
 
     private PetVo petVo;
-
     private UserService userService;
     private PiService piService;
 
@@ -79,11 +78,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         dataInit();
         Util.checkAudioPermission(this);
-
-
-        if (savedInstanceState == null) {
-
-        }
 
     }
 
@@ -193,7 +187,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             popClear();
             startActivity(new Intent(HomeActivity.this, AboutUsActivity.class));
             drawer.closeDrawers();
-        } else if (id == R.id.nav_privacy_policy) {
+        } else if (id == R.id.nav_streaming_camera) {
             popClear();
             startActivity(new Intent(HomeActivity.this, StreamingActivity.class));
             drawer.closeDrawers();
@@ -373,7 +367,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         protected void onSuccess(PiVo piVo) throws Exception {
             Util.setPiVo("piData", getApplicationContext(), piVo);
             System.out.println(piVo);
-
         }
     }
 
