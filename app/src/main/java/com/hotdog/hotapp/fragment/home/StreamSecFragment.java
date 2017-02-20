@@ -102,7 +102,7 @@ public class StreamSecFragment extends Fragment {
                                 }
                             }).show();
                 } else {
-                    Util.changeHomeFragment(getFragmentManager(), new VideoFragment());
+                    Util.changeHomeFragment(getFragmentManager(), new StreamSelectFragment());
                 }
             } else if ("no".equals(flag)) {
                 secPassErr.setVisibility(view.VISIBLE);

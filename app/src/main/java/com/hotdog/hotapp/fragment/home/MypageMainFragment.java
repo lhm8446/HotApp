@@ -89,7 +89,7 @@ public class MypageMainFragment extends BaseFragment {
             if ("exist".equals(flag)) {
                 Util.changeHomeFragment(getFragmentManager(), new MypageRaspLoginFragment());
             } else if ("first".equals(flag)) {
-                Util.changeHomeFragment(getFragmentManager(), new StreamStartFragment1());
+                Util.changeHomeFragment(getFragmentManager(), new StreamStart2Fragment());
             }
         }
     }

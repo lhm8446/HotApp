@@ -1,0 +1,76 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/darker_gray"
+    tools:context="com.hotdog.hotapp.fragment.home.StreamVideoFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <VideoView
+        android:id="@+id/videoView3"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@android:color/transparent"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/toggleVoice2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/microphoneblack" />
+
+        <ImageButton
+            android:id="@+id/start2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:contentDescription="@string/start"
+            android:src="@drawable/ic_switch_video"
+
+            android:text="@string/start" />
+
+        <ImageButton
+            android:id="@+id/camera2"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+
+            android:contentDescription="@string/camera"
+            android:src="@drawable/ic_switch_photo_facing_holo_light" />
+
+        <ImageButton
+            android:id="@+id/videosettings2"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:contentDescription="@string/video"
+            android:src="@drawable/ic_settings_holo_light" />
+
+        <ImageButton
+            android:id="@+id/toggleRec2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/recordblack" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:id="@+id/progress_bar2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:progressDrawable="@drawable/progress_large_white"
+            android:visibility="gone" />
+    </FrameLayout>
+</FrameLayout>

@@ -26,7 +26,7 @@ import com.hotdog.hotapp.vo.UserVo;
 import java.io.File;
 import java.io.IOException;
 
-public class VideoFragment extends Fragment {
+public class StreamVideo2Fragment extends Fragment {
     private VideoView videoView;
     private StreamingService streamingService;
     private String VideoURL;
@@ -36,24 +36,25 @@ public class VideoFragment extends Fragment {
     private Uri video;
     private UserVo userVo;
     private PiVo piVo;
-    private ImageButton buttonRight, buttonLeft, buttonCenter, toggleVoice, toggleRec;
-    private Boolean isChecked, isChecked1;
+    private ImageButton start2, camera2, videosettings2, toggleVoice, toggleRec;
+    private Boolean isChecked, isChecked1, isChecked2;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_video, container, false);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_stream_video2, container, false);
         Util.checkStoragePermission(getActivity());
-        videoView = (VideoView) rootView.findViewById(R.id.videoView2);
-        toggleVoice = (ImageButton) rootView.findViewById(R.id.toggleVoice);
-        buttonRight = (ImageButton) rootView.findViewById(R.id.buttonRight);
-        buttonLeft = (ImageButton) rootView.findViewById(R.id.buttonLeft);
-        buttonCenter = (ImageButton) rootView.findViewById(R.id.buttonCenter);
-        toggleRec = (ImageButton) rootView.findViewById(R.id.toggleRec);
-        mProgressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
+        videoView = (VideoView) rootView.findViewById(R.id.videoView3);
+        toggleVoice = (ImageButton) rootView.findViewById(R.id.toggleVoice2);
+        start2 = (ImageButton) rootView.findViewById(R.id.start2);
+        camera2 = (ImageButton) rootView.findViewById(R.id.camera2);
+        videosettings2 = (ImageButton) rootView.findViewById(R.id.videosettings2);
+        toggleRec = (ImageButton) rootView.findViewById(R.id.toggleRec2);
+        mProgressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar2);
         mProgressBar.setVisibility(View.VISIBLE);
         isChecked = false;
         isChecked1 = false;
+        isChecked2 = false;
 
 
         streamingService = new StreamingService();
@@ -93,22 +94,28 @@ public class VideoFragment extends Fragment {
             }
         });
 
-        buttonLeft.setOnClickListener(new View.OnClickListener() {
+        camera2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new PiControllAsyncTask("left", piVo.getDevice_num()).execute();
+
             }
         });
-        buttonCenter.setOnClickListener(new View.OnClickListener() {
+        videosettings2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new PiControllAsyncTask("center", piVo.getDevice_num()).execute();
             }
         });
-        buttonRight.setOnClickListener(new View.OnClickListener() {
+        start2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new PiControllAsyncTask("right", piVo.getDevice_num()).execute();
+                if (isChecked1) {
+                    isChecked1 = false;
+                    toggleStream(isChecked1);
+                } else {
+                    isChecked1 = true;
+                    toggleStream(isChecked1);
+                }
+
             }
         });
 
@@ -124,20 +131,7 @@ public class VideoFragment extends Fragment {
         videoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
-                new PiControllAsyncTask("streamstop", piVo.getDevice_num()).execute();
-                new PiControllAsyncTask("stream", piVo.getDevice_num()).execute();
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // TODO Auto-generated method stub
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        new PiControllAsyncTask(userVo.getNickname() + "," + userVo.getSec_pass_word(), piVo.getDevice_num()).execute();
-                    }
-                }).start();
+
                 return false;
             }
 
@@ -151,6 +145,14 @@ public class VideoFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    public void toggleStream(boolean isChecked) {
+        if (isChecked) {
+            new StartAsyncTask().execute();
+        } else {
+            new StopAsyncTask().execute();
+        }
     }
 
     public void toggleRec(boolean isChecked) {
@@ -185,74 +187,84 @@ public class VideoFragment extends Fragment {
             File saveFile = new File(Environment.getExternalStorageDirectory()
                     .getAbsolutePath() + "/myrecord.mp3");
 
-
-            new AudioUploadAsyncTask(saveFile).execute();
         }
 
     }
 
-    private class PiControllAsyncTask extends SafeAsyncTask<String> {
-        String msg;
-        String ip;
+    //스트리밍 시작
+    private class StartAsyncTask extends SafeAsyncTask<Integer> {
 
-        PiControllAsyncTask(String msg, String ip) {
-            this.msg = msg;
-            this.ip = ip;
+        @Override
+        public Integer call() throws Exception {
+            return streamingService.moBileController("start", "cSOSTNzupFU:APA91bGrCDI02lAbO2WVfveVw2-sDIwfoKekL41e-hLT1BUDHohiOLBG7mQEGyNJ80h-WyqGsH9SHOMtOMrBise3Zdd0bS-E4LlCfHUsxPhUlJiYNeGMFKDTl9PpVLbOQB_F5LdrkctQ");
         }
 
         @Override
-        public String call() throws Exception {
-            return streamingService.piController(msg, ip);
+        protected void onSuccess(Integer integer) throws Exception {
+
         }
 
         @Override
         protected void onException(Exception e) throws RuntimeException {
             super.onException(e);
         }
-
-        @Override
-        protected void onSuccess(String flag) throws Exception {
-
-        }
     }
 
-    private class AudioUploadAsyncTask extends SafeAsyncTask<String> {
-        File file;
+    //스트리밍 종료
+    private class StopAsyncTask extends SafeAsyncTask<Integer> {
 
-        AudioUploadAsyncTask(File file) {
-            this.file = file;
+        @Override
+        public Integer call() throws Exception {
+            return streamingService.moBileController("stop", "cSOSTNzupFU:APA91bGrCDI02lAbO2WVfveVw2-sDIwfoKekL41e-hLT1BUDHohiOLBG7mQEGyNJ80h-WyqGsH9SHOMtOMrBise3Zdd0bS-E4LlCfHUsxPhUlJiYNeGMFKDTl9PpVLbOQB_F5LdrkctQ");
         }
 
         @Override
-        public String call() throws Exception {
-            return streamingService.audioUpload(file);
+        protected void onSuccess(Integer integer) throws Exception {
         }
 
         @Override
         protected void onException(Exception e) throws RuntimeException {
             super.onException(e);
         }
+    }
+
+    //카메라 변경
+    private class CameraAsyncTask extends SafeAsyncTask<Integer> {
 
         @Override
-        protected void onSuccess(final String filename) throws Exception {
-            Toast.makeText(getActivity(), filename, Toast.LENGTH_SHORT).show();
-            new PiControllAsyncTask("audio", piVo.getDevice_num()).execute();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(200);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    new PiControllAsyncTask(filename, piVo.getDevice_num()).execute();
-                }
-            }).start();
+        public Integer call() throws Exception {
+            return streamingService.moBileController("camera", "cSOSTNzupFU:APA91bGrCDI02lAbO2WVfveVw2-sDIwfoKekL41e-hLT1BUDHohiOLBG7mQEGyNJ80h-WyqGsH9SHOMtOMrBise3Zdd0bS-E4LlCfHUsxPhUlJiYNeGMFKDTl9PpVLbOQB_F5LdrkctQ");
+        }
 
+        @Override
+        protected void onSuccess(Integer integer) throws Exception {
+        }
 
+        @Override
+        protected void onException(Exception e) throws RuntimeException {
+            super.onException(e);
         }
     }
 
+    //화질 변경
+    private class QualityAsyncTask extends SafeAsyncTask<Integer> {
+
+        @Override
+        public Integer call() throws Exception {
+            return null;
+        }
+
+        @Override
+        protected void onSuccess(Integer integer) throws Exception {
+        }
+
+        @Override
+        protected void onException(Exception e) throws RuntimeException {
+            super.onException(e);
+        }
+    }
+
+    //녹화 시작
     private class RecAsyncTask extends SafeAsyncTask<Integer> {
 
         @Override
@@ -271,6 +283,7 @@ public class VideoFragment extends Fragment {
         }
     }
 
+    //녹화 종료
     private class RecStopAsyncTask extends SafeAsyncTask<Integer> {
 
         @Override

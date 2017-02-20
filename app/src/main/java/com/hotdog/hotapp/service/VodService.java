@@ -20,6 +20,20 @@ import java.util.Map;
 public class VodService {
     private final String SERVER_URL = "http://150.95.141.66:80/hotdog";
 
+    public int refreshVod(UserVo userVo) throws IOException {
+        String url = "http://150.95.141.66:80/test/cgi-bin/vod.py";
+        HttpRequest httpRequest = HttpRequest.post(url);
+
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("userNo", userVo.getUsers_no());
+
+        if (httpRequest.form(data).created()) {
+            System.out.println(httpRequest.body());
+        }
+
+        return httpRequest.code();
+    }
+
     public ArrayList<VideoVo> fetchVodUrl(UserVo userVo) throws IOException {
         String url = SERVER_URL + "/blog/app/vod";
         HttpRequest httpRequest = HttpRequest.post(url);

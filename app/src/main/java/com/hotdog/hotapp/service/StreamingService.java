@@ -18,13 +18,27 @@ import java.util.Map;
 public class StreamingService {
     private final String SERVER_URL = "http://150.95.141.66:80/test/cgi-bin";
 
+    public int moBileController(String msg, String token) {
+        String url = SERVER_URL + "/noti.py";
+        HttpRequest httpRequest = HttpRequest.post(url);
+
+        Map<String, String> data = new HashMap();
+        data.put("msg", msg);
+        data.put("token", token);
+
+        if (httpRequest.form(data).created()) {
+            System.out.println(httpRequest.body());
+        }
+        return httpRequest.code();
+    }
+
     public String piController(String msg, String ip) {
         String url = SERVER_URL + "/send.py";
         HttpRequest httpRequest = HttpRequest.post(url);
 
         Map<String, String> data = new HashMap();
         data.put("msg", msg);
-        data.put("ip", ip + "");
+        data.put("ip", ip);
 
         if (httpRequest.form(data).created()) {
             System.out.println(httpRequest.body());

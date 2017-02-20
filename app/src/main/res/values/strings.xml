@@ -178,8 +178,9 @@
     <string name="streamTuto_never">다시 보지 않기</string>
 
     <!-- 스트리밍 -->
-    <string name="streamMain"></string>
-
+    <string name="stream_device">사용하실 스트리밍 기기 선택하세요.</string>
+    <string name="stream_mobile">안드로이드폰</string>
+    <string name="stream_rasp">라즈베리</string>
     <!-- 마이페이지 메인 -->
     <string name="mypageMain_user">회원정보 수정</string>
     <string name="mypageMain_pet">애완견정보 수정</string>

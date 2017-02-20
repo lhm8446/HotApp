@@ -52,7 +52,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     // urls to load navigation header background image
     // and profile image
-    private static final String urlNavHeaderBg = "http://upload.inven.co.kr/upload/2012/09/03/bbs/i0028172688.png";
+    private static final String urlNavHeaderBg = "http://68.media.tumblr.com/tumblr_lxhocbDywJ1qc0kfg.jpg";
     private static final String urlimg = "http://150.95.141.66:80/hotdog/hotdog/image/user/";
 
     // index to identify current nav menu item
@@ -63,7 +63,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     public static String CURRENT_TAG;
     private String HOME_TAG = "nav_home";
     private String STREAM_TAG = "nav_streaming";
-    private String VOD_TAG = "nav_vod";
     private String PAGE_TAG = "nav_page";
     private String SETTING_TAG = "nav_settings";
     // toolbar titles respected to selected nav menu item
@@ -88,7 +87,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
-
+        drawer.setVisibility(View.GONE);
         // Navigation view header
         navHeader = navigationView.getHeaderView(0);
         txtName = (TextView) navHeader.findViewById(R.id.name);
@@ -118,16 +117,20 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
+
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         FrameLayout homeFragment = (FrameLayout) findViewById(R.id.frame_home);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
         if (homeFragment != null) {
             finish();
+        } else {
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                super.onBackPressed();
+            }
         }
+
 
     }
 
@@ -174,7 +177,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             new SecPassChkAsyncTask().execute();
         } else if (id == R.id.nav_vod) {
             startActivity(new Intent(HomeActivity.this, VodActivity.class));
-            finish();
         } else if (id == R.id.nav_page) {
             popClear();
             CURRENT_TAG = PAGE_TAG;
@@ -312,11 +314,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             System.out.println(petVo);
             new GetPiInfoAsyncTask().execute();
             loadNavHeader();
+
             if ("mypage".equals(callback)) {
                 Util.changeHomeFragment(getSupportFragmentManager(), new MypageMainFragment(), PAGE_TAG);
             } else {
                 Util.changeHomeFragment(getSupportFragmentManager(), new HomeFragment(), HOME_TAG);
             }
+            drawer.setVisibility(View.VISIBLE);
+            drawer.setBackgroundResource(R.drawable.dog);
             loadHomeFragment();
         }
     }

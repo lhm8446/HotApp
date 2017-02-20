@@ -16,8 +16,8 @@ import java.util.Map;
  */
 
 public class UserService {
-    //private final String SERVER_URL = "http://150.95.141.66:80/hotdog";
-    private final String SERVER_URL = "http://192.168.1.29:8088/hotdog";
+    private final String SERVER_URL = "http://150.95.141.66:80/hotdog";
+    //private final String SERVER_URL = "http://192.168.1.29:8088/hotdog";
 
     // (로그인, 회원가입)이메일 체크
     public String userEmailCheck(String email) {
@@ -208,6 +208,8 @@ public class UserService {
         //System.out.println(httpRequest.body() + " " + jSONResultPetUpdate.getData());
         return jSONResultUpdatePet.getData();
     }
+
+
 
     // 비밀번호 찾기
     public String passModify(UserVo userVo) {

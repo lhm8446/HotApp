@@ -21,7 +21,7 @@ import com.hotdog.hotapp.service.UserService;
 import com.hotdog.hotapp.vo.PiVo;
 import com.hotdog.hotapp.vo.UserVo;
 
-public class StreamStartFragment1 extends Fragment {
+public class StreamStart2Fragment extends Fragment {
     private View view;
     private EditText editTextIp, editTextPassword, editTextPasschk;
     private TextView secPassErr, secPassErr1, secIpErr;

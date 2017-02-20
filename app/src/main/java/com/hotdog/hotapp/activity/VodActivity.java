@@ -1,6 +1,5 @@
 package com.hotdog.hotapp.activity;
 
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
@@ -35,8 +34,8 @@ public class VodActivity extends AppCompatActivity {
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar1);
         mProgressBar.setVisibility(View.VISIBLE);
         userVo = Util.getUserVo("userData", getApplicationContext());
+        new refreshVod().execute();
 
-        new getVodUrl().execute();
 
     }
 
@@ -45,9 +44,6 @@ public class VodActivity extends AppCompatActivity {
         if (getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
                 && getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE) {
             super.onBackPressed();
-            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-            intent.putExtra("userNo", Util.getUserVo("userData", getApplicationContext()).getUsers_no());
-            startActivity(intent);
             finish();
         } else {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -103,6 +99,27 @@ public class VodActivity extends AppCompatActivity {
                     .replace(R.id.layout_container, new VodListFragment(), "VodListFragment")
                     .addToBackStack(null)
                     .commit();
+        }
+
+        @Override
+        protected void onException(Exception e) throws RuntimeException {
+            super.onException(e);
+        }
+    }
+
+    private class refreshVod extends SafeAsyncTask<Integer> {
+
+        @Override
+        public Integer call() throws Exception {
+            vodService = new VodService();
+            return vodService.refreshVod(userVo);
+        }
+
+        @Override
+        protected void onSuccess(Integer code) throws Exception {
+            if (code == 200) {
+                new getVodUrl().execute();
+            }
         }
 
         @Override

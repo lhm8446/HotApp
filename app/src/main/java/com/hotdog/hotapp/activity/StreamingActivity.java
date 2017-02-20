@@ -54,7 +54,7 @@ public class StreamingActivity extends Activity implements
     private SurfaceView mSurfaceView;
     private TextView mTextBitrate;
     private ProgressBar mProgressBar;
-    private Session mSession;
+    private static Session mSession;
     private RtspClient mClient;
     private UserVo userVo;
     private int secPass;
@@ -128,10 +128,15 @@ public class StreamingActivity extends Activity implements
         if ("start".equals(state)) {
             toggleStream();
             mSession.switchCamera();
+        } else {
+
         }
 
     }
 
+    public static void switchCam() {
+        mSession.switchCamera();
+    }
 
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {

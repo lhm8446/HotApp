@@ -19,11 +19,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "MyFirebaseMsgService";
 
+
     /**
      * Called when message is received.
      *
      * @param remoteMessage Object representing the message received from Firebase Cloud Messaging.
      */
+
     // [START receive_message]
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -47,17 +49,21 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
 
             System.out.println(remoteMessage.getData().get("flag"));
-            if (remoteMessage.getData().get("flag").equals("stream")) {
-                Intent intent = new Intent(this, StreamingActivity.class);
-                intent.putExtra("state", "start");
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            }
             if (remoteMessage.getData().get("flag").equals("start")) {
                 Intent intent = new Intent(this, StreamingActivity.class);
                 intent.putExtra("state", "start");
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
+            }
+            if (remoteMessage.getData().get("flag").equals("stop")) {
+                Intent intent = new Intent(this, StreamingActivity.class);
+                intent.putExtra("state", "stop");
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+            if (remoteMessage.getData().get("flag").equals("camera")) {
+
+                StreamingActivity.switchCam();
             }
         }
 
