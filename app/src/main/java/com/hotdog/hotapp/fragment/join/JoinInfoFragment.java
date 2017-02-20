@@ -1,5 +1,6 @@
 package com.hotdog.hotapp.fragment.join;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,8 +13,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.hotdog.hotapp.R;
+import com.hotdog.hotapp.activity.LoginActivity;
 import com.hotdog.hotapp.other.network.SafeAsyncTask;
-import com.hotdog.hotapp.other.Util;
 import com.hotdog.hotapp.service.UserService;
 import com.hotdog.hotapp.vo.UserVo;
 
@@ -197,7 +198,9 @@ public class JoinInfoFragment extends Fragment {
             // 통신 완료 값은 사용자 번호. 0보다 크면 회원가입 완료 아니면 실패
             // 회원가입 완료 + 회원가입 실패 프래그먼트 띄우기 ( 구현 x )
             if (userVo.getUsers_no() > 0) {
-                Util.changeJoinFragment(getFragmentManager(), new JoinOkFragment());
+                Intent intent = new Intent(getActivity().getApplicationContext(), LoginActivity.class);
+                startActivity(intent);
+                getActivity().finish();
             }
         }
     }

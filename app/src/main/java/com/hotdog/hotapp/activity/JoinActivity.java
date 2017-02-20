@@ -2,6 +2,7 @@ package com.hotdog.hotapp.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.LinearLayout;
 
 import com.hotdog.hotapp.R;
 import com.hotdog.hotapp.fragment.join.JoinCheckFragment;
@@ -16,5 +17,16 @@ public class JoinActivity extends AppCompatActivity {
 
         Util.changeJoinFragment(getSupportFragmentManager(), new JoinCheckFragment());
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        LinearLayout joinFragment = (LinearLayout) findViewById(R.id.frame_join);
+
+        if (joinFragment != null) {
+            finish();
+        } else {
+            super.onBackPressed();
+        }
     }
 }

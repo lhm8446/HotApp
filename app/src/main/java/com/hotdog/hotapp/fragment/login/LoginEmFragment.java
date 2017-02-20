@@ -94,6 +94,8 @@ public class LoginEmFragment extends Fragment {
             if ("exist".equals(flag)) {
                 LoginActivity.presentEm = email;
                 Util.changeLoginFragment(getFragmentManager(), new LoginPwFragment());
+
+
             } else {
                 emailError.setVisibility(rootView.VISIBLE);
             }

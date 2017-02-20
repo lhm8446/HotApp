@@ -1,5 +1,6 @@
 package com.hotdog.hotapp.fragment.vod;
 
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.media.MediaPlayer;
@@ -23,6 +24,7 @@ import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
 import com.hotdog.hotapp.R;
+import com.hotdog.hotapp.other.Util;
 import com.hotdog.hotapp.other.listvideoplay.DisableListView;
 import com.hotdog.hotapp.other.listvideoplay.ListDataGenerater;
 import com.hotdog.hotapp.other.listvideoplay.Utils;
@@ -37,6 +39,8 @@ import com.hotdog.hotapp.other.videomanage.meta.MetaData;
 import com.hotdog.hotapp.other.videomanage.ui.MediaPlayerWrapper;
 import com.hotdog.hotapp.other.videomanage.ui.VideoPlayerView;
 import com.hotdog.hotapp.other.videomanage.utils.ViewHolder;
+
+import cn.refactor.lib.colordialog.PromptDialog;
 
 /**
  * Created by Bruce Too
@@ -62,7 +66,7 @@ public class VodListFragment extends Fragment implements AbsListView.OnScrollLis
     private VideoControllerView mCurrentVideoControllerView;
     private int mCurrentActiveVideoItem = -1;
     private int mCurrentBuffer;
-
+    private SharedPreferences wifiChk;
 
     private VideoPlayerManager<MetaData> mVideoPlayerManager = new SingleVideoPlayerManager(null);
 
@@ -161,6 +165,7 @@ public class VodListFragment extends Fragment implements AbsListView.OnScrollLis
         mVideoProgressBar = (ProgressBar) view.findViewById(R.id.video_progress_bar);
         mVideoCloseBg = view.findViewById(R.id.video_close_btn);
         mVideoCloseBg.setOnClickListener(this);
+        wifiChk = getActivity().getSharedPreferences("wifiChk", 0);
 
         mListView.setAdapter(new ListViewAdapter(this));
         mListView.setOnScrollListener(this);
@@ -434,46 +439,59 @@ public class VodListFragment extends Fragment implements AbsListView.OnScrollLis
     public void onClick(View v) {
 
         if (v.getId() == R.id.layout_play_area) {
-
-            mIsClickToStop = true;
-            v.setClickable(false);
-            if (mCurrentPlayArea != null) {
-                if (mCurrentPlayArea != v) {
-                    mCurrentPlayArea.setClickable(true);
-                    mCurrentPlayArea.setVisibility(View.VISIBLE);
-                    mCurrentPlayArea = v;
-                } else {//click same area
-                    if (mVideoFloatContainer.getVisibility() == View.VISIBLE) return;
-                }
+            int wifi = Util.getConnectivityStatus(getActivity());
+            if (wifi != 1 && wifiChk.getBoolean("chk", false)) {
+                new PromptDialog(getActivity())
+                        .setDialogType(PromptDialog.DIALOG_TYPE_INFO)
+                        .setAnimationEnable(true)
+                        .setTitleText("info")
+                        .setContentText("wifi 상태가 아닙니다. \n  데이터를 사용하실려면 Settings에서 변경하세요.")
+                        .setPositiveListener("확인", new PromptDialog.OnPositiveListener() {
+                            @Override
+                            public void onClick(PromptDialog dialog) {
+                                dialog.dismiss();
+                            }
+                        }).show();
             } else {
-                mCurrentPlayArea = v;
+                mIsClickToStop = true;
+                v.setClickable(false);
+                if (mCurrentPlayArea != null) {
+                    if (mCurrentPlayArea != v) {
+                        mCurrentPlayArea.setClickable(true);
+                        mCurrentPlayArea.setVisibility(View.VISIBLE);
+                        mCurrentPlayArea = v;
+                    } else {//click same area
+                        if (mVideoFloatContainer.getVisibility() == View.VISIBLE) return;
+                    }
+                } else {
+                    mCurrentPlayArea = v;
+                }
+
+                //invisible self ,and make visible when video play completely
+                v.setVisibility(View.INVISIBLE);
+                if (mCurrentVideoControllerView != null)
+                    mCurrentVideoControllerView.hide();
+
+                mVideoFloatContainer.setVisibility(View.VISIBLE);
+                mVideoCoverMask.setVisibility(View.GONE);
+                mVideoPlayerBg.setVisibility(View.GONE);
+
+                VideoModel model = (VideoModel) v.getTag();
+                mCurrentActiveVideoItem = model.position;
+
+                mCanTriggerGone = true;
+                mCanTriggerVisible = false;
+
+                recoverFloatContainer();
+                //move container view
+                startMoveFloatContainer(true);
+
+                mVideoLoadingView.setVisibility(View.VISIBLE);
+                mVideoPlayerView.setVisibility(View.INVISIBLE);
+
+                //play video
+                mVideoPlayerManager.playNewVideo(new CurrentItemMetaData(model.position, v), mVideoPlayerView, model.videoUrl);
             }
-
-            //invisible self ,and make visible when video play completely
-            v.setVisibility(View.INVISIBLE);
-            if (mCurrentVideoControllerView != null)
-                mCurrentVideoControllerView.hide();
-
-            mVideoFloatContainer.setVisibility(View.VISIBLE);
-            mVideoCoverMask.setVisibility(View.GONE);
-            mVideoPlayerBg.setVisibility(View.GONE);
-
-            VideoModel model = (VideoModel) v.getTag();
-            mCurrentActiveVideoItem = model.position;
-
-            mCanTriggerGone = true;
-            mCanTriggerVisible = false;
-
-            recoverFloatContainer();
-            //move container view
-            startMoveFloatContainer(true);
-
-            mVideoLoadingView.setVisibility(View.VISIBLE);
-            mVideoPlayerView.setVisibility(View.INVISIBLE);
-
-            //play video
-            mVideoPlayerManager.playNewVideo(new CurrentItemMetaData(model.position, v), mVideoPlayerView, model.videoUrl);
-
         } else if (v.getId() == R.id.video_close_btn) {
             relayoutContainer2NormalScreen();
             stopPlaybackImmediately();

@@ -114,7 +114,6 @@ public class MypageProfileFragment extends Fragment {
             public void onClick(View view) {
                 nicknameNew = edittext_nickname.getText().toString();
 
-
                 // 닉네임 체크
                 if (nicknameNew.length() < 2) {
                     textview_nicknameEr2.setVisibility(view.VISIBLE);

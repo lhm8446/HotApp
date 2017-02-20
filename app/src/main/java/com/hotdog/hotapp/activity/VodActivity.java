@@ -1,7 +1,6 @@
 package com.hotdog.hotapp.activity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
@@ -22,14 +21,12 @@ import com.hotdog.hotapp.vo.VideoVo;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import cn.refactor.lib.colordialog.PromptDialog;
-
 public class VodActivity extends AppCompatActivity {
     private VodService vodService;
     private UserVo userVo;
     private final String URL = "http://150.95.141.66:80/hotdog/hotdog/image/user/";
     private ProgressBar mProgressBar;
-    private SharedPreferences wifiChk;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,23 +35,8 @@ public class VodActivity extends AppCompatActivity {
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar1);
         mProgressBar.setVisibility(View.VISIBLE);
         userVo = Util.getUserVo("userData", getApplicationContext());
-        wifiChk = getApplication().getSharedPreferences("wifiChk", 0);
-        int wifi = Util.getConnectivityStatus(this);
-        if (wifi != 1 && wifiChk.getBoolean("chk", false)) {
-            new PromptDialog(this)
-                    .setDialogType(PromptDialog.DIALOG_TYPE_INFO)
-                    .setAnimationEnable(true)
-                    .setTitleText("info")
-                    .setContentText("wifi 상태가 아닙니다. \n  데이터를 사용하실려면 Settings에서 변경하세요.")
-                    .setPositiveListener("확인", new PromptDialog.OnPositiveListener() {
-                        @Override
-                        public void onClick(PromptDialog dialog) {
-                            dialog.dismiss();
-                        }
-                    }).show();
-        } else {
-            new getVodUrl().execute();
-        }
+
+        new getVodUrl().execute();
 
     }
 

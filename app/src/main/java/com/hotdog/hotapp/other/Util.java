@@ -125,7 +125,14 @@ public class Util {
         SharedPreferences.Editor editor = data.edit();
         editor.clear();
         editor.commit();
-
+        data = context.getSharedPreferences("repeatShow", 0);
+        editor = data.edit();
+        editor.clear();
+        editor.commit();
+        data = context.getSharedPreferences("email", 0);
+        editor = data.edit();
+        editor.clear();
+        editor.commit();
         data = context.getSharedPreferences("petData", 0);
         editor = data.edit();
         editor.clear();

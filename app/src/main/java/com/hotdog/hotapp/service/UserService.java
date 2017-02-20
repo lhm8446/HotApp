@@ -16,8 +16,8 @@ import java.util.Map;
  */
 
 public class UserService {
-    private final String SERVER_URL = "http://150.95.141.66:80/hotdog";
-    //private final String SERVER_URL = "http://192.168.1.29:8088/hotdog";
+    //private final String SERVER_URL = "http://150.95.141.66:80/hotdog";
+    private final String SERVER_URL = "http://192.168.1.29:8088/hotdog";
 
     // (로그인, 회원가입)이메일 체크
     public String userEmailCheck(String email) {
@@ -207,6 +207,41 @@ public class UserService {
         JSONResultUpdatePet jSONResultUpdatePet = fromJSON(httpRequest, JSONResultUpdatePet.class);
         //System.out.println(httpRequest.body() + " " + jSONResultPetUpdate.getData());
         return jSONResultUpdatePet.getData();
+    }
+
+    // 비밀번호 찾기
+    public String passModify(UserVo userVo) {
+        String url = SERVER_URL + "/user/app/passmodify";
+        HttpRequest httpRequest = HttpRequest.post(url);
+
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("email", userVo.getEmail());
+        data.put("pass_word", userVo.getPass_word());
+
+        if (httpRequest.form(data).created()) {
+        }
+        JSONResultPassModify jSONResultPassModify = fromJSON(httpRequest, JSONResultPassModify.class);
+        return jSONResultPassModify.getData();
+    }
+
+    // 이메일 전송
+    public String sendEmail(String email) {
+        String url = SERVER_URL + "/user/app/email";
+        HttpRequest httpRequest = HttpRequest.post(url);
+
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("email", email);
+
+        if (httpRequest.form(data).created()) {
+        }
+        JSONResultSendEmail jSONResultSendEamil = fromJSON(httpRequest, JSONResultSendEmail.class);
+        return jSONResultSendEamil.getData();
+    }
+
+    private class JSONResultPassModify extends JSONResult<String> {
+    }
+
+    private class JSONResultSendEmail extends JSONResult<String> {
     }
 
     private class JSONResultUserCheck extends JSONResult<UserVo> {
