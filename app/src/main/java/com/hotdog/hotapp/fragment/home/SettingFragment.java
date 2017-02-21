@@ -23,10 +23,10 @@ public class SettingFragment extends Fragment {
 
     private static final String TAG = "SettingFragment";
     private PiService piService;
-    private Switch switch1, switch2;
+    private Switch switch1, switch2, switch3;
     private Button buttonHelp;
     private UserVo userVo;
-    private PiVo piVo;
+    private PiVo piVo, oldPiVo;
     private SharedPreferences.Editor editor;
     private SharedPreferences wifiChk;
 
@@ -37,15 +37,30 @@ public class SettingFragment extends Fragment {
 
         switch1 = (Switch) rootView.findViewById(R.id.switch1);
         switch2 = (Switch) rootView.findViewById(R.id.switch2);
+        switch3 = (Switch) rootView.findViewById(R.id.switch3);
         buttonHelp = (Button) rootView.findViewById(R.id.buttonHelp);
 
         wifiChk = getActivity().getSharedPreferences("wifiChk", 0);
         editor = wifiChk.edit();
 
-        userVo = Util.getUserVo("userData", getActivity());
+        userVo = Util.getUserVo(getActivity());
+        oldPiVo = Util.getPiVo(getActivity());
+
+        switch1.setChecked(wifiChk.getBoolean("chk", false));
+        if (oldPiVo.getToken() != null) {
+            if (!"".equals(oldPiVo.getToken())) {
+                switch2.setChecked(true);
+            }
+        }
+        if (oldPiVo.getSec_token() != null) {
+            if (!"".equals(oldPiVo.getSec_token())) {
+                switch3.setChecked(true);
+            }
+        }
+
         piVo = new PiVo();
         piVo.setUsers_no(userVo.getUsers_no());
-        switch1.setChecked(wifiChk.getBoolean("chk", false));
+
         switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -70,6 +85,18 @@ public class SettingFragment extends Fragment {
                 }
             }
         });
+        switch3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    piVo.setSec_token(FirebaseInstanceId.getInstance().getToken());
+                    new PiSecTokenUpdateAsyncTask().execute();
+                } else {
+                    piVo.setSec_token("");
+                    new PiSecTokenUpdateAsyncTask().execute();
+                }
+            }
+        });
         buttonHelp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -87,6 +114,26 @@ public class SettingFragment extends Fragment {
         public String call() throws Exception {
             piService = new PiService();
             return piService.piTokenUpdate(piVo);
+        }
+
+        @Override
+        protected void onSuccess(String s) throws Exception {
+
+        }
+
+        @Override
+        protected void onException(Exception e) throws RuntimeException {
+            super.onException(e);
+        }
+    }
+
+    //pi token 변경
+    private class PiSecTokenUpdateAsyncTask extends SafeAsyncTask<String> {
+
+        @Override
+        public String call() throws Exception {
+            piService = new PiService();
+            return piService.piSecTokenUpdate(piVo);
         }
 
         @Override

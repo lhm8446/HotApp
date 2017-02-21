@@ -259,7 +259,8 @@
     <!-- 세팅 메인 -->
     <string name="setting_first">WIFI 환경에서만 스트리밍 재생</string>
     <string name="setting_second">알림 허용</string>
-    <string name="setting_third">도움말 및 지원</string>
+    <string name="setting_third">스트리밍 촬영용 기기로 이용</string>
+    <string name="setting_help">도움말 및 개발자 소개</string>
 
     <!-- 세팅 도움말 -->
     <string name="settingTalk_content">도\n움\n말\n도\n움\n말</string>

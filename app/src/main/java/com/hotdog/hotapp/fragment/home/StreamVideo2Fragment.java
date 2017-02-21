@@ -1,5 +1,6 @@
 package com.hotdog.hotapp.fragment.home;
 
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -26,6 +27,8 @@ import com.hotdog.hotapp.vo.UserVo;
 import java.io.File;
 import java.io.IOException;
 
+import cn.refactor.lib.colordialog.PromptDialog;
+
 public class StreamVideo2Fragment extends Fragment {
     private VideoView videoView;
     private StreamingService streamingService;
@@ -38,6 +41,7 @@ public class StreamVideo2Fragment extends Fragment {
     private PiVo piVo;
     private ImageButton start2, camera2, videosettings2, toggleVoice, toggleRec;
     private Boolean isChecked, isChecked1, isChecked2;
+    private SharedPreferences wifiChk;
 
     @Nullable
     @Override
@@ -52,14 +56,14 @@ public class StreamVideo2Fragment extends Fragment {
         toggleRec = (ImageButton) rootView.findViewById(R.id.toggleRec2);
         mProgressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar2);
         mProgressBar.setVisibility(View.VISIBLE);
+        wifiChk = getActivity().getSharedPreferences("wifiChk", 0);
         isChecked = false;
         isChecked1 = false;
         isChecked2 = false;
 
-
         streamingService = new StreamingService();
-        userVo = Util.getUserVo("userData", getActivity());
-        piVo = Util.getPiVo("piData", getActivity());
+        userVo = Util.getUserVo(getActivity());
+        piVo = Util.getPiVo(getActivity());
 
         VideoURL = "rtsp://150.95.141.66:1935/live/" + userVo.getNickname() + "/stream";
 
@@ -97,7 +101,7 @@ public class StreamVideo2Fragment extends Fragment {
         camera2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new StopAsyncTask().execute();
+                new CameraAsyncTask().execute();
             }
         });
         videosettings2.setOnClickListener(new View.OnClickListener() {
@@ -108,42 +112,55 @@ public class StreamVideo2Fragment extends Fragment {
         start2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isChecked1) {
-                    isChecked1 = false;
-                    toggleStream(isChecked1);
+                if (isChecked2) {
+                    isChecked2 = false;
+                    toggleStream(isChecked2);
                 } else {
-                    isChecked1 = true;
-                    toggleStream(isChecked1);
+                    isChecked2 = true;
+                    toggleStream(isChecked2);
                 }
 
             }
         });
+        int wifi = Util.getConnectivityStatus(getActivity());
+        if (wifi != 1 && wifiChk.getBoolean("chk", false)) {
+            new PromptDialog(getActivity())
+                    .setDialogType(PromptDialog.DIALOG_TYPE_INFO)
+                    .setAnimationEnable(true)
+                    .setTitleText("info")
+                    .setContentText("wifi 상태가 아닙니다. \n  데이터를 사용하실려면 Settings에서 변경하세요.")
+                    .setPositiveListener("확인", new PromptDialog.OnPositiveListener() {
+                        @Override
+                        public void onClick(PromptDialog dialog) {
+                            dialog.dismiss();
+                        }
+                    }).show();
+        } else {
+            // Start the MediaController
+            mediacontroller = new MediaController(getActivity());
+            mediacontroller.setAnchorView(videoView);
 
-        // Start the MediaController
-        mediacontroller = new MediaController(getActivity());
-        mediacontroller.setAnchorView(videoView);
+            // Get the URL from String VideoURL
+            video = Uri.parse(VideoURL);
+            videoView.setMediaController(mediacontroller);
+            videoView.setVideoURI(video);
+            videoView.requestFocus();
+            videoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                @Override
+                public boolean onError(MediaPlayer mp, int what, int extra) {
 
-        // Get the URL from String VideoURL
-        video = Uri.parse(VideoURL);
-        videoView.setMediaController(mediacontroller);
-        videoView.setVideoURI(video);
-        videoView.requestFocus();
-        videoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-            @Override
-            public boolean onError(MediaPlayer mp, int what, int extra) {
+                    return false;
+                }
 
-                return false;
-            }
-
-        });
-        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            // Close the progress bar and play the video
-            public void onPrepared(MediaPlayer mp) {
-                mProgressBar.setVisibility(View.GONE);
-                videoView.start();
-            }
-        });
-
+            });
+            videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                // Close the progress bar and play the video
+                public void onPrepared(MediaPlayer mp) {
+                    mProgressBar.setVisibility(View.GONE);
+                    videoView.start();
+                }
+            });
+        }
         return rootView;
     }
 
@@ -196,7 +213,7 @@ public class StreamVideo2Fragment extends Fragment {
 
         @Override
         public Integer call() throws Exception {
-            return streamingService.moBileController("start", "cSOSTNzupFU:APA91bGrCDI02lAbO2WVfveVw2-sDIwfoKekL41e-hLT1BUDHohiOLBG7mQEGyNJ80h-WyqGsH9SHOMtOMrBise3Zdd0bS-E4LlCfHUsxPhUlJiYNeGMFKDTl9PpVLbOQB_F5LdrkctQ");
+            return streamingService.mobileController("start", piVo.getSec_token());
         }
 
         @Override
@@ -215,7 +232,7 @@ public class StreamVideo2Fragment extends Fragment {
 
         @Override
         public Integer call() throws Exception {
-            return streamingService.moBileController("stop", "cSOSTNzupFU:APA91bGrCDI02lAbO2WVfveVw2-sDIwfoKekL41e-hLT1BUDHohiOLBG7mQEGyNJ80h-WyqGsH9SHOMtOMrBise3Zdd0bS-E4LlCfHUsxPhUlJiYNeGMFKDTl9PpVLbOQB_F5LdrkctQ");
+            return streamingService.mobileController("stop", piVo.getSec_token());
         }
 
         @Override
@@ -233,7 +250,7 @@ public class StreamVideo2Fragment extends Fragment {
 
         @Override
         public Integer call() throws Exception {
-            return streamingService.moBileController("camera", "cSOSTNzupFU:APA91bGrCDI02lAbO2WVfveVw2-sDIwfoKekL41e-hLT1BUDHohiOLBG7mQEGyNJ80h-WyqGsH9SHOMtOMrBise3Zdd0bS-E4LlCfHUsxPhUlJiYNeGMFKDTl9PpVLbOQB_F5LdrkctQ");
+            return streamingService.mobileController("camera", piVo.getSec_token());
         }
 
         @Override

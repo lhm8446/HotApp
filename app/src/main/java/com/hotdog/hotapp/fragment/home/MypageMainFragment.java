@@ -25,7 +25,7 @@ public class MypageMainFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_mypage_main, container, false);
-        userVo = Util.getUserVo("userData", getActivity());
+        userVo = Util.getUserVo(getActivity());
 
         buttonUpdateUser = (Button) rootView.findViewById(R.id.buttonUpdateUser);
         buttonUpdateUser.setOnClickListener(new View.OnClickListener() {

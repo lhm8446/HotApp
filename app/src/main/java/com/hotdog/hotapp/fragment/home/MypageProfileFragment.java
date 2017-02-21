@@ -58,7 +58,7 @@ public class MypageProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_mypage_profile, container, false);
         Util.checkStoragePermission(getActivity());
-        userVo = Util.getUserVo("userData", getActivity());
+        userVo = Util.getUserVo(getActivity());
 
 
         textview_email = (TextView) rootView.findViewById(R.id.textview_email);

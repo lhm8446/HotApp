@@ -32,8 +32,8 @@ public class MypageRaspMainFragment extends Fragment {
         DeviceNumChange = (Button) rootView.findViewById(R.id.DeviceNumChange);
         DeviceNumDelete = (Button) rootView.findViewById(R.id.DeviceNumDelete);
 
-        userVo = Util.getUserVo("userData", getActivity());
-        piVo = Util.getPiVo("piData", getActivity());
+        userVo = Util.getUserVo(getActivity());
+        piVo = Util.getPiVo(getActivity());
 
         raspDevice.setText(piVo.getDevice_num());
 

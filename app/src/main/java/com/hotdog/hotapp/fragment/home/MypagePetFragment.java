@@ -64,7 +64,7 @@ public class MypagePetFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_mypage_pet, container, false);
         Util.checkStoragePermission(getActivity());
-        petVo = Util.getPetVo("petData", getActivity());
+        petVo = Util.getPetVo(getActivity());
 
         petImage = (ImageView) rootView.findViewById(R.id.petImage);
         petName = (EditText) rootView.findViewById(R.id.petName);

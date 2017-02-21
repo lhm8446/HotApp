@@ -38,7 +38,7 @@ public class MypageRaspChangePwFragment extends Fragment {
         secChangeErr = (TextView) rootView.findViewById(R.id.secChangeErr);
         secChangeErr1 = (TextView) rootView.findViewById(R.id.secChangeErr1);
 
-        userVo = Util.getUserVo("userData", getActivity());
+        userVo = Util.getUserVo(getActivity());
         secChange.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

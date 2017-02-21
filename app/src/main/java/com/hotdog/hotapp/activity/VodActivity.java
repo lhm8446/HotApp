@@ -33,9 +33,8 @@ public class VodActivity extends AppCompatActivity {
         setContentView(R.layout.activity_vod);
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar1);
         mProgressBar.setVisibility(View.VISIBLE);
-        userVo = Util.getUserVo("userData", getApplicationContext());
+        userVo = Util.getUserVo(getApplicationContext());
         new refreshVod().execute();
-
 
     }
 

@@ -18,7 +18,7 @@ import java.util.Map;
 public class StreamingService {
     private final String SERVER_URL = "http://150.95.141.66:80/test/cgi-bin";
 
-    public int moBileController(String msg, String token) {
+    public int mobileController(String msg, String token) {
         String url = SERVER_URL + "/noti.py";
         HttpRequest httpRequest = HttpRequest.post(url);
 

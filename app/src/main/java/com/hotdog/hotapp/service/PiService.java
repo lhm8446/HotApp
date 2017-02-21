@@ -73,6 +73,23 @@ public class PiService {
     }
 
     // pi 정보 입력
+    public String piSecTokenUpdate(PiVo piVo) {
+        String url = SERVER_URL + "/app/raspberry/tokensecupdate";
+        HttpRequest httpRequest = HttpRequest.post(url);
+
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("users_no", piVo.getUsers_no());
+        data.put("sec_token", piVo.getSec_token());
+
+        if (httpRequest.form(data).created()) {
+            System.out.println(httpRequest.body());
+        }
+        JSONResultpiSecTokenUpdate jSONResultpiSecTokenUpdate = fromJSON(httpRequest, JSONResultpiSecTokenUpdate.class);
+
+        return jSONResultpiSecTokenUpdate.getData();
+    }
+
+    // pi 정보 입력
     public PiVo getinfo(int users_no) {
         String url = SERVER_URL + "/app/raspberry/getinfo";
         HttpRequest httpRequest = HttpRequest.post(url);
@@ -85,6 +102,9 @@ public class PiService {
 
         JSONResultGetinfo jSONResultGetinfo = fromJSON(httpRequest, JSONResultGetinfo.class);
         return jSONResultGetinfo.getData();
+    }
+
+    private class JSONResultpiSecTokenUpdate extends JSONResult<String> {
     }
 
     private class JSONResultpiTokenUpdate extends JSONResult<String> {

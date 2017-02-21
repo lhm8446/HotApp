@@ -34,7 +34,7 @@ public class MypageRaspChangeRaspFragment extends Fragment {
         deviceChange = (EditText) rootView.findViewById(R.id.deviceChange);
         deviceChangeErr = (TextView) rootView.findViewById(R.id.deviceChangeErr);
         deviceChangeBut = (Button) rootView.findViewById(R.id.deviceChangeBut);
-        piVo = Util.getPiVo("piData", getActivity());
+        piVo = Util.getPiVo(getActivity());
 
         deviceChange.setText(piVo.getDevice_num());
 
@@ -70,7 +70,7 @@ public class MypageRaspChangeRaspFragment extends Fragment {
             if ("success".equals(s)) {
                 Toast.makeText(getActivity(), "변경 되었습니다.", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getActivity().getApplicationContext(), HomeActivity.class);
-                intent.putExtra("userNo", Util.getUserVo("userData", getActivity()).getUsers_no());
+                intent.putExtra("userNo", Util.getUserVo(getActivity()).getUsers_no());
                 intent.putExtra("callback", "mypage");
                 startActivity(intent);
                 getActivity().finish();

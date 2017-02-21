@@ -45,7 +45,7 @@ public class StreamStart2Fragment extends Fragment {
         secIpErr = (TextView) rootView.findViewById(R.id.secIpErr);
         secPassErr = (TextView) rootView.findViewById(R.id.secPassErr);
         secPassErr1 = (TextView) rootView.findViewById(R.id.secPassErr1);
-        userVo = Util.getUserVo("userData", getActivity());
+        userVo = Util.getUserVo(getActivity());
 
 
         buttonRegister.setOnClickListener(new View.OnClickListener() {

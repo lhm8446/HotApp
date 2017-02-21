@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.Camera.CameraInfo;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.View;
@@ -61,13 +59,12 @@ public class StreamingActivity extends Activity implements
     private int secPass;
     private String nickname;
     private SharedPreferences mPrefs;
-    private SharedPreferences.Editor editor;
     private SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
         public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-            System.out.println("OnSharedPreferenceChangeListener");
             String flag = prefs.getString(key, "");
             if ("stop".equals(flag)) {
                 Toast.makeText(StreamingActivity.this, "stop", Toast.LENGTH_SHORT).show();
+                onDestroy();
                 finish();
             } else if ("camera".equals(flag)) {
                 Toast.makeText(StreamingActivity.this, "camera", Toast.LENGTH_SHORT).show();
@@ -98,12 +95,13 @@ public class StreamingActivity extends Activity implements
         mButtonCamera.setOnClickListener(this);
         mButtonVideo.setOnClickListener(this);
 
-        userVo = Util.getUserVo("userData", getApplicationContext());
+        userVo = Util.getUserVo(getApplicationContext());
         nickname = userVo.getNickname();
         secPass = userVo.getSec_pass_word();
 
         Util.checkCameraPermission(this);
-        mPrefs = PreferenceManager.getDefaultSharedPreferences(StreamingActivity.this);
+        //mPrefs = PreferenceManager.getDefaultSharedPreferences(StreamingActivity.this);
+        mPrefs = getApplicationContext().getSharedPreferences("stream", 0);
         mPrefs.registerOnSharedPreferenceChangeListener(listener);
 
         // Configures the SessionBuilder
@@ -218,12 +216,7 @@ public class StreamingActivity extends Activity implements
         if (!mClient.isStreaming()) {
             String ip, port, path;
 
-            // We save the content user inputs in Shared Preferences
-            mPrefs = PreferenceManager.getDefaultSharedPreferences(StreamingActivity.this);
-            editor = mPrefs.edit();
-
             // We parse the URI written in the Editext
-            Pattern uri = Pattern.compile("rtsp://(.+):(\\d*)/(.+)");
             ip = "150.95.141.66";
             port = "1935";
             path = "live/" + nickname + "/stream";

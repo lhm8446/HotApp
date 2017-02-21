@@ -210,8 +210,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 
     public void loadNavHeader() {
-        userVo = Util.getUserVo("userData", getApplicationContext());
-        petVo = Util.getPetVo("petData", getApplicationContext());
+        userVo = Util.getUserVo(getApplicationContext());
+        petVo = Util.getPetVo(getApplicationContext());
         txtName.setText(userVo.getNickname() + "님");
         txtWebsite.setText("프로필");
 
@@ -288,7 +288,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         @Override
         protected void onSuccess(UserVo userVo) throws Exception {
 
-            Util.setFirstUserVo("userData", getApplicationContext(), userVo);
+            Util.setUserVo(getApplicationContext(), userVo);
             System.out.println(userVo);
             new PetGetAsyncTask().execute();
         }
@@ -310,7 +310,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         @Override
         protected void onSuccess(PetVo petVo) throws Exception {
-            Util.setFirstPetVo("petData", getApplicationContext(), petVo);
+            Util.setPetVo(getApplicationContext(), petVo);
             System.out.println(petVo);
             new GetPiInfoAsyncTask().execute();
             loadNavHeader();
@@ -370,7 +370,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         @Override
         protected void onSuccess(PiVo piVo) throws Exception {
-            Util.setPiVo("piData", getApplicationContext(), piVo);
+            Util.setPiVo(getApplicationContext(), piVo);
             System.out.println(piVo);
         }
     }

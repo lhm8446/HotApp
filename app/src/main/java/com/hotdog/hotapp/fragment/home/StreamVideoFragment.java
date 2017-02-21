@@ -1,5 +1,6 @@
 package com.hotdog.hotapp.fragment.home;
 
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -26,6 +27,8 @@ import com.hotdog.hotapp.vo.UserVo;
 import java.io.File;
 import java.io.IOException;
 
+import cn.refactor.lib.colordialog.PromptDialog;
+
 public class StreamVideoFragment extends Fragment {
     private VideoView videoView;
     private StreamingService streamingService;
@@ -38,6 +41,7 @@ public class StreamVideoFragment extends Fragment {
     private PiVo piVo;
     private ImageButton buttonRight, buttonLeft, buttonCenter, toggleVoice, toggleRec;
     private Boolean isChecked, isChecked1;
+    private SharedPreferences wifiChk;
 
     @Nullable
     @Override
@@ -52,13 +56,14 @@ public class StreamVideoFragment extends Fragment {
         toggleRec = (ImageButton) rootView.findViewById(R.id.toggleRec);
         mProgressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
         mProgressBar.setVisibility(View.VISIBLE);
+        wifiChk = getActivity().getSharedPreferences("wifiChk", 0);
         isChecked = false;
         isChecked1 = false;
 
 
         streamingService = new StreamingService();
-        userVo = Util.getUserVo("userData", getActivity());
-        piVo = Util.getPiVo("piData", getActivity());
+        userVo = Util.getUserVo(getActivity());
+        piVo = Util.getPiVo(getActivity());
 
         VideoURL = "rtsp://150.95.141.66:1935/live/" + userVo.getNickname() + "/stream";
 
@@ -111,45 +116,58 @@ public class StreamVideoFragment extends Fragment {
                 new PiControllAsyncTask("right", piVo.getDevice_num()).execute();
             }
         });
-
-        // Start the MediaController
-        mediacontroller = new MediaController(getActivity());
-        mediacontroller.setAnchorView(videoView);
-
-        // Get the URL from String VideoURL
-        video = Uri.parse(VideoURL);
-        videoView.setMediaController(mediacontroller);
-        videoView.setVideoURI(video);
-        videoView.requestFocus();
-        videoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-            @Override
-            public boolean onError(MediaPlayer mp, int what, int extra) {
-                new PiControllAsyncTask("streamstop", piVo.getDevice_num()).execute();
-                new PiControllAsyncTask("stream", piVo.getDevice_num()).execute();
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // TODO Auto-generated method stub
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+        int wifi = Util.getConnectivityStatus(getActivity());
+        if (wifi != 1 && wifiChk.getBoolean("chk", false)) {
+            new PromptDialog(getActivity())
+                    .setDialogType(PromptDialog.DIALOG_TYPE_INFO)
+                    .setAnimationEnable(true)
+                    .setTitleText("info")
+                    .setContentText("wifi 상태가 아닙니다. \n  데이터를 사용하실려면 Settings에서 변경하세요.")
+                    .setPositiveListener("확인", new PromptDialog.OnPositiveListener() {
+                        @Override
+                        public void onClick(PromptDialog dialog) {
+                            dialog.dismiss();
                         }
-                        new PiControllAsyncTask(userVo.getNickname() + "," + userVo.getSec_pass_word(), piVo.getDevice_num()).execute();
-                    }
-                }).start();
-                return false;
-            }
+                    }).show();
+        } else {
+            // Start the MediaController
+            mediacontroller = new MediaController(getActivity());
+            mediacontroller.setAnchorView(videoView);
 
-        });
-        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            // Close the progress bar and play the video
-            public void onPrepared(MediaPlayer mp) {
-                mProgressBar.setVisibility(View.GONE);
-                videoView.start();
-            }
-        });
+            // Get the URL from String VideoURL
+            video = Uri.parse(VideoURL);
+            videoView.setMediaController(mediacontroller);
+            videoView.setVideoURI(video);
+            videoView.requestFocus();
+            videoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                @Override
+                public boolean onError(MediaPlayer mp, int what, int extra) {
+                    new PiControllAsyncTask("streamstop", piVo.getDevice_num()).execute();
+                    new PiControllAsyncTask("stream", piVo.getDevice_num()).execute();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // TODO Auto-generated method stub
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            new PiControllAsyncTask(userVo.getNickname() + "," + userVo.getSec_pass_word(), piVo.getDevice_num()).execute();
+                        }
+                    }).start();
+                    return false;
+                }
 
+            });
+            videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                // Close the progress bar and play the video
+                public void onPrepared(MediaPlayer mp) {
+                    mProgressBar.setVisibility(View.GONE);
+                    videoView.start();
+                }
+            });
+        }
         return rootView;
     }
 
@@ -184,7 +202,6 @@ public class StreamVideoFragment extends Fragment {
 
             File saveFile = new File(Environment.getExternalStorageDirectory()
                     .getAbsolutePath() + "/myrecord.mp3");
-
 
             new AudioUploadAsyncTask(saveFile).execute();
         }

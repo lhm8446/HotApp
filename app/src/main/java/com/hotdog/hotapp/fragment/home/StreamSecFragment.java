@@ -42,8 +42,8 @@ public class StreamSecFragment extends Fragment {
         secPassErr1 = (TextView) rootView.findViewById(R.id.secPassErr1);
         editTextPassword = (EditText) rootView.findViewById(R.id.editPassword);
 
-        userVo = Util.getUserVo("userData", getActivity());
-        piVo = Util.getPiVo("piData", getActivity());
+        userVo = Util.getUserVo(getActivity());
+        piVo = Util.getPiVo(getActivity());
         textIpAddress.setText(piVo.getDevice_num());
 
 

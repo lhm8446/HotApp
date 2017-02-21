@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -47,7 +46,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.d(TAG, "From: " + remoteMessage.getFrom());
-        state = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        state = getApplicationContext().getSharedPreferences("stream", 0);
         editor = state.edit();
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
@@ -60,7 +59,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
-
             if (remoteMessage.getData().get("flag").equals("stop")) {
                 System.out.println("stop");
                 editor.putString("flag", "stop");

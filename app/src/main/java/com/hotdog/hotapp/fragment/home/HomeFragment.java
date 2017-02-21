@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.hotdog.hotapp.R;
 import com.hotdog.hotapp.other.Util;
 import com.hotdog.hotapp.vo.PetVo;
@@ -42,8 +41,8 @@ public class HomeFragment extends Fragment {
         userImage = (ImageView) rootView.findViewById(R.id.userImage);
         petImage = (ImageView) rootView.findViewById(R.id.petImage);
         textCount = (TextView) rootView.findViewById(R.id.textCount);
-        userVo = Util.getUserVo("userData", getActivity());
-        petVo = Util.getPetVo("petData", getActivity());
+        userVo = Util.getUserVo(getActivity());
+        petVo = Util.getPetVo(getActivity());
         mTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {

@@ -35,7 +35,7 @@ public class MypageRaspLoginFragment extends Fragment {
         secEdit = (EditText) rootView.findViewById(R.id.secEdit);
         secTextErr = (TextView) rootView.findViewById(R.id.secTextErr);
 
-        userVo = Util.getUserVo("userData", getActivity());
+        userVo = Util.getUserVo(getActivity());
         buttonSec.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
