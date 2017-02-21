@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.Camera.CameraInfo;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -61,6 +62,19 @@ public class StreamingActivity extends Activity implements
     private String nickname;
     private SharedPreferences mPrefs;
     private SharedPreferences.Editor editor;
+    private SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+            System.out.println("OnSharedPreferenceChangeListener");
+            String flag = prefs.getString(key, "");
+            if ("stop".equals(flag)) {
+                Toast.makeText(StreamingActivity.this, "stop", Toast.LENGTH_SHORT).show();
+                finish();
+            } else if ("camera".equals(flag)) {
+                Toast.makeText(StreamingActivity.this, "camera", Toast.LENGTH_SHORT).show();
+                mSession.switchCamera();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +104,7 @@ public class StreamingActivity extends Activity implements
 
         Util.checkCameraPermission(this);
         mPrefs = PreferenceManager.getDefaultSharedPreferences(StreamingActivity.this);
-
+        mPrefs.registerOnSharedPreferenceChangeListener(listener);
 
         // Configures the SessionBuilder
         mSession = SessionBuilder.getInstance()
@@ -127,12 +141,10 @@ public class StreamingActivity extends Activity implements
         String state = intent.getStringExtra("state");
         if ("start".equals(state)) {
             toggleStream();
-            mSession.switchCamera();
-        } else {
-
         }
 
     }
+
 
     public static void switchCam() {
         mSession.switchCamera();

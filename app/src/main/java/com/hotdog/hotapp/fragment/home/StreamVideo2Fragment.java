@@ -97,7 +97,7 @@ public class StreamVideo2Fragment extends Fragment {
         camera2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                new StopAsyncTask().execute();
             }
         });
         videosettings2.setOnClickListener(new View.OnClickListener() {

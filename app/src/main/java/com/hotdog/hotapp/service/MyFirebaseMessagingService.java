@@ -4,8 +4,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -19,6 +21,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "MyFirebaseMsgService";
 
+    private SharedPreferences state;
+    private SharedPreferences.Editor editor;
 
     /**
      * Called when message is received.
@@ -43,27 +47,29 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.d(TAG, "From: " + remoteMessage.getFrom());
-
+        state = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        editor = state.edit();
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
-
-            System.out.println(remoteMessage.getData().get("flag"));
+            editor.putString("flag", "");
+            editor.apply();
             if (remoteMessage.getData().get("flag").equals("start")) {
                 Intent intent = new Intent(this, StreamingActivity.class);
                 intent.putExtra("state", "start");
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
+
             if (remoteMessage.getData().get("flag").equals("stop")) {
-                Intent intent = new Intent(this, StreamingActivity.class);
-                intent.putExtra("state", "stop");
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+                System.out.println("stop");
+                editor.putString("flag", "stop");
+                editor.apply();
             }
             if (remoteMessage.getData().get("flag").equals("camera")) {
-
-                StreamingActivity.switchCam();
+                System.out.println("camera");
+                editor.putString("flag", "camera");
+                editor.apply();
             }
         }
 
