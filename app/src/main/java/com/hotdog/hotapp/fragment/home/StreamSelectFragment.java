@@ -1,5 +1,6 @@
 package com.hotdog.hotapp.fragment.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.hotdog.hotapp.R;
+import com.hotdog.hotapp.activity.VideoActivity;
+import com.hotdog.hotapp.activity.VideoActivity2;
 import com.hotdog.hotapp.other.Util;
 import com.hotdog.hotapp.vo.PiVo;
 
@@ -35,7 +38,7 @@ public class StreamSelectFragment extends Fragment {
             public void onClick(View view) {
                 if (piVo.getSec_token() != null) {
                     if (!"".equals(piVo.getSec_token())) {
-                        Util.changeHomeFragment(getFragmentManager(), new StreamVideo2Fragment());
+                        startActivity(new Intent(getActivity(), VideoActivity.class));
                     } else {
                         new PromptDialog(getActivity())
                                 .setDialogType(PromptDialog.DIALOG_TYPE_INFO)
@@ -70,7 +73,7 @@ public class StreamSelectFragment extends Fragment {
             public void onClick(View view) {
                 if (piVo.getDevice_num() != null) {
                     if (!"".equals(piVo.getDevice_num())) {
-                        Util.changeHomeFragment(getFragmentManager(), new StreamVideoFragment());
+                        startActivity(new Intent(getActivity(), VideoActivity2.class));
                     } else {
                         new PromptDialog(getActivity())
                                 .setDialogType(PromptDialog.DIALOG_TYPE_INFO)

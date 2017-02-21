@@ -61,7 +61,7 @@ public abstract class MediaPlayerWrapper
         this.mContext = context;
         if (SHOW_LOGS) Logger.v(TAG, "constructor of MediaPlayerWrapper");
         if (SHOW_LOGS)
-            Logger.v(TAG, "constructor of MediaPlayerWrapper, main Looper " + Looper.getMainLooper());
+            Logger.v(TAG, "constructor of MediaPlayerWrapper, activity_video Looper " + Looper.getMainLooper());
         if (SHOW_LOGS)
             Logger.v(TAG, "constructor of MediaPlayerWrapper, my Looper " + Looper.myLooper());
 

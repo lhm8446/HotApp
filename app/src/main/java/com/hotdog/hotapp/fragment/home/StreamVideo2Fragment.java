@@ -50,7 +50,7 @@ public class StreamVideo2Fragment extends Fragment {
         Util.checkStoragePermission(getActivity());
         videoView = (VideoView) rootView.findViewById(R.id.videoView3);
         toggleVoice = (ImageButton) rootView.findViewById(R.id.toggleVoice2);
-        start2 = (ImageButton) rootView.findViewById(R.id.start2);
+        start2 = (ImageButton) rootView.findViewById(R.id.stop2);
         camera2 = (ImageButton) rootView.findViewById(R.id.camera2);
         videosettings2 = (ImageButton) rootView.findViewById(R.id.videosettings2);
         toggleRec = (ImageButton) rootView.findViewById(R.id.toggleRec2);

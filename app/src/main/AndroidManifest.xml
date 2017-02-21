@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.hotdog.hotapp">
+    package="com.hotdog.hotapp"
+    android:installLocation="auto">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -10,14 +11,17 @@
         android:required="false" />
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
 
     <application
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@drawable/hotdog_logo_02"
         android:label="@string/app_name"
         android:supportsRtl="true"
@@ -37,6 +41,7 @@
         <activity android:name=".activity.PrivacyPolicyActivity" />
         <activity
             android:name=".activity.HomeActivity"
+            android:largeHeap="true"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <service android:name=".service.MyFirebaseMessagingService">
@@ -56,9 +61,16 @@
         <activity
             android:name=".activity.VodActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:largeHeap="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-
+        <activity
+            android:name=".activity.VideoActivity"
+            android:largeHeap="true" />
+        <activity
+            android:name=".activity.VideoActivity2"
+            android:largeHeap="true" />
+        <activity android:name=".activity.PreferencesActivity" />
     </application>
 
 </manifest>

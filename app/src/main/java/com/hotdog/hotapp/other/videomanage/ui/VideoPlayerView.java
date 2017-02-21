@@ -27,7 +27,7 @@ import java.util.Set;
  * This is player implementation based on {@link TextureView}
  * It encapsulates {@link MediaPlayer}.
  * <p>
- * It ensures that MediaPlayer methods are called from not main thread.
+ * It ensures that MediaPlayer methods are called from not activity_video thread.
  * MediaPlayer methods are directly connected with hardware. That's why they should not be called from UI thread
  *
  * @author danylo.volokh
@@ -111,7 +111,7 @@ public class VideoPlayerView extends ScalableTextureView
 
     private void checkThread() {
         if (Looper.myLooper() == Looper.getMainLooper()) {
-            throw new RuntimeException("cannot be in main thread");
+            throw new RuntimeException("cannot be in activity_video thread");
         }
     }
 
@@ -150,7 +150,7 @@ public class VideoPlayerView extends ScalableTextureView
         if (SHOW_LOGS) Logger.v(TAG, ">> createNewPlayerInstance");
 
         if (SHOW_LOGS)
-            Logger.v(TAG, "createNewPlayerInstance main Looper " + Looper.getMainLooper());
+            Logger.v(TAG, "createNewPlayerInstance activity_video Looper " + Looper.getMainLooper());
         if (SHOW_LOGS) Logger.v(TAG, "createNewPlayerInstance my Looper " + Looper.myLooper());
 
         checkThread();

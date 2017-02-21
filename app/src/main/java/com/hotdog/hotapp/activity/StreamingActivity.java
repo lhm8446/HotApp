@@ -100,7 +100,6 @@ public class StreamingActivity extends Activity implements
         secPass = userVo.getSec_pass_word();
 
         Util.checkCameraPermission(this);
-        //mPrefs = PreferenceManager.getDefaultSharedPreferences(StreamingActivity.this);
         mPrefs = getApplicationContext().getSharedPreferences("stream", 0);
         mPrefs.registerOnSharedPreferenceChangeListener(listener);
 
@@ -114,7 +113,7 @@ public class StreamingActivity extends Activity implements
                 .setPreviewOrientation(0)
                 .setCallback(this)
                 .build();
-
+        //mSession.setVideoQuality(new VideoQuality(640, 480, 15, 700 * 1000));
         // Configures the RTSP client
         mClient = new RtspClient();
         mClient.setSession(mSession);
@@ -131,7 +130,6 @@ public class StreamingActivity extends Activity implements
         //mSurfaceView.setAspectRatioMode(SurfaceView.ASPECT_RATIO_PREVIEW);
 
         mSurfaceView.getHolder().addCallback(this);
-        selectQuality();
         mSession.setPreviewOrientation(90);
         mSession.configure();
 

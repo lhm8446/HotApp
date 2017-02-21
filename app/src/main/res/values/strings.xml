@@ -282,7 +282,8 @@
     <!-- streaming -->
     <string name="default_bitrate">0 kbps</string>
 
-    <string name="start">Start/Stop Streaming</string>
+    <string name="start">시작</string>
+    <string name="connect">연결</string>
     <string name="flash">Flash</string>
     <string name="camera">Camera</string>
     <string name="video">Video Settings</string>

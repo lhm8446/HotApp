@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:inputType="number">
+    <PreferenceCategory
+        android:summary=""
+        android:title="Synchronization">
+        <veg.mediaplayer.sdk.test.CheckBoxPreferenceInteger
+            android:key="synchroEnable"
+            android:persistent="true"
+            android:summary="Synchronization audio and video streams."
+            android:title="A/V synchronization" />
+        <veg.mediaplayer.sdk.test.CheckBoxPreferenceInteger
+            android:key="synchroNeedDropVideoFrames"
+            android:persistent="true"
+            android:summary="Drop video frames if frame is late by PTS."
+            android:title="Drop video frames" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:summary=""
+        android:title="Video decoding">
+        <veg.mediaplayer.sdk.test.CheckBoxPreferenceInteger
+            android:key="decoderType"
+            android:persistent="true"
+            android:summary="Enable the Native video decoder."
+            android:title="Video decoding acceleration" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:summary=""
+        android:title="Video rendering">
+        <veg.mediaplayer.sdk.test.CheckBoxPreferenceInteger
+            android:key="rendererType"
+            android:persistent="true"
+            android:summary="Enable optimized OpenGL rendering."
+            android:title="Video rendereing acceleration using OpenGL" />
+        <veg.mediaplayer.sdk.test.CheckBoxPreferenceInteger
+            android:key="rendererEnableColorVideo"
+            android:persistent="true"
+            android:summary="Grayscaled video if setting is off."
+            android:title="Grayscaled or color video" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:summary=""
+        android:title="Screen">
+        <CheckBoxPreference
+            android:key="AllowFullscreenMode"
+            android:persistent="true"
+            android:summary="Show/hide notification area in viewing mode."
+            android:title="Full screen mode" />
+        <veg.mediaplayer.sdk.test.CheckBoxPreferenceInteger
+            android:key="rendererEnableAspectRatio"
+            android:persistent="true"
+            android:summary="Select aspect ratio or full screen mode."
+            android:title="Aspect ratio" />
+        <!--    		<veg.mediaplayer.sdk.test.CheckBoxPreferenceInteger
+                         android:title="Lock change orientation"
+                         android:key="LockPlayerViewOrientation"
+                         android:persistent="true"
+                         android:summary="Lock/unlock change orientation." />
+         -->
+    </PreferenceCategory>
+</PreferenceScreen>

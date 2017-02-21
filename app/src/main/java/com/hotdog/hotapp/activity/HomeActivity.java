@@ -175,6 +175,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             popClear();
             CURRENT_TAG = STREAM_TAG;
             new SecPassChkAsyncTask().execute();
+
         } else if (id == R.id.nav_vod) {
             startActivity(new Intent(HomeActivity.this, VodActivity.class));
         } else if (id == R.id.nav_page) {
