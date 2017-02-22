@@ -19,7 +19,6 @@ import com.hotdog.hotapp.vo.UserVo;
 import java.util.Calendar;
 import java.util.Random;
 import java.util.Timer;
-import java.util.TimerTask;
 
 import tyrantgit.widget.HeartLayout;
 
@@ -43,7 +42,7 @@ public class HomeFragment extends Fragment {
         textCount = (TextView) rootView.findViewById(R.id.textCount);
         userVo = Util.getUserVo(getActivity());
         petVo = Util.getPetVo(getActivity());
-        mTimer.scheduleAtFixedRate(new TimerTask() {
+    /*    mTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 mHeartLayout.post(new Runnable() {
@@ -53,7 +52,7 @@ public class HomeFragment extends Fragment {
                     }
                 });
             }
-        }, 500, 200);
+        }, 500, 200);*/
         init();
         return rootView;
     }

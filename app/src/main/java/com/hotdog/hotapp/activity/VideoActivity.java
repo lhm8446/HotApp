@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.IdRes;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -30,9 +31,11 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -85,6 +88,8 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
     private Boolean isChecked, isChecked1, isChecked2;
     private SharedPreferences wifiChk;
     private MediaRecorder recorder;
+    private RadioGroup mRadioGroup;
+    private FrameLayout mLayoutVideoSettings;
 
     private enum PlayerStates {
         Busy,
@@ -319,8 +324,8 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
         camera2 = (ImageButton) findViewById(R.id.camera2);
         videosettings2 = (ImageButton) findViewById(R.id.videosettings2);
         toggleRec = (ImageButton) findViewById(R.id.toggleRec2);
-        RelativeLayout layout = (RelativeLayout) findViewById(R.id.main_view);
-
+        mRadioGroup = (RadioGroup) findViewById(R.id.radioGroup);
+        mLayoutVideoSettings = (FrameLayout) findViewById(R.id.video_layout2);
         wifiChk = getSharedPreferences("wifiChk", 0);
         isChecked = false;
         isChecked1 = false;
@@ -345,7 +350,6 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
             public void onClick(View v) {
                 if (player != null) {
                     Log.e("SDL", "getVideoShot()");
-
                     //VideoShot frame = player.getVideoShot(200, 200);
                     VideoShot frame = player.getVideoShot(-1, -1);
                     if (frame == null)
@@ -408,7 +412,7 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
         stop2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new StopAsyncTask().execute();
+                new moblieControlAsyncTask("stop", piVo.getSec_token()).execute();
                 isChecked2 = false;
                 onBackPressed();
             }
@@ -416,12 +420,30 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
         camera2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new CameraAsyncTask().execute();
+                new moblieControlAsyncTask("camera", piVo.getSec_token()).execute();
             }
         });
         videosettings2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mRadioGroup.clearCheck();
+                mLayoutVideoSettings.setVisibility(View.VISIBLE);
+            }
+        });
+
+        mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                mLayoutVideoSettings.setVisibility(View.GONE);
+                int id = mRadioGroup.getCheckedRadioButtonId();
+                if (id == R.id.radio1) {
+                    new moblieControlAsyncTask("low", piVo.getSec_token()).execute();
+                } else if (id == R.id.radio2) {
+                    new moblieControlAsyncTask("middle", piVo.getSec_token()).execute();
+                } else if (id == R.id.radio3) {
+                    new moblieControlAsyncTask("high", piVo.getSec_token()).execute();
+                }
+
             }
         });
 
@@ -483,20 +505,29 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
                         }
                     }).show();
         } else {
-            if ("Disconnected".equals(playerStatusText.getText().toString())) {
+          /*  if ("Disconnected".equals(playerStatusText.getText().toString())) {
                 if (!isChecked2) {
-                    new StartAsyncTask().execute();
+                    new moblieControlAsyncTask("start", piVo.getSec_token()).execute();
                     isChecked2 = true;
                 }
-            }
-
+            }*/
+            new moblieControlAsyncTask("check", piVo.getSec_token()).execute();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    new moblieControlAsyncTask("start", piVo.getSec_token()).execute();
+                }
+            }).start();
             SharedSettings.getInstance().loadPrefSettings();
             if (player != null) {
                 player.getConfig().setConnectionUrl(VideoURL);
-                if (player.getConfig().getConnectionUrl().isEmpty()) {
-                    new StartAsyncTask().execute();
+                if (player.getConfig().getConnectionUrl().isEmpty())
                     return;
-                }
                 if (toastShot != null)
                     toastShot.cancel();
 
@@ -516,8 +547,9 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
                     conf.setConnectionDetectionTime(sett.connectionDetectionTime);
                     conf.setConnectionBufferingTime(sett.connectionBufferingTime);
                     conf.setDecodingType(sett.decoderType);
+                    conf.setDecoderLatency(1); // Low Latency on decoder
                     conf.setRendererType(sett.rendererType);
-                    conf.setSynchroEnable(sett.synchroEnable);
+                    conf.setSynchroEnable(0);
                     conf.setSynchroNeedDropVideoFrames(sett.synchroNeedDropVideoFrames);
                     conf.setEnableColorVideo(sett.rendererEnableColorVideo);
                     conf.setEnableAspectRatio(aspect);
@@ -572,14 +604,9 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
     public void onBackPressed() {
         if (toastShot != null)
             toastShot.cancel();
-
         player.Close();
-        if (!playing) {
-            super.onBackPressed();
-            return;
-        }
+        super.onBackPressed();
 
-        setUIDisconnected();
     }
 
     @Override
@@ -648,7 +675,6 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
 
         SurfaceHolder sfhTrackHolder = player.getSurfaceView().getHolder();
         sfhTrackHolder.setFormat(PixelFormat.TRANSPARENT);
-
         setTitle("");
     }
 
@@ -780,12 +806,19 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
     }
 
 
-    //스트리밍 시작
-    private class StartAsyncTask extends SafeAsyncTask<Integer> {
+    //모바일 컨트롤
+    private class moblieControlAsyncTask extends SafeAsyncTask<Integer> {
+        String msg;
+        String sec_token;
+
+        public moblieControlAsyncTask(String msg, String sec_token) {
+            this.msg = msg;
+            this.sec_token = sec_token;
+        }
 
         @Override
         public Integer call() throws Exception {
-            return streamingService.mobileController("start", piVo.getSec_token());
+            return streamingService.mobileController(msg, sec_token);
         }
 
         @Override
@@ -799,59 +832,6 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
         }
     }
 
-    //스트리밍 종료
-    private class StopAsyncTask extends SafeAsyncTask<Integer> {
-
-        @Override
-        public Integer call() throws Exception {
-            return streamingService.mobileController("stop", piVo.getSec_token());
-        }
-
-        @Override
-        protected void onSuccess(Integer integer) throws Exception {
-        }
-
-        @Override
-        protected void onException(Exception e) throws RuntimeException {
-            super.onException(e);
-        }
-    }
-
-    //카메라 변경
-    private class CameraAsyncTask extends SafeAsyncTask<Integer> {
-
-        @Override
-        public Integer call() throws Exception {
-            return streamingService.mobileController("camera", piVo.getSec_token());
-        }
-
-        @Override
-        protected void onSuccess(Integer integer) throws Exception {
-        }
-
-        @Override
-        protected void onException(Exception e) throws RuntimeException {
-            super.onException(e);
-        }
-    }
-
-    //화질 변경
-    private class QualityAsyncTask extends SafeAsyncTask<Integer> {
-
-        @Override
-        public Integer call() throws Exception {
-            return null;
-        }
-
-        @Override
-        protected void onSuccess(Integer integer) throws Exception {
-        }
-
-        @Override
-        protected void onException(Exception e) throws RuntimeException {
-            super.onException(e);
-        }
-    }
 
     //녹화 시작
     private class RecAsyncTask extends SafeAsyncTask<Integer> {

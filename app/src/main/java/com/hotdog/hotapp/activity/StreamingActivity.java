@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.hardware.Camera.CameraInfo;
 import android.os.Bundle;
 import android.util.Log;
@@ -45,9 +46,7 @@ public class StreamingActivity extends Activity implements
 
     public final static String TAG = "StreamingActivity";
 
-    private ImageButton mButtonVideo;
-    private ImageButton mButtonStart;
-    private ImageButton mButtonCamera;
+    private ImageButton mButtonVideo, mButtonStart, mButtonCamera, lightoff;
     private RadioGroup mRadioGroup;
     private FrameLayout mLayoutVideoSettings;
     private SurfaceView mSurfaceView;
@@ -59,16 +58,45 @@ public class StreamingActivity extends Activity implements
     private int secPass;
     private String nickname;
     private SharedPreferences mPrefs;
+    private SharedPreferences.Editor editor;
     private SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
         public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-            String flag = prefs.getString(key, "");
-            if ("stop".equals(flag)) {
-                Toast.makeText(StreamingActivity.this, "stop", Toast.LENGTH_SHORT).show();
-                onDestroy();
-                finish();
-            } else if ("camera".equals(flag)) {
-                Toast.makeText(StreamingActivity.this, "camera", Toast.LENGTH_SHORT).show();
-                mSession.switchCamera();
+            if (key.equals("stream")) {
+                if ("check".equals(prefs.getString(key, ""))) {
+                    if (mClient.isStreaming()) {
+                        editor.putString("stream", "true");
+                        editor.apply();
+                    } else {
+                        editor.putString("stream", "false");
+                        editor.apply();
+                    }
+                }
+            } else {
+                String flag = prefs.getString(key, "");
+                if ("stop".equals(flag)) {
+                    if (mClient.isStreaming()) {
+                        mClient.stopStream();
+                        editor.putString("stream", "false");
+                        editor.apply();
+                        onDestroy();
+                        finish();
+                    } else {
+                        editor.putString("stream", "false");
+                        editor.apply();
+                        onDestroy();
+                        finish();
+                    }
+                } else if ("camera".equals(flag)) {
+                    Toast.makeText(StreamingActivity.this, "camera", Toast.LENGTH_SHORT).show();
+                    mSession.switchCamera();
+                } else if ("high".equals(flag)) {
+                    mSession.setVideoQuality(new VideoQuality(640, 480, 30, 700000));
+                } else if ("middle".equals(flag)) {
+                    mSession.setVideoQuality(new VideoQuality(352, 288, 30, 600000));
+                } else if ("low".equals(flag)) {
+                    mSession.setVideoQuality(new VideoQuality(176, 144, 30, 500000));
+                }
+
             }
         }
     };
@@ -76,12 +104,14 @@ public class StreamingActivity extends Activity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.activity_streaming);
         mButtonVideo = (ImageButton) findViewById(R.id.videosettings);
         mButtonStart = (ImageButton) findViewById(R.id.start);
         mButtonCamera = (ImageButton) findViewById(R.id.camera);
+        lightoff = (ImageButton) findViewById(R.id.lightoff);
         mSurfaceView = (SurfaceView) findViewById(R.id.surface);
         mTextBitrate = (TextView) findViewById(R.id.bitrate);
         mLayoutVideoSettings = (FrameLayout) findViewById(R.id.video_layout);
@@ -93,6 +123,7 @@ public class StreamingActivity extends Activity implements
 
         mButtonStart.setOnClickListener(this);
         mButtonCamera.setOnClickListener(this);
+        lightoff.setOnClickListener(this);
         mButtonVideo.setOnClickListener(this);
 
         userVo = Util.getUserVo(getApplicationContext());
@@ -101,8 +132,8 @@ public class StreamingActivity extends Activity implements
 
         Util.checkCameraPermission(this);
         mPrefs = getApplicationContext().getSharedPreferences("stream", 0);
+        editor = mPrefs.edit();
         mPrefs.registerOnSharedPreferenceChangeListener(listener);
-
         // Configures the SessionBuilder
         mSession = SessionBuilder.getInstance()
                 .setContext(getApplicationContext())
@@ -110,9 +141,9 @@ public class StreamingActivity extends Activity implements
                 .setAudioQuality(new AudioQuality(8000, 16000))
                 .setVideoEncoder(SessionBuilder.VIDEO_H264)
                 .setSurfaceView(mSurfaceView)
-                .setPreviewOrientation(0)
                 .setCallback(this)
                 .build();
+
         //mSession.setVideoQuality(new VideoQuality(640, 480, 15, 700 * 1000));
         // Configures the RTSP client
         mClient = new RtspClient();
@@ -130,7 +161,7 @@ public class StreamingActivity extends Activity implements
         //mSurfaceView.setAspectRatioMode(SurfaceView.ASPECT_RATIO_PREVIEW);
 
         mSurfaceView.getHolder().addCallback(this);
-        mSession.setPreviewOrientation(90);
+        mSession.setPreviewOrientation(0);
         mSession.configure();
 
         Intent intent = getIntent();
@@ -138,9 +169,7 @@ public class StreamingActivity extends Activity implements
         if ("start".equals(state)) {
             toggleStream();
         }
-
     }
-
 
     public static void switchCam() {
         mSession.switchCamera();
@@ -166,7 +195,13 @@ public class StreamingActivity extends Activity implements
                 mRadioGroup.clearCheck();
                 mLayoutVideoSettings.setVisibility(View.VISIBLE);
                 break;
-
+            case R.id.lightoff:
+                Toast.makeText(this, "불꺼", Toast.LENGTH_SHORT).show();
+                WindowManager.LayoutParams params = getWindow().getAttributes();
+                params.flags |= WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
+                params.screenBrightness = 0;
+                getWindow().setAttributes(params);
+                break;
         }
     }
 
@@ -213,20 +248,21 @@ public class StreamingActivity extends Activity implements
         mProgressBar.setVisibility(View.VISIBLE);
         if (!mClient.isStreaming()) {
             String ip, port, path;
-
             // We parse the URI written in the Editext
             ip = "150.95.141.66";
             port = "1935";
             path = "live/" + nickname + "/stream";
-
             mClient.setCredentials(nickname, secPass + "");
             mClient.setServerAddress(ip, Integer.parseInt(port));
             mClient.setStreamPath("/" + path);
             mClient.startStream();
-
+            editor.putString("stream", "true");
+            editor.apply();
         } else {
             // Stops the stream and disconnects from the RTSP server
             mClient.stopStream();
+            editor.putString("stream", "false");
+            editor.apply();
         }
     }
 
@@ -250,7 +286,6 @@ public class StreamingActivity extends Activity implements
     @Override
     public void onPreviewStarted() {
         if (mSession.getCamera() == CameraInfo.CAMERA_FACING_FRONT) {
-        } else {
         }
     }
 
@@ -327,5 +362,7 @@ public class StreamingActivity extends Activity implements
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         mClient.stopStream();
+        editor.putString("stream", "false");
+        editor.apply();
     }
 }

@@ -20,25 +20,25 @@
 
 package net.majorkernelpanic.streaming.video;
 
-import java.util.Iterator;
-import java.util.List;
-
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.util.Log;
 
+import java.util.Iterator;
+import java.util.List;
+
 /**
- * A class that represents the quality of a video stream. 
+ * A class that represents the quality of a video stream.
  * It contains the resolution, the framerate (in fps) and the bitrate (in bps) of the stream.
  */
 public class VideoQuality {
 
 	public final static String TAG = "VideoQuality";
-	
-	/** Default video stream quality. */
-	public final static VideoQuality DEFAULT_VIDEO_QUALITY = new VideoQuality(176,144,20,500000);
 
-	/**	Represents a quality for a video stream. */ 
+	/** Default video stream quality. */
+	public final static VideoQuality DEFAULT_VIDEO_QUALITY = new VideoQuality(640,480,30,1050000);
+
+	/**	Represents a quality for a video stream. */
 	public VideoQuality() {}
 
 	/**
@@ -49,14 +49,14 @@ public class VideoQuality {
 	public VideoQuality(int resX, int resY) {
 		this.resX = resX;
 		this.resY = resY;
-	}	
+	}
 
 	/**
 	 * Represents a quality for a video stream.
 	 * @param resX The horizontal resolution
 	 * @param resY The vertical resolution
 	 * @param framerate The framerate in frame per seconds
-	 * @param bitrate The bitrate in bit per seconds 
+	 * @param bitrate The bitrate in bit per seconds
 	 */
 	public VideoQuality(int resX, int resY, int framerate, int bitrate) {
 		this.framerate = framerate;
@@ -100,10 +100,10 @@ public class VideoQuality {
 	public String toString() {
 		return resX+"x"+resY+" px, "+framerate+" fps, "+bitrate/1000+" kbps";
 	}
-	
-	/** 
+
+	/**
 	 * Checks if the requested resolution is supported by the camera.
-	 * If not, it modifies it by supported parameters. 
+	 * If not, it modifies it by supported parameters.
 	 **/
 	public static VideoQuality determineClosestSupportedResolution(Camera.Parameters parameters, VideoQuality quality) {
 		VideoQuality v = quality.clone();
@@ -124,7 +124,7 @@ public class VideoQuality {
 		if (quality.resX != v.resX || quality.resY != v.resY) {
 			Log.v(TAG,"Resolution modified: "+quality.resX+"x"+quality.resY+"->"+v.resX+"x"+v.resY);
 		}
-		
+
 		return v;
 	}
 
@@ -137,11 +137,11 @@ public class VideoQuality {
 			// Intervals are returned as integers, for example "29970" means "29.970" FPS.
 			supportedFpsRangesStr += interval[0]/1000+"-"+interval[1]/1000+"fps"+(it.hasNext()?", ":"");
 			if (interval[1]>maxFps[1] || (interval[0]>maxFps[0] && interval[1]==maxFps[1])) {
-				maxFps = interval; 
+				maxFps = interval;
 			}
 		}
 		Log.v(TAG,supportedFpsRangesStr);
 		return maxFps;
 	}
-	
+
 }

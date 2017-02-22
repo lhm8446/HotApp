@@ -54,10 +54,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             editor.putString("flag", "");
             editor.apply();
             if (remoteMessage.getData().get("flag").equals("start")) {
-                Intent intent = new Intent(this, StreamingActivity.class);
-                intent.putExtra("state", "start");
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+                System.out.println(state.getString("stream", ""));
+                if (!"true".equals(state.getString("stream", ""))) {
+                    Intent intent = new Intent(this, StreamingActivity.class);
+                    intent.putExtra("state", "start");
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
             }
             if (remoteMessage.getData().get("flag").equals("stop")) {
                 System.out.println("stop");
@@ -67,6 +70,26 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             if (remoteMessage.getData().get("flag").equals("camera")) {
                 System.out.println("camera");
                 editor.putString("flag", "camera");
+                editor.apply();
+            }
+            if (remoteMessage.getData().get("flag").equals("low")) {
+                System.out.println("low");
+                editor.putString("flag", "low");
+                editor.apply();
+            }
+            if (remoteMessage.getData().get("flag").equals("middle")) {
+                System.out.println("middle");
+                editor.putString("flag", "middle");
+                editor.apply();
+            }
+            if (remoteMessage.getData().get("flag").equals("high")) {
+                System.out.println("high");
+                editor.putString("flag", "high");
+                editor.apply();
+            }
+            if (remoteMessage.getData().get("flag").equals("check")) {
+                System.out.println("check");
+                editor.putString("stream", "check");
                 editor.apply();
             }
         }

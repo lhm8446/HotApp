@@ -63,11 +63,17 @@
                 android:layout_height="match_parent"
                 android:contentDescription="@string/video"
                 android:src="@drawable/ic_settings_holo_light" />
+
+            <ImageButton
+                android:id="@+id/lightoff"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/video"
+                android:src="@drawable/ic_home_black_24dp" />
         </LinearLayout>
     </FrameLayout>
 
     <include layout="@layout/video_settings" />
-
 
     <FrameLayout
         android:layout_width="match_parent"

@@ -45,7 +45,7 @@
                     android:layout_alignParentTop="true"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
-                <include layout="@layout/video_settings3" />
+
             </RelativeLayout>
 
             <RelativeLayout
@@ -73,14 +73,16 @@
                     android:src="@drawable/ic_play_arrow_black_48dp" />
             </RelativeLayout>
 
+
         </FrameLayout>
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
+            android:background="@android:color/black"
             android:orientation="vertical">
 
+            <include layout="@layout/video_settings2" />
 
             <LinearLayout
                 android:id="@+id/linearLayout1"

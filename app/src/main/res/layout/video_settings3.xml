@@ -1,20 +1,21 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/video_layout"
+    android:id="@+id/video_layout2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_alignParentStart="true"
     android:visibility="gone">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_gravity="bottom|right"
         android:background="@drawable/bg"
         android:orientation="vertical"
         android:padding="10dp">
 
         <RadioGroup
-            android:id="@+id/radio"
+            android:id="@+id/radioGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
@@ -23,23 +24,26 @@
                 style="@style/RadioButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/quality1" />
+                android:text="@string/low"
+                android:textColor="@android:color/white" />
+
 
             <RadioButton
                 android:id="@+id/radio2"
                 style="@style/RadioButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/quality2" />
+                android:text="@string/middle"
+                android:textColor="@android:color/white" />
+
 
             <RadioButton
                 android:id="@+id/radio3"
                 style="@style/RadioButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="@string/quality3" />
-
+                android:text="@string/high"
+                android:textColor="@android:color/white" />
         </RadioGroup>
     </LinearLayout>
 
