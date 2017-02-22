@@ -49,12 +49,16 @@ public class SettingFragment extends Fragment {
         switch1.setChecked(wifiChk.getBoolean("chk", false));
         if (oldPiVo.getToken() != null) {
             if (!"".equals(oldPiVo.getToken())) {
-                switch2.setChecked(true);
+                if (FirebaseInstanceId.getInstance().getToken().equals(oldPiVo.getToken())) {
+                    switch2.setChecked(true);
+                }
             }
         }
         if (oldPiVo.getSec_token() != null) {
             if (!"".equals(oldPiVo.getSec_token())) {
-                switch3.setChecked(true);
+                if (FirebaseInstanceId.getInstance().getToken().equals(oldPiVo.getSec_token())) {
+                    switch3.setChecked(true);
+                }
             }
         }
 
