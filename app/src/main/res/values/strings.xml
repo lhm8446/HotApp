@@ -291,7 +291,7 @@
 
     <!-- video quality -->
     <string name="quality1">176x144, 30 fps, 500 Kbps</string>
-    <string name="quality2">384x288, 30 fps, 600 Kbps</string>
+    <string name="quality2">352x288, 30 fps, 600 Kbps</string>
     <string name="quality3">640x480, 30 fps, 700 Kbps</string>
     <!-- video quality -->
     <string name="low">LOW</string>

@@ -152,6 +152,11 @@ public class Util {
         editor.clear();
         editor.commit();
 
+        data = context.getSharedPreferences("stream", 0);
+        editor = data.edit();
+        editor.clear();
+        editor.commit();
+
         data = PreferenceManager.getDefaultSharedPreferences(context);
         editor = data.edit();
         editor.clear();

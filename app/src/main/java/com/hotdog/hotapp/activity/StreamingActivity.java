@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.hardware.Camera.CameraInfo;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -34,6 +35,7 @@ import net.majorkernelpanic.streaming.gl.SurfaceView;
 import net.majorkernelpanic.streaming.rtsp.RtspClient;
 import net.majorkernelpanic.streaming.video.VideoQuality;
 
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,7 +47,7 @@ public class StreamingActivity extends Activity implements
         OnCheckedChangeListener {
 
     public final static String TAG = "StreamingActivity";
-
+    private MediaPlayer mp;
     private ImageButton mButtonVideo, mButtonStart, mButtonCamera, lightoff;
     private RadioGroup mRadioGroup;
     private FrameLayout mLayoutVideoSettings;
@@ -61,6 +63,7 @@ public class StreamingActivity extends Activity implements
     private SharedPreferences.Editor editor;
     private SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
         public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+
             if (key.equals("stream")) {
                 if ("check".equals(prefs.getString(key, ""))) {
                     if (mClient.isStreaming()) {
@@ -71,11 +74,11 @@ public class StreamingActivity extends Activity implements
                         editor.apply();
                     }
                 }
-            } else {
+            } else if (key.equals("flag")) {
                 String flag = prefs.getString(key, "");
                 if ("stop".equals(flag)) {
                     if (mClient.isStreaming()) {
-                        mClient.stopStream();
+                        toggleStream();
                         editor.putString("stream", "false");
                         editor.apply();
                         onDestroy();
@@ -88,15 +91,68 @@ public class StreamingActivity extends Activity implements
                     }
                 } else if ("camera".equals(flag)) {
                     Toast.makeText(StreamingActivity.this, "camera", Toast.LENGTH_SHORT).show();
-                    mSession.switchCamera();
+                    //switchCam();
                 } else if ("high".equals(flag)) {
-                    mSession.setVideoQuality(new VideoQuality(640, 480, 30, 700000));
+                    mSession.setVideoQuality(new VideoQuality(640, 480, 30, 900000));
+                    if (mClient.isStreaming()) {
+                        toggleStream();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                toggleStream();
+                            }
+                        }).start();
+                    } else {
+                        toggleStream();
+                    }
                 } else if ("middle".equals(flag)) {
                     mSession.setVideoQuality(new VideoQuality(352, 288, 30, 600000));
+                    if (mClient.isStreaming()) {
+                        toggleStream();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                toggleStream();
+                            }
+                        }).start();
+                    } else {
+                        toggleStream();
+                    }
                 } else if ("low".equals(flag)) {
                     mSession.setVideoQuality(new VideoQuality(176, 144, 30, 500000));
+                    if (mClient.isStreaming()) {
+                        toggleStream();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                toggleStream();
+                            }
+                        }).start();
+                    } else {
+                        toggleStream();
+                    }
+                } else if ("audio".equals(flag)) {
+                    try {
+                        mp3Player(mPrefs.getString("audio", ""));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-
             }
         }
     };
@@ -104,7 +160,6 @@ public class StreamingActivity extends Activity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.activity_streaming);
@@ -117,7 +172,7 @@ public class StreamingActivity extends Activity implements
         mLayoutVideoSettings = (FrameLayout) findViewById(R.id.video_layout);
         mRadioGroup = (RadioGroup) findViewById(R.id.radio);
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
-
+        mp = new MediaPlayer();
         mRadioGroup.setOnCheckedChangeListener(this);
         mRadioGroup.setOnClickListener(this);
 
@@ -133,6 +188,8 @@ public class StreamingActivity extends Activity implements
         Util.checkCameraPermission(this);
         mPrefs = getApplicationContext().getSharedPreferences("stream", 0);
         editor = mPrefs.edit();
+        editor.putString("stream", "false");
+        editor.apply();
         mPrefs.registerOnSharedPreferenceChangeListener(listener);
         // Configures the SessionBuilder
         mSession = SessionBuilder.getInstance()
@@ -141,6 +198,7 @@ public class StreamingActivity extends Activity implements
                 .setAudioQuality(new AudioQuality(8000, 16000))
                 .setVideoEncoder(SessionBuilder.VIDEO_H264)
                 .setSurfaceView(mSurfaceView)
+                .setPreviewOrientation(0)
                 .setCallback(this)
                 .build();
 
@@ -161,8 +219,6 @@ public class StreamingActivity extends Activity implements
         //mSurfaceView.setAspectRatioMode(SurfaceView.ASPECT_RATIO_PREVIEW);
 
         mSurfaceView.getHolder().addCallback(this);
-        mSession.setPreviewOrientation(0);
-        mSession.configure();
 
         Intent intent = getIntent();
         String state = intent.getStringExtra("state");
@@ -185,18 +241,17 @@ public class StreamingActivity extends Activity implements
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.start:
+                mProgressBar.setVisibility(View.VISIBLE);
                 toggleStream();
                 break;
             case R.id.camera:
-                mSession.switchCamera();
+                switchCam();
                 break;
-
             case R.id.videosettings:
                 mRadioGroup.clearCheck();
                 mLayoutVideoSettings.setVisibility(View.VISIBLE);
                 break;
             case R.id.lightoff:
-                Toast.makeText(this, "불꺼", Toast.LENGTH_SHORT).show();
                 WindowManager.LayoutParams params = getWindow().getAttributes();
                 params.flags |= WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
                 params.screenBrightness = 0;
@@ -208,9 +263,13 @@ public class StreamingActivity extends Activity implements
     @Override
     public void onDestroy() {
         super.onDestroy();
+        editor.putString("stream", "false");
+        editor.apply();
+        mp.release();
         mClient.release();
         mSession.release();
         mSurfaceView.getHolder().removeCallback(this);
+
     }
 
     private void selectQuality() {
@@ -245,7 +304,7 @@ public class StreamingActivity extends Activity implements
 
     // Connects/disconnects to the RTSP server and starts/stops the stream
     public void toggleStream() {
-        mProgressBar.setVisibility(View.VISIBLE);
+
         if (!mClient.isStreaming()) {
             String ip, port, path;
             // We parse the URI written in the Editext
@@ -264,6 +323,34 @@ public class StreamingActivity extends Activity implements
             editor.putString("stream", "false");
             editor.apply();
         }
+    }
+
+    public void mp3Player(String fileName) throws IOException {
+        try {
+            mp.reset();
+            mp.setDataSource("http://150.95.141.66/hotdog/hotdog/image/user/" + fileName);
+            mp.prepare();
+            mp.setLooping(false);
+            MediaPlayer.OnCompletionListener listener2 = new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    System.out.println("complection");
+                    mp.stop();
+                    mp.reset();
+                }
+            };
+            mp.setOnCompletionListener(listener2);
+            mp.start();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void logError(final String msg) {

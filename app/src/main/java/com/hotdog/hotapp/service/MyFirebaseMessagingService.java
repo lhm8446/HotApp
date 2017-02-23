@@ -62,10 +62,23 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     startActivity(intent);
                 }
             }
+            if (remoteMessage.getData().get("flag").equals("startgo")) {
+                Intent intent = new Intent(this, StreamingActivity.class);
+                intent.putExtra("state", "start");
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
             if (remoteMessage.getData().get("flag").equals("stop")) {
                 System.out.println("stop");
                 editor.putString("flag", "stop");
                 editor.apply();
+            }
+            if (remoteMessage.getData().get("flag").contains("audio/")) {
+                String[] str = remoteMessage.getData().get("flag").split("/");
+                editor.putString("flag", "audio");
+                editor.putString("audio", str[1]);
+                editor.apply();
+
             }
             if (remoteMessage.getData().get("flag").equals("camera")) {
                 System.out.println("camera");

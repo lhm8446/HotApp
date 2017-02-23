@@ -36,7 +36,7 @@ public class VideoQuality {
 	public final static String TAG = "VideoQuality";
 
 	/** Default video stream quality. */
-	public final static VideoQuality DEFAULT_VIDEO_QUALITY = new VideoQuality(640,480,30,1050000);
+	public final static VideoQuality DEFAULT_VIDEO_QUALITY = new VideoQuality(352, 288, 30, 600000);
 
 	/**	Represents a quality for a video stream. */
 	public VideoQuality() {}

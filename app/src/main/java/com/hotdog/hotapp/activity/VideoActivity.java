@@ -77,7 +77,6 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
     private TextView playerStatusText = null;
     private TextView playerHwStatus = null;
 
-
     private MulticastLock multicastLock = null;
 
     private StreamingService streamingService;
@@ -105,7 +104,7 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
     private PlayerConnectType reconnect_type = PlayerConnectType.Normal;
     private int mOldMsg = 0;
     private Toast toastShot = null;
-
+    private Boolean first;
     // Event handler
     private Handler handler = new Handler() {
         String strText = "Connecting";
@@ -426,7 +425,7 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
         videosettings2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mRadioGroup.clearCheck();
+                //mRadioGroup.clearCheck();
                 mLayoutVideoSettings.setVisibility(View.VISIBLE);
             }
         });
@@ -476,12 +475,11 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
             recorder.reset();
             recorder.release();
             recorder = null;
-
             File saveFile = new File(Environment.getExternalStorageDirectory()
                     .getAbsolutePath() + "/myrecord.mp3");
 
+            new AudioUploadAsyncTask(saveFile).execute();
         }
-
     }
 
     public Bitmap getFrameAsBitmap(ByteBuffer frame, int width, int height) {
@@ -505,24 +503,25 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
                         }
                     }).show();
         } else {
-          /*  if ("Disconnected".equals(playerStatusText.getText().toString())) {
-                if (!isChecked2) {
-                    new moblieControlAsyncTask("start", piVo.getSec_token()).execute();
-                    isChecked2 = true;
-                }
-            }*/
-            new moblieControlAsyncTask("check", piVo.getSec_token()).execute();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(200);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+            first = true;
+            if (first) {
+                new moblieControlAsyncTask("startgo", piVo.getSec_token()).execute();
+                first = false;
+            }
+            if ("Disconnected".equals(playerStatusText.getText().toString())) {
+                new moblieControlAsyncTask("check", piVo.getSec_token()).execute();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(300);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        new moblieControlAsyncTask("start", piVo.getSec_token()).execute();
                     }
-                    new moblieControlAsyncTask("start", piVo.getSec_token()).execute();
-                }
-            }).start();
+                }).start();
+            }
             SharedSettings.getInstance().loadPrefSettings();
             if (player != null) {
                 player.getConfig().setConnectionUrl(VideoURL);
@@ -553,7 +552,7 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
                     conf.setSynchroNeedDropVideoFrames(sett.synchroNeedDropVideoFrames);
                     conf.setEnableColorVideo(sett.rendererEnableColorVideo);
                     conf.setEnableAspectRatio(aspect);
-                    conf.setDataReceiveTimeout(30000);
+                    conf.setDataReceiveTimeout(100000);
                     conf.setNumberOfCPUCores(0);
 
                     // Open Player
@@ -832,7 +831,6 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
         }
     }
 
-
     //녹화 시작
     private class RecAsyncTask extends SafeAsyncTask<Integer> {
 
@@ -870,4 +868,30 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
             Toast.makeText(getApplicationContext(), "녹화 종료", Toast.LENGTH_SHORT).show();
         }
     }
+
+    //오디오 업로딩
+    private class AudioUploadAsyncTask extends SafeAsyncTask<String> {
+        File file;
+
+        AudioUploadAsyncTask(File file) {
+            this.file = file;
+        }
+
+        @Override
+        public String call() throws Exception {
+            return streamingService.audioUpload(file);
+        }
+
+        @Override
+        protected void onException(Exception e) throws RuntimeException {
+            super.onException(e);
+        }
+
+        @Override
+        protected void onSuccess(final String filename) throws Exception {
+            new moblieControlAsyncTask("audio/" + filename, piVo.getSec_token()).execute();
+
+        }
+    }
+
 }

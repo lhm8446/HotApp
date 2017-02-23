@@ -276,7 +276,7 @@ public abstract class MediaStream implements Stream {
      * for a {@link AudioStream}.
      */
     public synchronized void configure() throws IllegalStateException, IOException {
-        if (mStreaming) throw new IllegalStateException("Can't be called while streaming.");
+        //if (mStreaming) throw new IllegalStateException("Can't be called while streaming.");
         if (mPacketizer != null) {
             mPacketizer.setDestination(mDestination, mRtpPort, mRtcpPort);
             mPacketizer.getRtpSocket().setOutputStream(mOutputStream, mChannelIdentifier);
