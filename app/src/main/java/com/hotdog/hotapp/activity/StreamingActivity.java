@@ -1,8 +1,6 @@
 package com.hotdog.hotapp.activity;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -48,7 +46,7 @@ public class StreamingActivity extends Activity implements
 
     public final static String TAG = "StreamingActivity";
     private MediaPlayer mp;
-    private ImageButton mButtonVideo, mButtonStart, mButtonCamera, lightoff;
+    private ImageButton mButtonVideo, mButtonStart, mButtonCamera, lightoff, flash;
     private RadioGroup mRadioGroup;
     private FrameLayout mLayoutVideoSettings;
     private SurfaceView mSurfaceView;
@@ -59,6 +57,7 @@ public class StreamingActivity extends Activity implements
     private UserVo userVo;
     private int secPass;
     private String nickname;
+    private Boolean isChecked;
     private SharedPreferences mPrefs;
     private SharedPreferences.Editor editor;
     private SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
@@ -89,66 +88,20 @@ public class StreamingActivity extends Activity implements
                         onDestroy();
                         finish();
                     }
-                } else if ("camera".equals(flag)) {
-                    Toast.makeText(StreamingActivity.this, "camera", Toast.LENGTH_SHORT).show();
-                    //switchCam();
+                } else if ("flash".equals(flag)) {
+                    flash.performClick();
                 } else if ("high".equals(flag)) {
                     mSession.setVideoQuality(new VideoQuality(640, 480, 30, 900000));
-                    if (mClient.isStreaming()) {
-                        toggleStream();
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                                toggleStream();
-                            }
-                        }).start();
-                    } else {
-                        toggleStream();
-                    }
+                    toggleThread();
                 } else if ("middle".equals(flag)) {
                     mSession.setVideoQuality(new VideoQuality(352, 288, 30, 600000));
-                    if (mClient.isStreaming()) {
-                        toggleStream();
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                                toggleStream();
-                            }
-                        }).start();
-                    } else {
-                        toggleStream();
-                    }
+                    toggleThread();
                 } else if ("low".equals(flag)) {
                     mSession.setVideoQuality(new VideoQuality(176, 144, 30, 500000));
-                    if (mClient.isStreaming()) {
-                        toggleStream();
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                                toggleStream();
-                            }
-                        }).start();
-                    } else {
-                        toggleStream();
-                    }
+                    toggleThread();
                 } else if ("audio".equals(flag)) {
                     try {
-                        mp3Player(mPrefs.getString("audio", ""));
+                        mp3Player(userVo.getUsers_no());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -172,14 +125,16 @@ public class StreamingActivity extends Activity implements
         mLayoutVideoSettings = (FrameLayout) findViewById(R.id.video_layout);
         mRadioGroup = (RadioGroup) findViewById(R.id.radio);
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        flash = (ImageButton) findViewById(R.id.flash2);
         mp = new MediaPlayer();
+        isChecked = false;
         mRadioGroup.setOnCheckedChangeListener(this);
         mRadioGroup.setOnClickListener(this);
-
         mButtonStart.setOnClickListener(this);
         mButtonCamera.setOnClickListener(this);
         lightoff.setOnClickListener(this);
         mButtonVideo.setOnClickListener(this);
+        flash.setOnClickListener(this);
 
         userVo = Util.getUserVo(getApplicationContext());
         nickname = userVo.getNickname();
@@ -257,6 +212,15 @@ public class StreamingActivity extends Activity implements
                 params.screenBrightness = 0;
                 getWindow().setAttributes(params);
                 break;
+            case R.id.flash2:
+                if (!isChecked) {
+                    flash.setImageResource(R.drawable.ic_flash_off_black_48dp);
+                    mSession.toggleFlash();
+                } else {
+                    flash.setImageResource(R.drawable.ic_flash_on_black_48dp);
+                    mSession.toggleFlash();
+                }
+                break;
         }
     }
 
@@ -265,11 +229,12 @@ public class StreamingActivity extends Activity implements
         super.onDestroy();
         editor.putString("stream", "false");
         editor.apply();
-        mp.release();
         mClient.release();
         mSession.release();
+        if (mp != null) {
+            mp.release();
+        }
         mSurfaceView.getHolder().removeCallback(this);
-
     }
 
     private void selectQuality() {
@@ -325,11 +290,11 @@ public class StreamingActivity extends Activity implements
         }
     }
 
-    public void mp3Player(String fileName) throws IOException {
+    public void mp3Player(int users_no) throws IOException {
         try {
             mp.reset();
-            mp.setDataSource("http://150.95.141.66/hotdog/hotdog/image/user/" + fileName);
-            mp.prepare();
+            mp.setDataSource("http://150.95.141.66/hotdog/hotdog/image/user/" + users_no + "/myrecord.mp3");
+            mp.prepareAsync();
             mp.setLooping(false);
             MediaPlayer.OnCompletionListener listener2 = new MediaPlayer.OnCompletionListener() {
                 @Override
@@ -353,16 +318,34 @@ public class StreamingActivity extends Activity implements
 
     }
 
+    public void toggleThread() {
+        if (mClient.isStreaming()) {
+            toggleStream();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    toggleStream();
+                }
+            }).start();
+        } else {
+            toggleStream();
+        }
+    }
+
     private void logError(final String msg) {
-        final String error = (msg == null) ? "Error unknown" : msg;
-        // Displays a popup to report the eror to the user
+ /*       final String error = (msg == null) ? "Error unknown" : msg;
         AlertDialog.Builder builder = new AlertDialog.Builder(StreamingActivity.this);
         builder.setMessage(msg).setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
             }
         });
         AlertDialog dialog = builder.create();
-        dialog.show();
+        dialog.show();*/
     }
 
     @Override

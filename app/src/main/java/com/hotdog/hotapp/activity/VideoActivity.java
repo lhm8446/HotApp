@@ -8,12 +8,14 @@ package com.hotdog.hotapp.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.MulticastLock;
 import android.os.AsyncTask;
@@ -21,6 +23,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.support.annotation.IdRes;
 import android.util.Log;
 import android.view.Gravity;
@@ -48,26 +51,30 @@ import com.hotdog.hotapp.service.StreamingService;
 import com.hotdog.hotapp.vo.PiVo;
 import com.hotdog.hotapp.vo.UserVo;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 import cn.refactor.lib.colordialog.PromptDialog;
 import veg.mediaplayer.sdk.MediaPlayer;
 import veg.mediaplayer.sdk.MediaPlayer.PlayerNotifyCodes;
 import veg.mediaplayer.sdk.MediaPlayer.PlayerProperties;
-import veg.mediaplayer.sdk.MediaPlayer.VideoShot;
 import veg.mediaplayer.sdk.MediaPlayerConfig;
 
 
 public class VideoActivity extends Activity implements OnClickListener, MediaPlayer.MediaPlayerCallback {
-    private static final String TAG = "MediaPlayerTest";
+    private static final String TAG = "VideoActivity";
 
     private ImageButton btnConnect;
     private ImageButton btnShot;
 
     private StatusProgressTask mProgressTask = null;
-    private LinearLayout linearLayout1;
+    private LinearLayout linearLayout1, linearTop;
 
     private boolean playing = false;
     private MediaPlayer player = null;
@@ -78,12 +85,11 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
     private TextView playerHwStatus = null;
 
     private MulticastLock multicastLock = null;
-
     private StreamingService streamingService;
     private String VideoURL;
     private UserVo userVo;
     private PiVo piVo;
-    private ImageButton stop2, camera2, videosettings2, toggleVoice, toggleRec;
+    private ImageButton stop2, flash, videosettings2, toggleVoice, toggleRec;
     private Boolean isChecked, isChecked1, isChecked2;
     private SharedPreferences wifiChk;
     private MediaRecorder recorder;
@@ -104,7 +110,8 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
     private PlayerConnectType reconnect_type = PlayerConnectType.Normal;
     private int mOldMsg = 0;
     private Toast toastShot = null;
-    private Boolean first;
+    private Boolean first = true;
+    private final String path = Environment.getExternalStorageDirectory() + "/";
     // Event handler
     private Handler handler = new Handler() {
         String strText = "Connecting";
@@ -272,7 +279,6 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
         return 0;
     }
 
-
     // All event are sent to event handlers
     @Override
     public int Status(int arg) {
@@ -291,7 +297,6 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
         }
         return 0;
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -312,6 +317,7 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
         SharedSettings.getInstance(this).loadPrefSettings();
         SharedSettings.getInstance().savePrefSettings();
         linearLayout1 = (LinearLayout) findViewById(R.id.linearLayout1);
+        linearTop = (LinearLayout) findViewById(R.id.linearTop);
         playerStatus = (RelativeLayout) findViewById(R.id.playerStatus);
         playerStatusText = (TextView) findViewById(R.id.playerStatusText);
         playerHwStatus = (TextView) findViewById(R.id.playerHwStatus);
@@ -320,7 +326,7 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
         btnConnect = (ImageButton) findViewById(R.id.button_connect);
         toggleVoice = (ImageButton) findViewById(R.id.toggleVoice2);
         stop2 = (ImageButton) findViewById(R.id.stop2);
-        camera2 = (ImageButton) findViewById(R.id.camera2);
+        flash = (ImageButton) findViewById(R.id.flash);
         videosettings2 = (ImageButton) findViewById(R.id.videosettings2);
         toggleRec = (ImageButton) findViewById(R.id.toggleRec2);
         mRadioGroup = (RadioGroup) findViewById(R.id.radioGroup);
@@ -329,7 +335,6 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
         isChecked = false;
         isChecked1 = false;
         isChecked2 = false;
-
         streamingService = new StreamingService();
         userVo = Util.getUserVo(this);
         piVo = Util.getPiVo(this);
@@ -348,29 +353,7 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
         btnShot.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (player != null) {
-                    Log.e("SDL", "getVideoShot()");
-                    //VideoShot frame = player.getVideoShot(200, 200);
-                    VideoShot frame = player.getVideoShot(-1, -1);
-                    if (frame == null)
-                        return;
-                    // get your custom_toast.xml ayout
-                    LayoutInflater inflater = getLayoutInflater();
-                    View layout = inflater.inflate(R.layout.videoshot_view,
-                            (ViewGroup) findViewById(R.id.videoshot_toast_layout_id));
-
-                    ImageView image = (ImageView) layout.findViewById(R.id.videoshot_image);
-                    image.setImageBitmap(getFrameAsBitmap(frame.getData(), frame.getWidth(), frame.getHeight()));
-
-                    // Toast...
-                    if (toastShot != null)
-                        toastShot.cancel();
-
-                    toastShot = new Toast(getApplicationContext());
-                    toastShot.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                    toastShot.setDuration(Toast.LENGTH_SHORT);
-                    toastShot.setView(layout);
-                    toastShot.show();
-
+                    captureImage();
                 }
             }
         });
@@ -412,14 +395,21 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
             @Override
             public void onClick(View v) {
                 new moblieControlAsyncTask("stop", piVo.getSec_token()).execute();
-                isChecked2 = false;
                 onBackPressed();
             }
         });
-        camera2.setOnClickListener(new View.OnClickListener() {
+        flash.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new moblieControlAsyncTask("camera", piVo.getSec_token()).execute();
+                if (isChecked2) {
+                    flash.setImageResource(R.drawable.ic_flash_on_black_48dp);
+                    isChecked2 = false;
+                    new moblieControlAsyncTask("flash", piVo.getSec_token()).execute();
+                } else {
+                    flash.setImageResource(R.drawable.ic_flash_off_black_48dp);
+                    isChecked2 = true;
+                    new moblieControlAsyncTask("flash", piVo.getSec_token()).execute();
+                }
             }
         });
         videosettings2.setOnClickListener(new View.OnClickListener() {
@@ -488,6 +478,44 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
         return bmp;
     }
 
+    public void captureImage() {
+        Util.checkStoragePermission(getApplication());
+        //VideoShot frame = player.getVideoShot(200, 200);
+        MediaPlayer.VideoShot frame = player.getVideoShot(-1, -1);
+        if (frame == null)
+            return;
+        // get your custom_toast.xml ayout
+        LayoutInflater inflater = getLayoutInflater();
+        View layout = inflater.inflate(R.layout.videoshot_view,
+                (ViewGroup) findViewById(R.id.videoshot_toast_layout_id));
+
+        ImageView image = (ImageView) layout.findViewById(R.id.videoshot_image);
+        Bitmap bitMap = getFrameAsBitmap(frame.getData(), frame.getWidth(), frame.getHeight());
+        image.setImageBitmap(bitMap);
+        String fileName = generateSaveFileName("jpg");
+        SaveBitmapToFileCache(bitMap, fileName);
+        if (toastShot != null)
+            toastShot.cancel();
+
+        toastShot = new Toast(getApplicationContext());
+        toastShot.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+        toastShot.setDuration(Toast.LENGTH_SHORT);
+        toastShot.setView(layout);
+        toastShot.show();
+    }
+
+    public void captureImage2() {
+        Util.checkStoragePermission(getApplication());
+        //VideoShot frame = player.getVideoShot(200, 200);
+        MediaPlayer.VideoShot frame = player.getVideoShot(-1, -1);
+        if (frame == null)
+            return;
+        Bitmap bitMap = getFrameAsBitmap(frame.getData(), frame.getWidth(), frame.getHeight());
+        String fileName = generateSaveFileName2("jpg");
+        SaveBitmapToFileCache(bitMap, fileName);
+
+    }
+
     public void onClick(View v) {
         int wifi1 = Util.getConnectivityStatus(this);
         if (wifi1 != 1 && wifiChk.getBoolean("chk", false)) {
@@ -503,24 +531,24 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
                         }
                     }).show();
         } else {
-            first = true;
-            if (first) {
-                new moblieControlAsyncTask("startgo", piVo.getSec_token()).execute();
-                first = false;
-            }
             if ("Disconnected".equals(playerStatusText.getText().toString())) {
-                new moblieControlAsyncTask("check", piVo.getSec_token()).execute();
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep(300);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                if (first) {
+                    new moblieControlAsyncTask("startgo", piVo.getSec_token()).execute();
+                    first = false;
+                } else {
+                    new moblieControlAsyncTask("check", piVo.getSec_token()).execute();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            new moblieControlAsyncTask("start", piVo.getSec_token()).execute();
                         }
-                        new moblieControlAsyncTask("start", piVo.getSec_token()).execute();
-                    }
-                }).start();
+                    }).start();
+                }
             }
             SharedSettings.getInstance().loadPrefSettings();
             if (player != null) {
@@ -529,7 +557,6 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
                     return;
                 if (toastShot != null)
                     toastShot.cancel();
-
                 player.Close();
                 if (playing) {
                     setUIDisconnected();
@@ -601,8 +628,10 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
 
     @Override
     public void onBackPressed() {
+
         if (toastShot != null)
             toastShot.cancel();
+        linearTop.setVisibility(View.GONE);
         player.Close();
         super.onBackPressed();
 
@@ -629,7 +658,7 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
         Log.e("SDL", "onDestroy()");
         if (toastShot != null)
             toastShot.cancel();
-
+        linearTop.setVisibility(View.GONE);
         if (player != null)
             player.onDestroy();
 
@@ -642,7 +671,6 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
         }
         super.onDestroy();
     }
-
 
     protected void setUIDisconnected() {
         playing = false;
@@ -804,6 +832,118 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
         }
     }
 
+    private String generateSaveFileName2(String ext) {
+        String fileName = "stream_";
+        Calendar calendar = Calendar.getInstance();
+        TimeZone timeZone = TimeZone.getTimeZone("GMT+9");
+        calendar.setTimeZone(timeZone);
+        fileName += calendar.get(Calendar.YEAR) + "-";
+        if ((calendar.get(Calendar.MONTH) + 1) >= 10) {
+            fileName += (calendar.get(Calendar.MONTH) + 1) + "-";
+        } else {
+            fileName += "0" + (calendar.get(Calendar.MONTH) + 1) + "-";
+        }
+        if (calendar.get(Calendar.DATE) >= 10) {
+            fileName += calendar.get(Calendar.DATE) + "-";
+        } else {
+            fileName += "0" + calendar.get(Calendar.DATE) + "-";
+        }
+        if (calendar.get(Calendar.HOUR_OF_DAY) >= 10) {
+            fileName += calendar.get(Calendar.HOUR_OF_DAY) + ".";
+        } else {
+            fileName += "0" + calendar.get(Calendar.HOUR_OF_DAY) + ".";
+        }
+        if ((calendar.get(Calendar.MINUTE) - 1) >= 10) {
+            fileName += (calendar.get(Calendar.MINUTE) - 1);
+        } else {
+            fileName += "0" + (calendar.get(Calendar.MINUTE) - 1);
+        }
+        fileName += ("." + ext);
+        return fileName;
+    }
+
+    private String generateSaveFileName(String ext) {
+        String fileName = "stream_";
+        Calendar calendar = Calendar.getInstance();
+        TimeZone timeZone = TimeZone.getTimeZone("GMT+9");
+        calendar.setTimeZone(timeZone);
+        fileName += calendar.get(Calendar.YEAR) + "-";
+        if ((calendar.get(Calendar.MONTH) + 1) >= 10) {
+            fileName += (calendar.get(Calendar.MONTH) + 1) + "-";
+        } else {
+            fileName += "0" + (calendar.get(Calendar.MONTH) + 1) + "-";
+        }
+        if (calendar.get(Calendar.DATE) >= 10) {
+            fileName += calendar.get(Calendar.DATE) + "-";
+        } else {
+            fileName += "0" + calendar.get(Calendar.DATE) + "-";
+        }
+        if (calendar.get(Calendar.HOUR_OF_DAY) >= 10) {
+            fileName += calendar.get(Calendar.HOUR_OF_DAY) + ".";
+        } else {
+            fileName += "0" + calendar.get(Calendar.HOUR_OF_DAY) + ".";
+        }
+        if ((calendar.get(Calendar.MINUTE) - 1) >= 10) {
+            fileName += (calendar.get(Calendar.MINUTE) - 1) + ".";
+        } else {
+            fileName += "0" + (calendar.get(Calendar.MINUTE) - 1) + ".";
+        }
+        if ((calendar.get(Calendar.SECOND)) >= 10) {
+            fileName += calendar.get(Calendar.SECOND) + ".";
+        } else {
+            fileName += "0" + calendar.get(Calendar.SECOND) + ".";
+        }
+        fileName += calendar.get(Calendar.MILLISECOND);
+        fileName += ("." + ext);
+        return fileName;
+    }
+
+    private void SaveBitmapToFileCache(Bitmap bitmap, String fileName) {
+
+        File folder = new File(path + "/hotdog");
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+        File fileCacheItem = new File(path + "/hotdog/" + fileName);
+        ByteArrayOutputStream bos = null;
+        FileOutputStream fos = null;
+        try {
+            fileCacheItem.createNewFile();
+            bos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+            byte[] bitmapdata = bos.toByteArray();
+            fos = new FileOutputStream(fileCacheItem);
+            fos.write(bitmapdata);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                new ImageUploadAsyncTask(fileCacheItem).execute();
+                notifyMediaStoreScanner(fileCacheItem);
+                if (fos != null) {
+                    fos.flush();
+                    fos.close();
+                }
+                if (bos != null) {
+                    bos.close();
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public final void notifyMediaStoreScanner(final File file) {
+        try {
+            MediaStore.Images.Media.insertImage(this.getContentResolver(),
+                    file.getAbsolutePath(), file.getName(), null);
+            this.sendBroadcast(new Intent(
+                    Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
 
     //모바일 컨트롤
     private class moblieControlAsyncTask extends SafeAsyncTask<Integer> {
@@ -836,6 +976,7 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
 
         @Override
         public Integer call() throws Exception {
+
             return streamingService.recStart(userVo.getNickname(), userVo.getUsers_no());
         }
 
@@ -847,6 +988,9 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
         @Override
         protected void onSuccess(Integer flag) throws Exception {
             Toast.makeText(getApplicationContext(), "녹화 시작", Toast.LENGTH_SHORT).show();
+            if (player != null) {
+                captureImage2();
+            }
         }
     }
 
@@ -879,7 +1023,7 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
 
         @Override
         public String call() throws Exception {
-            return streamingService.audioUpload(file);
+            return streamingService.audioUpload(file, userVo.getUsers_no());
         }
 
         @Override
@@ -889,8 +1033,30 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
 
         @Override
         protected void onSuccess(final String filename) throws Exception {
-            new moblieControlAsyncTask("audio/" + filename, piVo.getSec_token()).execute();
+            new moblieControlAsyncTask("audio!" + filename, piVo.getSec_token()).execute();
+        }
+    }
 
+    //이미지 업로딩
+    private class ImageUploadAsyncTask extends SafeAsyncTask<String> {
+        File file;
+
+        ImageUploadAsyncTask(File file) {
+            this.file = file;
+        }
+
+        @Override
+        public String call() throws Exception {
+            return streamingService.audioUpload(file, userVo.getUsers_no());
+        }
+
+        @Override
+        protected void onException(Exception e) throws RuntimeException {
+            super.onException(e);
+        }
+
+        @Override
+        protected void onSuccess(final String filename) throws Exception {
         }
     }
 

@@ -2,9 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main_view"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:background="@android:color/black">
 
     <LinearLayout
+        android:id="@+id/linearTop"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="vertical">
@@ -53,14 +55,14 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
 
-
                 <TextView
                     android:id="@+id/playerStatusText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:gravity="center"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@android:color/white" />
 
                 <ImageButton
                     android:id="@+id/button_connect"
@@ -102,12 +104,11 @@
                     android:src="@drawable/microphoneblack" />
 
                 <ImageButton
-                    android:id="@+id/camera2"
+                    android:id="@+id/flash"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:contentDescription="@string/camera"
-                    android:src="@drawable/ic_camera_front_black_48dp" />
+                    android:src="@drawable/ic_flash_on_black_48dp" />
 
                 <ImageButton
                     android:id="@+id/button_shot"

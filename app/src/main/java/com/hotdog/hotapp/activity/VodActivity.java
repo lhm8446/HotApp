@@ -85,15 +85,11 @@ public class VodActivity extends AppCompatActivity {
         @Override
         protected void onSuccess(ArrayList<VideoVo> urlList) throws Exception {
             ListDataGenerater.clearDatas();
-            VideoModel videoModel1 = new VideoModel();
-            videoModel1.videoUrl = "rtsp://150.95.141.66:1935/live/nap12/stream";
-            videoModel1.title = "stream";
-            ListDataGenerater.addDatas(videoModel1);
             for (VideoVo videoVo : urlList) {
                 VideoModel videoModel = new VideoModel();
-                videoModel.videoUrl = URL + "5/" + videoVo.getSave_name();
+                videoModel.videoUrl = URL + userVo.getUsers_no() + "/" + videoVo.getSave_name();
                 videoModel.title = videoVo.getRegdate() + " " + videoVo.getRegtime();
-                //videoModel.size = getSize(videoModel.videoUrl);
+                videoModel.coverImage = URL + userVo.getUsers_no() + "/" + videoVo.getSave_name().substring(0, 23) + ".jpg";
                 ListDataGenerater.addDatas(videoModel);
             }
             mProgressBar.setVisibility(View.GONE);

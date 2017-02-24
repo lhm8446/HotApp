@@ -57,6 +57,7 @@
 
         <activity
             android:name=".activity.StreamingActivity"
+            android:largeHeap="true"
             android:noHistory="true" />
         <activity
             android:name=".activity.VodActivity"

@@ -77,7 +77,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         dataInit();
         Util.checkAudioPermission(this);
-
     }
 
     private void init() {
@@ -117,8 +116,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         FrameLayout homeFragment = (FrameLayout) findViewById(R.id.frame_home);
         if (homeFragment != null) {
@@ -136,20 +133,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_logout) {
             Util.logout(getApplicationContext());
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
@@ -175,7 +165,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             popClear();
             CURRENT_TAG = STREAM_TAG;
             new SecPassChkAsyncTask().execute();
-
         } else if (id == R.id.nav_vod) {
             startActivity(new Intent(HomeActivity.this, VodActivity.class));
         } else if (id == R.id.nav_page) {
@@ -243,7 +232,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 
         // showing dot next to notifications label
-        navigationView.getMenu().getItem(0).setActionView(R.layout.menu_dot);
     }
 
     public void loadHomeFragment() {
@@ -257,7 +245,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }
         //Closing drawer on item click
         drawer.closeDrawers();
-
         // refresh toolbar menu
         invalidateOptionsMenu();
 
@@ -270,7 +257,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private void selectNavMenu() {
         navigationView.getMenu().getItem(navItemIndex).setChecked(true);
     }
-
 
     // getUser 통신
     private class UserGetAsyncTask extends SafeAsyncTask<UserVo> {
@@ -353,7 +339,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             }
         }
     }
-
 
     //pi 정보 받기
     private class GetPiInfoAsyncTask extends SafeAsyncTask<PiVo> {

@@ -8,12 +8,14 @@ package com.hotdog.hotapp.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.MulticastLock;
 import android.os.AsyncTask;
@@ -21,6 +23,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -45,26 +48,30 @@ import com.hotdog.hotapp.service.StreamingService;
 import com.hotdog.hotapp.vo.PiVo;
 import com.hotdog.hotapp.vo.UserVo;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 import cn.refactor.lib.colordialog.PromptDialog;
 import veg.mediaplayer.sdk.MediaPlayer;
 import veg.mediaplayer.sdk.MediaPlayer.PlayerNotifyCodes;
 import veg.mediaplayer.sdk.MediaPlayer.PlayerProperties;
-import veg.mediaplayer.sdk.MediaPlayer.VideoShot;
 import veg.mediaplayer.sdk.MediaPlayerConfig;
 
 
 public class VideoActivity2 extends Activity implements OnClickListener, MediaPlayer.MediaPlayerCallback {
-    private static final String TAG = "MediaPlayerTest";
+    private static final String TAG = "VideoActivity2";
 
     private ImageButton btnConnect;
     private ImageButton btnShot;
 
     private StatusProgressTask mProgressTask = null;
-    private LinearLayout linearLayout1;
+    private LinearLayout linearLayout1, linearTop;
 
     private boolean playing = false;
     private MediaPlayer player = null;
@@ -101,6 +108,7 @@ public class VideoActivity2 extends Activity implements OnClickListener, MediaPl
     private int mOldMsg = 0;
     private Toast toastShot = null;
 
+    private final String path = Environment.getExternalStorageDirectory() + "/";
     // Event handler
     private Handler handler = new Handler() {
         String strText = "Connecting";
@@ -307,6 +315,7 @@ public class VideoActivity2 extends Activity implements OnClickListener, MediaPl
         SharedSettings.getInstance(this).loadPrefSettings();
         SharedSettings.getInstance().savePrefSettings();
         linearLayout1 = (LinearLayout) findViewById(R.id.linearLayout1);
+        linearTop = (LinearLayout) findViewById(R.id.linearTop);
         playerStatus = (RelativeLayout) findViewById(R.id.playerStatus);
         playerStatusText = (TextView) findViewById(R.id.playerStatusText);
         playerHwStatus = (TextView) findViewById(R.id.playerHwStatus);
@@ -345,30 +354,7 @@ public class VideoActivity2 extends Activity implements OnClickListener, MediaPl
         btnShot.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (player != null) {
-                    Log.e("SDL", "getVideoShot()");
-
-                    //VideoShot frame = player.getVideoShot(200, 200);
-                    VideoShot frame = player.getVideoShot(-1, -1);
-                    if (frame == null)
-                        return;
-                    // get your custom_toast.xml ayout
-                    LayoutInflater inflater = getLayoutInflater();
-                    View layout = inflater.inflate(R.layout.videoshot_view,
-                            (ViewGroup) findViewById(R.id.videoshot_toast_layout_id));
-
-                    ImageView image = (ImageView) layout.findViewById(R.id.videoshot_image);
-                    image.setImageBitmap(getFrameAsBitmap(frame.getData(), frame.getWidth(), frame.getHeight()));
-
-                    // Toast...
-                    if (toastShot != null)
-                        toastShot.cancel();
-
-                    toastShot = new Toast(getApplicationContext());
-                    toastShot.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                    toastShot.setDuration(Toast.LENGTH_SHORT);
-                    toastShot.setView(layout);
-                    toastShot.show();
-
+                    captureImage();
                 }
             }
         });
@@ -473,6 +459,115 @@ public class VideoActivity2 extends Activity implements OnClickListener, MediaPl
         return bmp;
     }
 
+    public void captureImage() {
+        Util.checkStoragePermission(getApplication());
+        //VideoShot frame = player.getVideoShot(200, 200);
+        MediaPlayer.VideoShot frame = player.getVideoShot(-1, -1);
+        if (frame == null)
+            return;
+        // get your custom_toast.xml ayout
+        LayoutInflater inflater = getLayoutInflater();
+        View layout = inflater.inflate(R.layout.videoshot_view,
+                (ViewGroup) findViewById(R.id.videoshot_toast_layout_id));
+
+        ImageView image = (ImageView) layout.findViewById(R.id.videoshot_image);
+        Bitmap bitMap = getFrameAsBitmap(frame.getData(), frame.getWidth(), frame.getHeight());
+        image.setImageBitmap(bitMap);
+        String fileName = generateSaveFileName("jpg");
+        SaveBitmapToFileCache(bitMap, fileName);
+        if (toastShot != null)
+            toastShot.cancel();
+
+        toastShot = new Toast(getApplicationContext());
+        toastShot.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+        toastShot.setDuration(Toast.LENGTH_SHORT);
+        toastShot.setView(layout);
+        toastShot.show();
+    }
+
+    private void SaveBitmapToFileCache(Bitmap bitmap, String fileName) {
+
+        File folder = new File(path + "/hotdog");
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+        File fileCacheItem = new File(path + "/hotdog/" + fileName);
+        ByteArrayOutputStream bos = null;
+        FileOutputStream fos = null;
+        try {
+            fileCacheItem.createNewFile();
+            bos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+            byte[] bitmapdata = bos.toByteArray();
+            fos = new FileOutputStream(fileCacheItem);
+            fos.write(bitmapdata);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                new ImageUploadAsyncTask(fileCacheItem).execute();
+                notifyMediaStoreScanner(fileCacheItem);
+                if (fos != null) {
+                    fos.flush();
+                    fos.close();
+                }
+                if (bos != null) {
+                    bos.close();
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private String generateSaveFileName(String ext) {
+        String fileName = "stream_";
+        Calendar calendar = Calendar.getInstance();
+        TimeZone timeZone = TimeZone.getTimeZone("GMT+9");
+        calendar.setTimeZone(timeZone);
+        fileName += calendar.get(Calendar.YEAR) + "-";
+        if ((calendar.get(Calendar.MONTH) + 1) >= 10) {
+            fileName += (calendar.get(Calendar.MONTH) + 1) + "-";
+        } else {
+            fileName += "0" + (calendar.get(Calendar.MONTH) + 1) + "-";
+        }
+        if (calendar.get(Calendar.DATE) >= 10) {
+            fileName += calendar.get(Calendar.DATE) + "-";
+        } else {
+            fileName += "0" + calendar.get(Calendar.DATE) + "-";
+        }
+        if (calendar.get(Calendar.HOUR_OF_DAY) >= 10) {
+            fileName += calendar.get(Calendar.HOUR_OF_DAY) + ".";
+        } else {
+            fileName += "0" + calendar.get(Calendar.HOUR_OF_DAY) + ".";
+        }
+        if ((calendar.get(Calendar.MINUTE) - 1) >= 10) {
+            fileName += (calendar.get(Calendar.MINUTE) - 1) + ".";
+        } else {
+            fileName += "0" + (calendar.get(Calendar.MINUTE) - 1) + ".";
+        }
+        if ((calendar.get(Calendar.SECOND)) >= 10) {
+            fileName += calendar.get(Calendar.SECOND) + ".";
+        } else {
+            fileName += "0" + calendar.get(Calendar.SECOND) + ".";
+        }
+        fileName += calendar.get(Calendar.MILLISECOND);
+        fileName += ("." + ext);
+        return fileName;
+    }
+
+    public final void notifyMediaStoreScanner(final File file) {
+        try {
+            MediaStore.Images.Media.insertImage(this.getContentResolver(),
+                    file.getAbsolutePath(), file.getName(), null);
+            this.sendBroadcast(new Intent(
+                    Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void onClick(View v) {
         int wifi1 = Util.getConnectivityStatus(this);
         if (wifi1 != 1 && wifiChk.getBoolean("chk", false)) {
@@ -520,12 +615,13 @@ public class VideoActivity2 extends Activity implements OnClickListener, MediaPl
                     conf.setConnectionDetectionTime(sett.connectionDetectionTime);
                     conf.setConnectionBufferingTime(sett.connectionBufferingTime);
                     conf.setDecodingType(sett.decoderType);
+                    conf.setDecoderLatency(1); // Low Latency on decoder
                     conf.setRendererType(sett.rendererType);
-                    conf.setSynchroEnable(sett.synchroEnable);
+                    conf.setSynchroEnable(0);
                     conf.setSynchroNeedDropVideoFrames(sett.synchroNeedDropVideoFrames);
                     conf.setEnableColorVideo(sett.rendererEnableColorVideo);
                     conf.setEnableAspectRatio(aspect);
-                    conf.setDataReceiveTimeout(30000);
+                    conf.setDataReceiveTimeout(100000);
                     conf.setNumberOfCPUCores(0);
 
                     // Open Player
@@ -569,21 +665,16 @@ public class VideoActivity2 extends Activity implements OnClickListener, MediaPl
 
         if (toastShot != null)
             toastShot.cancel();
-
     }
 
     @Override
     public void onBackPressed() {
         if (toastShot != null)
             toastShot.cancel();
-
+        linearTop.setVisibility(View.GONE);
         player.Close();
-        if (!playing) {
-            super.onBackPressed();
-            return;
-        }
+        super.onBackPressed();
 
-        setUIDisconnected();
     }
 
     @Override
@@ -607,7 +698,7 @@ public class VideoActivity2 extends Activity implements OnClickListener, MediaPl
         Log.e("SDL", "onDestroy()");
         if (toastShot != null)
             toastShot.cancel();
-
+        linearTop.setVisibility(View.GONE);
         if (player != null)
             player.onDestroy();
 
@@ -620,7 +711,6 @@ public class VideoActivity2 extends Activity implements OnClickListener, MediaPl
         }
         super.onDestroy();
     }
-
 
     protected void setUIDisconnected() {
         playing = false;
@@ -783,7 +873,7 @@ public class VideoActivity2 extends Activity implements OnClickListener, MediaPl
         }
     }
 
-
+    //파이 컨트롤
     private class PiControllAsyncTask extends SafeAsyncTask<String> {
         String msg;
         String ip;
@@ -809,6 +899,7 @@ public class VideoActivity2 extends Activity implements OnClickListener, MediaPl
         }
     }
 
+    //오디오 업로드
     private class AudioUploadAsyncTask extends SafeAsyncTask<String> {
         File file;
 
@@ -818,7 +909,7 @@ public class VideoActivity2 extends Activity implements OnClickListener, MediaPl
 
         @Override
         public String call() throws Exception {
-            return streamingService.audioUpload(file);
+            return streamingService.audioUpload(file, userVo.getUsers_no());
         }
 
         @Override
@@ -880,6 +971,29 @@ public class VideoActivity2 extends Activity implements OnClickListener, MediaPl
         @Override
         protected void onSuccess(Integer flag) throws Exception {
             Toast.makeText(getApplicationContext(), "녹화 종료", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    //이미지 업로딩
+    private class ImageUploadAsyncTask extends SafeAsyncTask<String> {
+        File file;
+
+        ImageUploadAsyncTask(File file) {
+            this.file = file;
+        }
+
+        @Override
+        public String call() throws Exception {
+            return streamingService.audioUpload(file, userVo.getUsers_no());
+        }
+
+        @Override
+        protected void onException(Exception e) throws RuntimeException {
+            super.onException(e);
+        }
+
+        @Override
+        protected void onSuccess(final String filename) throws Exception {
         }
     }
 }

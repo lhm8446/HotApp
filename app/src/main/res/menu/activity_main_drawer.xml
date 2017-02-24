@@ -5,31 +5,46 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home_black_24dp"
             android:title="@string/nav_home" />
         <item
             android:id="@+id/nav_streaming"
+            android:icon="@drawable/ic_streetview_black_24dp"
             android:title="@string/nav_streaming" />
         <item
             android:id="@+id/nav_vod"
+            android:icon="@drawable/ic_video_library_black_24dp"
             android:title="@string/nav_vod" />
-
+        <item
+            android:id="@+id/nav_gallery"
+            android:icon="@drawable/ic_photo_library_black_24dp"
+            android:title="@string/nav_gallery" />
         <item
             android:id="@+id/nav_page"
+            android:icon="@drawable/ic_perm_identity_black_24dp"
             android:title="@string/nav_page" />
 
         <item
             android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings_black_24dp"
             android:title="@string/nav_settings" />
+
     </group>
 
     <item android:title="Other">
         <menu>
             <item
+                android:id="@+id/nav_streaming_camera"
+                android:icon="@drawable/ic_videocam_black_24dp"
+                android:title="@string/activity_title_Streaming" />
+            <item
+                android:id="@+id/nav_web_blog"
+                android:icon="@drawable/hotdog_logo_02"
+                android:title="@string/activity_web_blog" />
+            <item
                 android:id="@+id/nav_about_us"
                 android:title="@string/activity_title_about_us" />
-            <item
-                android:id="@+id/nav_streaming_camera"
-                android:title="@string/activity_title_Streaming" />
+
         </menu>
     </item>
 </menu>

@@ -647,8 +647,7 @@ public class VodListFragment extends Fragment implements AbsListView.OnScrollLis
         public View getView(int i, View view, ViewGroup viewGroup) {
             ViewHolder holder = ViewHolder.newInstance(getContext(), view, viewGroup, R.layout.item_list_view);
             VideoModel tag = ListDataGenerater.datas.get(i);
-            Glide.with(getActivity()).load(tag.videoUrl)
-                    .thumbnail(0.1f)
+            Glide.with(getActivity()).load(tag.coverImage)
                     .placeholder(R.drawable.shape_place_holder)
                     .into((ImageView) holder.getView(R.id.img_cover));
             tag.position = i;

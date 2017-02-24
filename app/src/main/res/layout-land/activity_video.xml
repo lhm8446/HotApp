@@ -104,12 +104,11 @@
                     android:src="@drawable/microphoneblack" />
 
                 <ImageButton
-                    android:id="@+id/camera2"
+                    android:id="@+id/flash"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:contentDescription="@string/camera"
-                    android:src="@drawable/ic_camera_front_black_48dp" />
+                    android:src="@drawable/ic_flash_on_black_48dp" />
 
                 <ImageButton
                     android:id="@+id/button_shot"

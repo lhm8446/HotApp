@@ -1,6 +1,5 @@
 package com.hotdog.hotapp.fragment.home;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,14 +17,9 @@ import com.hotdog.hotapp.vo.UserVo;
 
 import java.util.Calendar;
 import java.util.Random;
-import java.util.Timer;
-
-import tyrantgit.widget.HeartLayout;
 
 public class HomeFragment extends Fragment {
     private Random mRandom = new Random();
-    private Timer mTimer = new Timer();
-    private HeartLayout mHeartLayout;
     private ImageView userImage, petImage;
     private TextView textCount;
     private static final String urlimg = "http://150.95.141.66:80/hotdog/hotdog/image/user/";
@@ -36,23 +30,11 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_home, container, false);
-        mHeartLayout = (HeartLayout) rootView.findViewById(R.id.heart_layout);
         userImage = (ImageView) rootView.findViewById(R.id.userImage);
         petImage = (ImageView) rootView.findViewById(R.id.petImage);
         textCount = (TextView) rootView.findViewById(R.id.textCount);
         userVo = Util.getUserVo(getActivity());
         petVo = Util.getPetVo(getActivity());
-    /*    mTimer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                mHeartLayout.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mHeartLayout.addHeart(randomColor());
-                    }
-                });
-            }
-        }, 500, 200);*/
         init();
         return rootView;
     }
@@ -120,15 +102,9 @@ public class HomeFragment extends Fragment {
             }
 
             result = dDayCnt - nowDayCnt - (365 * normalYrCnt) - (366 * leapYrCnt);
-          /*  if (result < 0) {
-                result = (result * -1) + 1;
-            }*/
+
         }
         return result;
-    }
-
-    private int randomColor() {
-        return Color.rgb(mRandom.nextInt(255), 0, 0);
     }
 
 

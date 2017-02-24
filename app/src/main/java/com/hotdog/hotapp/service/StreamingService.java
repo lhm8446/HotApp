@@ -64,11 +64,11 @@ public class StreamingService {
         return httpRequest.code();
     }
 
-    public String audioUpload(File file) throws IOException {
+    public String audioUpload(File file, int users_no) throws IOException {
         String url = "http://150.95.141.66/hotdog/user/app/audioupload";
         HttpRequest httpRequest = HttpRequest.post(url);
         httpRequest.part("file", file.getName(), file);
-
+        httpRequest.part("users_no", users_no);
         int responseCode = httpRequest.code();
 
         if (responseCode != HttpURLConnection.HTTP_OK) {

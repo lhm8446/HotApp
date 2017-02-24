@@ -210,7 +210,6 @@ public class UserService {
     }
 
 
-
     // 비밀번호 찾기
     public String passModify(UserVo userVo) {
         String url = SERVER_URL + "/user/app/passmodify";

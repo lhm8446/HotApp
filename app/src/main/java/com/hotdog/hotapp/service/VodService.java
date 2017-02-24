@@ -4,6 +4,7 @@ import com.github.kevinsawicki.http.HttpRequest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.hotdog.hotapp.other.network.JSONResult;
+import com.hotdog.hotapp.vo.CaptureVo;
 import com.hotdog.hotapp.vo.UserVo;
 import com.hotdog.hotapp.vo.VideoVo;
 
@@ -38,7 +39,6 @@ public class VodService {
         String url = SERVER_URL + "/blog/app/vod";
         HttpRequest httpRequest = HttpRequest.post(url);
 
-        System.out.println(userVo);
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("users_no", userVo.getUsers_no());
 
@@ -50,9 +50,41 @@ public class VodService {
         return jSONResultVodUrl.getData();
     }
 
+    public int refreshGallery(UserVo userVo) throws IOException {
+        String url = "http://150.95.141.66:80/test/cgi-bin/capture.py";
+        HttpRequest httpRequest = HttpRequest.post(url);
+
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("userNo", userVo.getUsers_no());
+
+        if (httpRequest.form(data).created()) {
+            System.out.println(httpRequest.body());
+        }
+
+        return httpRequest.code();
+    }
+
+
+    public ArrayList<CaptureVo> fetchCapture(UserVo userVo) throws IOException {
+        String url = SERVER_URL + "/blog/app/vod";
+        HttpRequest httpRequest = HttpRequest.post(url);
+
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("users_no", userVo.getUsers_no());
+
+        if (httpRequest.form(data).created()) {
+            System.out.println(httpRequest.body());
+        }
+
+        JSONResultCapture jSONResultCapture = fromJSON(httpRequest, JSONResultCapture.class);
+        return jSONResultCapture.getData();
+    }
+
     private class JSONResultVodUrl extends JSONResult<ArrayList<VideoVo>> {
     }
 
+    private class JSONResultCapture extends JSONResult<ArrayList<CaptureVo>> {
+    }
 
     protected <V> V fromJSON(HttpRequest request, Class<V> target) {
         V v = null;
