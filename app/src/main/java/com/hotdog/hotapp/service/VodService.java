@@ -66,7 +66,7 @@ public class VodService {
 
 
     public ArrayList<CaptureVo> fetchCapture(UserVo userVo) throws IOException {
-        String url = SERVER_URL + "/blog/app/vod";
+        String url = SERVER_URL + "/blog/app/capture";
         HttpRequest httpRequest = HttpRequest.post(url);
 
         Map<String, Object> data = new HashMap<String, Object>();

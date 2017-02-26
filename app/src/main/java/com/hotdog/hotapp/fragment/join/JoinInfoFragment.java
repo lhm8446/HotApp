@@ -30,6 +30,12 @@ public class JoinInfoFragment extends Fragment {
     private SharedPreferences emailShared;
     private SharedPreferences.Editor editor;
 
+    @Override
+    public void onDestroy() {
+        getFragmentManager().popBackStack();
+        super.onDestroy();
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -141,6 +147,7 @@ public class JoinInfoFragment extends Fragment {
         });
 
         return rootView;
+
     }
 
     // 닉네임 체크

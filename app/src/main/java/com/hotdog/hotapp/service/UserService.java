@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class UserService {
     private final String SERVER_URL = "http://150.95.141.66:80/hotdog";
-    //private final String SERVER_URL = "http://192.168.1.29:8088/hotdog";
+    //private final String SERVER_URL = "http://192.168.0.5:8088/hotdog";
 
     // (로그인, 회원가입)이메일 체크
     public String userEmailCheck(String email) {
@@ -203,9 +203,8 @@ public class UserService {
         if (httpRequest.form(data).created()) {
             System.out.println("----- Pet update ----");
         }
-
+        System.out.println(httpRequest.body());
         JSONResultUpdatePet jSONResultUpdatePet = fromJSON(httpRequest, JSONResultUpdatePet.class);
-        //System.out.println(httpRequest.body() + " " + jSONResultPetUpdate.getData());
         return jSONResultUpdatePet.getData();
     }
 
@@ -235,9 +234,26 @@ public class UserService {
 
         if (httpRequest.form(data).created()) {
         }
-        JSONResultSendEmail jSONResultSendEamil = fromJSON(httpRequest, JSONResultSendEmail.class);
-        return jSONResultSendEamil.getData();
+        return httpRequest.body();
     }
+
+    // (최종 로그인)이메일 + 비밀번호 체크
+    public int sessionLogin(UserVo userVo) {
+        String url = SERVER_URL + "/user/login";
+        HttpRequest httpRequest = HttpRequest.post(url);
+
+        Map<String, String> data = new HashMap<String, String>();
+        data.put("email", userVo.getEmail());
+        data.put("pass_word", userVo.getPass_word());
+        data.put("nickname", userVo.getNickname());
+        data.put("remember", "remember");
+        if (httpRequest.form(data).created()) {
+            System.out.println("----- Users login checked ----");
+        }
+
+        return httpRequest.code();
+    }
+
 
     private class JSONResultPassModify extends JSONResult<String> {
     }

@@ -357,15 +357,11 @@ public class MypagePetFragment extends Fragment {
 
         @Override
         protected void onSuccess(String flag) throws Exception {
-            if ("success".equals(flag)) {
-                Intent intent = new Intent(getActivity().getApplicationContext(), HomeActivity.class);
-                intent.putExtra("userNo", petVo.getUsers_no());
-                intent.putExtra("callback", "mypage");
-                startActivity(intent);
-                getActivity().finish();
-            } else {
-                Toast.makeText(getActivity().getApplicationContext(), "에러, 나중에 다시 해죠", Toast.LENGTH_LONG).show();
-            }
+            Intent intent = new Intent(getActivity().getApplicationContext(), HomeActivity.class);
+            intent.putExtra("userNo", petVo.getUsers_no());
+            intent.putExtra("callback", "mypage");
+            startActivity(intent);
+            getActivity().finish();
         }
     }
 }

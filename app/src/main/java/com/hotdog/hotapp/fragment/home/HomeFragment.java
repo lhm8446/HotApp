@@ -19,7 +19,6 @@ import java.util.Calendar;
 import java.util.Random;
 
 public class HomeFragment extends Fragment {
-    private Random mRandom = new Random();
     private ImageView userImage, petImage;
     private TextView textCount;
     private static final String urlimg = "http://150.95.141.66:80/hotdog/hotdog/image/user/";
@@ -36,6 +35,7 @@ public class HomeFragment extends Fragment {
         userVo = Util.getUserVo(getActivity());
         petVo = Util.getPetVo(getActivity());
         init();
+        
         return rootView;
     }
 

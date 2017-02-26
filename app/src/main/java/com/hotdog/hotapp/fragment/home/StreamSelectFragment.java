@@ -26,12 +26,10 @@ public class StreamSelectFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_stream_select, container, false);
-
         piVo = Util.getPiVo(getActivity());
 
         streamMobile = (Button) rootView.findViewById(R.id.streamMobile);
         streamRasp = (Button) rootView.findViewById(R.id.streamRasp);
-
 
         streamMobile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,9 +101,12 @@ public class StreamSelectFragment extends Fragment {
 
             }
         });
-
         return rootView;
     }
 
-
+    @Override
+    public void onDestroy() {
+        getFragmentManager().popBackStack();
+        super.onDestroy();
+    }
 }

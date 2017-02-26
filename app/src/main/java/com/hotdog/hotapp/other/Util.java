@@ -12,8 +12,15 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.view.View;
 
 import com.hotdog.hotapp.R;
+import com.hotdog.hotapp.activity.HomeActivity;
+import com.hotdog.hotapp.fragment.home.HomeFragment;
+import com.hotdog.hotapp.fragment.home.MypageMainFragment;
+import com.hotdog.hotapp.other.network.SafeAsyncTask;
+import com.hotdog.hotapp.service.PiService;
+import com.hotdog.hotapp.service.UserService;
 import com.hotdog.hotapp.vo.PetVo;
 import com.hotdog.hotapp.vo.PiVo;
 import com.hotdog.hotapp.vo.UserVo;
@@ -178,6 +185,7 @@ public class Util {
 
     public static UserVo getUserVo(Context context) {
         SharedPreferences data = context.getSharedPreferences("userData", 0);
+        new UserGetAsyncTask(context).execute();
 
         UserVo userVo = new UserVo();
         userVo.setUsers_no(data.getInt("users_no", -1));
@@ -206,6 +214,7 @@ public class Util {
 
     public static PetVo getPetVo(Context context) {
         SharedPreferences data = context.getSharedPreferences("petData", 0);
+        new PetGetAsyncTask(context).execute();
 
         PetVo petVo = new PetVo();
         petVo.setPet_no(data.getInt("pet_no", 0));
@@ -234,6 +243,7 @@ public class Util {
 
     public static PiVo getPiVo(Context context) {
         SharedPreferences data = context.getSharedPreferences("piData", 0);
+        new GetPiInfoAsyncTask(context).execute();
 
         PiVo piVo = new PiVo();
         piVo.setUsers_no(data.getInt("users_no", 0));
@@ -244,5 +254,79 @@ public class Util {
         return piVo;
     }
 
+    private static class UserGetAsyncTask extends SafeAsyncTask<UserVo> {
+        private Context context;
 
+        public UserGetAsyncTask(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        public UserVo call() throws Exception {
+            UserService userService = new UserService();
+            SharedPreferences data = context.getSharedPreferences("userData", 0);
+            return userService.getUser(data.getInt("users_no", -1));
+        }
+
+        @Override
+        protected void onException(Exception e) throws RuntimeException {
+            super.onException(e);
+            System.out.println("-------------------- getUser 에러 ------------------- " + e);
+        }
+
+        @Override
+        protected void onSuccess(UserVo userVo) throws Exception {
+
+            Util.setUserVo(context, userVo);
+        }
+    }
+
+    private static class PetGetAsyncTask extends SafeAsyncTask<PetVo> {
+        private Context context;
+
+        public PetGetAsyncTask(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        public PetVo call() throws Exception {
+            UserService userService = new UserService();
+            SharedPreferences data = context.getSharedPreferences("userData", 0);
+            return userService.getPet(data.getInt("users_no", -1));
+        }
+
+        @Override
+        protected void onException(Exception e) throws RuntimeException {
+            super.onException(e);
+        }
+
+        @Override
+        protected void onSuccess(PetVo petVo) throws Exception {
+            Util.setPetVo(context, petVo);
+        }
+    }
+
+    private static class GetPiInfoAsyncTask extends SafeAsyncTask<PiVo> {
+        private Context context;
+
+        public GetPiInfoAsyncTask(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        public PiVo call() throws Exception {
+            PiService piService = new PiService();
+            SharedPreferences data = context.getSharedPreferences("userData", 0);
+            return piService.getinfo(data.getInt("users_no", -1));
+        }
+
+        @Override
+        protected void onException(Exception e) throws RuntimeException {
+        }
+
+        @Override
+        protected void onSuccess(PiVo piVo) throws Exception {
+            Util.setPiVo(context, piVo);
+        }
+    }
 }

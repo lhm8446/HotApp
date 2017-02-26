@@ -28,7 +28,10 @@
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings_black_24dp"
             android:title="@string/nav_settings" />
-
+        <item
+            android:id="@+id/nav_web_blog"
+            android:icon="@drawable/hotdog_logo_02"
+            android:title="@string/activity_web_blog" />
     </group>
 
     <item android:title="Other">
@@ -37,10 +40,7 @@
                 android:id="@+id/nav_streaming_camera"
                 android:icon="@drawable/ic_videocam_black_24dp"
                 android:title="@string/activity_title_Streaming" />
-            <item
-                android:id="@+id/nav_web_blog"
-                android:icon="@drawable/hotdog_logo_02"
-                android:title="@string/activity_web_blog" />
+
             <item
                 android:id="@+id/nav_about_us"
                 android:title="@string/activity_title_about_us" />

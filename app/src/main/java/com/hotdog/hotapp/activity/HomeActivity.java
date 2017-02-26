@@ -20,6 +20,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.hotdog.hotapp.R;
+import com.hotdog.hotapp.fragment.home.BlogFragment;
+import com.hotdog.hotapp.fragment.home.FetchCaptureFragment;
 import com.hotdog.hotapp.fragment.home.HomeFragment;
 import com.hotdog.hotapp.fragment.home.MypageMainFragment;
 import com.hotdog.hotapp.fragment.home.SettingFragment;
@@ -38,22 +40,21 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private FragmentManager fm;
     private UserVo userVo;
     private int users_no;
-
     private PetVo petVo;
     private UserService userService;
     private PiService piService;
-
+    private Menu menu;
+    private MenuItem nav_home;
     private NavigationView navigationView;
-    private DrawerLayout drawer;
     private View navHeader;
     private ImageView imgNavHeaderBg, imgProfile, img_pet;
     private TextView txtName, txtWebsite;
     private Toolbar toolbar;
-
+    public DrawerLayout drawer;
     // urls to load navigation header background image
     // and profile image
-    private static final String urlNavHeaderBg = "http://68.media.tumblr.com/tumblr_lxhocbDywJ1qc0kfg.jpg";
-    private static final String urlimg = "http://150.95.141.66:80/hotdog/hotdog/image/user/";
+    private static final String NAVHEAD = "http://68.media.tumblr.com/tumblr_lxhocbDywJ1qc0kfg.jpg";
+    private static final String URLIMG = "http://150.95.141.66:80/hotdog/hotdog/image/user/";
 
     // index to identify current nav menu item
     public static int navItemIndex = 0;
@@ -74,7 +75,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_home);
 
         init();
-
         dataInit();
         Util.checkAudioPermission(this);
     }
@@ -89,16 +89,17 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         drawer.setVisibility(View.GONE);
         // Navigation view header
         navHeader = navigationView.getHeaderView(0);
+
         txtName = (TextView) navHeader.findViewById(R.id.name);
         txtWebsite = (TextView) navHeader.findViewById(R.id.website);
         imgNavHeaderBg = (ImageView) navHeader.findViewById(R.id.img_header_bg);
         imgProfile = (ImageView) navHeader.findViewById(R.id.img_profile);
         img_pet = (ImageView) navHeader.findViewById(R.id.img_pet);
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(HomeActivity.this);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        menu = navigationView.getMenu();
+        nav_home = menu.findItem(R.id.nav_home);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
@@ -117,9 +118,16 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        FrameLayout homeFragment = (FrameLayout) findViewById(R.id.frame_home);
-        if (homeFragment != null) {
+        FrameLayout Home = (FrameLayout) findViewById(R.id.frame_home);
+        if (Home != null) {
             finish();
+        } else if (fm.getBackStackEntryCount() == 2) {
+            nav_home.setChecked(true);
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                super.onBackPressed();
+            }
         } else {
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
@@ -127,8 +135,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 super.onBackPressed();
             }
         }
-
-
     }
 
     @Override
@@ -167,6 +173,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             new SecPassChkAsyncTask().execute();
         } else if (id == R.id.nav_vod) {
             startActivity(new Intent(HomeActivity.this, VodActivity.class));
+        } else if (id == R.id.nav_gallery) {
+            popClear();
+            Util.changeHomeFragment(getSupportFragmentManager(), new FetchCaptureFragment(), PAGE_TAG);
         } else if (id == R.id.nav_page) {
             popClear();
             CURRENT_TAG = PAGE_TAG;
@@ -175,6 +184,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             popClear();
             CURRENT_TAG = SETTING_TAG;
             Util.changeHomeFragment(getSupportFragmentManager(), new SettingFragment(), SETTING_TAG);
+        } else if (id == R.id.nav_web_blog) {
+            popClear();
+            Util.changeHomeFragment(getSupportFragmentManager(), new BlogFragment());
         } else if (id == R.id.nav_about_us) {
             popClear();
             startActivity(new Intent(HomeActivity.this, AboutUsActivity.class));
@@ -190,6 +202,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+        loadHomeFragment();
         return true;
     }
 
@@ -205,11 +218,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         txtName.setText(userVo.getNickname() + "님");
         txtWebsite.setText("프로필");
 
-        String urlProfileImg = urlimg + userVo.getUsers_image();
-        String urlPetImg = urlimg + petVo.getPet_image();
+        String urlProfileImg = URLIMG + userVo.getUsers_image();
+        String urlPetImg = URLIMG + petVo.getPet_image();
 
         // loading header background image
-        Glide.with(this).load(urlNavHeaderBg)
+        Glide.with(this).load(NAVHEAD)
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(imgNavHeaderBg);
@@ -304,12 +317,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
             if ("mypage".equals(callback)) {
                 Util.changeHomeFragment(getSupportFragmentManager(), new MypageMainFragment(), PAGE_TAG);
+                loadHomeFragment();
             } else {
                 Util.changeHomeFragment(getSupportFragmentManager(), new HomeFragment(), HOME_TAG);
+                loadHomeFragment();
             }
             drawer.setVisibility(View.VISIBLE);
-            drawer.setBackgroundResource(R.drawable.dog);
-            loadHomeFragment();
+            drawer.setBackgroundResource(R.drawable.mainbg);
+
         }
     }
 
@@ -317,17 +332,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private class SecPassChkAsyncTask extends SafeAsyncTask<String> {
         @Override
         public String call() throws Exception {
-
             // 통신 완료 후 리턴값 저장
             userService = new UserService();
-
             return userService.chkSecPass(userVo);
         }
 
         @Override
         protected void onException(Exception e) throws RuntimeException {
             super.onException(e);
-            System.out.println("-------------------- 에러 ------------------- " + e);
         }
 
         @Override
@@ -351,7 +363,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         @Override
         protected void onException(Exception e) throws RuntimeException {
             super.onException(e);
-            System.out.println("-------------------- 에러 ------------------- " + e);
         }
 
         @Override

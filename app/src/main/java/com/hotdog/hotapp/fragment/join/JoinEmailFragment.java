@@ -87,6 +87,10 @@ public class JoinEmailFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 
     // 이메일 체크
     private class UserEmailChkAsyncTask extends SafeAsyncTask<String> {

@@ -80,14 +80,12 @@ public class StreamSecFragment extends Fragment {
             super.onException(e);
             System.out.println("-------------------- 에러 ------------------- " + e);
             secPassErr.setVisibility(view.VISIBLE);
-
         }
 
         @Override
         protected void onSuccess(String flag) throws Exception {
             wifiChk = getActivity().getSharedPreferences("wifiChk", 0);
             int wifi = Util.getConnectivityStatus(getActivity());
-
             if ("yes".equals(flag)) {
                 if (wifi != 1 && wifiChk.getBoolean("chk", false)) {
                     new PromptDialog(getActivity())

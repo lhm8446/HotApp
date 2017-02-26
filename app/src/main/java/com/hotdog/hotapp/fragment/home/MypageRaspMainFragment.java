@@ -1,5 +1,6 @@
 package com.hotdog.hotapp.fragment.home;
 
+import android.accounts.AccountManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -25,7 +26,7 @@ public class MypageRaspMainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_mypage_rasp_main, container, false);
-
+        System.out.println(getFragmentManager().getBackStackEntryCount());
         raspDevice = (TextView) rootView.findViewById(R.id.raspDevice);
 
         secPassChange = (Button) rootView.findViewById(R.id.secPassChange);
@@ -61,5 +62,10 @@ public class MypageRaspMainFragment extends Fragment {
         return rootView;
     }
 
-
+    @Override
+    public void onDestroy() {
+        getFragmentManager().popBackStack();
+        System.out.println(getFragmentManager().getBackStackEntryCount());
+        super.onDestroy();
+    }
 }

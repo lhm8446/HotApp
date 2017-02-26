@@ -73,6 +73,12 @@ public class ResetPwFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onDestroy() {
+        getFragmentManager().popBackStack();
+        super.onDestroy();
+    }
+
     // 닉네임 체크
     private class PassModifyAsyncTask extends SafeAsyncTask<String> {
         @Override
