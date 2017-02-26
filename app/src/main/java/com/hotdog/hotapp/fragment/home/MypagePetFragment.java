@@ -128,11 +128,19 @@ public class MypagePetFragment extends Fragment {
                             cal.get(Calendar.DAY_OF_MONTH));
                 } else {
                     String[] strArr = petAge.getText().toString().split("/");
-                    datePicker = new DatePickerDialog(getActivity(),
-                            datePickerListener,
-                            Integer.parseInt(strArr[2]),
-                            Integer.parseInt(strArr[1]) - 1,
-                            Integer.parseInt(strArr[0]));
+                    if (strArr.length >= 3) {
+                        datePicker = new DatePickerDialog(getActivity(),
+                                datePickerListener,
+                                Integer.parseInt(strArr[2]),
+                                Integer.parseInt(strArr[1]) - 1,
+                                Integer.parseInt(strArr[0]));
+                    } else {
+                        datePicker = new DatePickerDialog(getActivity(),
+                                datePickerListener,
+                                cal.get(Calendar.YEAR),
+                                cal.get(Calendar.MONTH),
+                                cal.get(Calendar.DAY_OF_MONTH));
+                    }
                 }
                 datePicker.setCancelable(false);
                 datePicker.setTitle("Select the date");
@@ -153,11 +161,19 @@ public class MypagePetFragment extends Fragment {
                             cal.get(Calendar.DAY_OF_MONTH));
                 } else {
                     String[] strArr = co_Date.getText().toString().split("/");
-                    datePicker = new DatePickerDialog(getActivity(),
-                            datePickerListener1,
-                            Integer.parseInt(strArr[2]),
-                            Integer.parseInt(strArr[1]) - 1,
-                            Integer.parseInt(strArr[0]));
+                    if (strArr.length >= 2) {
+                        datePicker = new DatePickerDialog(getActivity(),
+                                datePickerListener1,
+                                Integer.parseInt(strArr[2]),
+                                Integer.parseInt(strArr[1]) - 1,
+                                Integer.parseInt(strArr[0]));
+                    } else {
+                        datePicker = new DatePickerDialog(getActivity(),
+                                datePickerListener1,
+                                cal.get(Calendar.YEAR),
+                                cal.get(Calendar.MONTH),
+                                cal.get(Calendar.DAY_OF_MONTH));
+                    }
                 }
                 datePicker.setCancelable(false);
                 datePicker.setTitle("Select the date");

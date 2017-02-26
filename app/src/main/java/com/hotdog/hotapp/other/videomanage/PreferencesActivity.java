@@ -5,7 +5,7 @@
  */
 
 
-package com.hotdog.hotapp.activity;
+package com.hotdog.hotapp.other.videomanage;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
