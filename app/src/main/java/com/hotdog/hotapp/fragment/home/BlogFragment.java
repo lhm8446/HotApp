@@ -23,7 +23,7 @@ import im.delight.android.webview.AdvancedWebView;
  * A simple {@link Fragment} subclass.
  */
 public class BlogFragment extends Fragment implements AdvancedWebView.Listener {
-    private AdvancedWebView mWebView;
+    public static AdvancedWebView mWebView;
     private UserVo userVo;
 
     @Override
@@ -54,6 +54,7 @@ public class BlogFragment extends Fragment implements AdvancedWebView.Listener {
 
         return rootView;
     }
+
 
     @SuppressLint("NewApi")
     @Override

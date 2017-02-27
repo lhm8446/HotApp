@@ -16,7 +16,6 @@ import com.hotdog.hotapp.vo.PetVo;
 import com.hotdog.hotapp.vo.UserVo;
 
 import java.util.Calendar;
-import java.util.Random;
 
 public class HomeFragment extends Fragment {
     private ImageView userImage, petImage;
@@ -35,7 +34,7 @@ public class HomeFragment extends Fragment {
         userVo = Util.getUserVo(getActivity());
         petVo = Util.getPetVo(getActivity());
         init();
-        
+
         return rootView;
     }
 

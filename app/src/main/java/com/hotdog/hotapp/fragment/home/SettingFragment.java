@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
@@ -24,7 +23,6 @@ public class SettingFragment extends Fragment {
     private static final String TAG = "SettingFragment";
     private PiService piService;
     private Switch switch1, switch2, switch3;
-    private Button buttonHelp;
     private UserVo userVo;
     private PiVo piVo, oldPiVo;
     private SharedPreferences.Editor editor;
@@ -38,7 +36,6 @@ public class SettingFragment extends Fragment {
         switch1 = (Switch) rootView.findViewById(R.id.switch1);
         switch2 = (Switch) rootView.findViewById(R.id.switch2);
         switch3 = (Switch) rootView.findViewById(R.id.switch3);
-        buttonHelp = (Button) rootView.findViewById(R.id.buttonHelp);
 
         wifiChk = getActivity().getSharedPreferences("wifiChk", 0);
         editor = wifiChk.edit();
@@ -99,12 +96,6 @@ public class SettingFragment extends Fragment {
                     piVo.setSec_token("");
                     new PiSecTokenUpdateAsyncTask().execute();
                 }
-            }
-        });
-        buttonHelp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
             }
         });
 

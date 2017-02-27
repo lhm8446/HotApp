@@ -353,6 +353,11 @@ public class MypagePetFragment extends Fragment {
         protected void onException(Exception e) throws RuntimeException {
             super.onException(e);
             System.out.println("-------------------- 에러 ------------------- " + e);
+            Intent intent = new Intent(getActivity().getApplicationContext(), HomeActivity.class);
+            intent.putExtra("userNo", petVo.getUsers_no());
+            intent.putExtra("callback", "mypage");
+            startActivity(intent);
+            getActivity().finish();
         }
 
         @Override

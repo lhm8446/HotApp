@@ -119,20 +119,30 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         FrameLayout Home = (FrameLayout) findViewById(R.id.frame_home);
-        if (Home != null) {
-            finish();
-        } else if (fm.getBackStackEntryCount() == 2) {
-            nav_home.setChecked(true);
-            if (drawer.isDrawerOpen(GravityCompat.START)) {
-                drawer.closeDrawer(GravityCompat.START);
-            } else {
+        FrameLayout blog = (FrameLayout) findViewById(R.id.frame_blog);
+        if (blog != null) {
+            if ("http://150.95.141.66/hotdog/".equals(BlogFragment.mWebView.getUrl())) {
+                nav_home.setChecked(true);
                 super.onBackPressed();
+            } else {
+                BlogFragment.mWebView.goBack();
             }
         } else {
-            if (drawer.isDrawerOpen(GravityCompat.START)) {
-                drawer.closeDrawer(GravityCompat.START);
+            if (Home != null) {
+                finish();
+            } else if (fm.getBackStackEntryCount() == 2) {
+                nav_home.setChecked(true);
+                if (drawer.isDrawerOpen(GravityCompat.START)) {
+                    drawer.closeDrawer(GravityCompat.START);
+                } else {
+                    super.onBackPressed();
+                }
             } else {
-                super.onBackPressed();
+                if (drawer.isDrawerOpen(GravityCompat.START)) {
+                    drawer.closeDrawer(GravityCompat.START);
+                } else {
+                    super.onBackPressed();
+                }
             }
         }
     }
@@ -289,7 +299,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         protected void onSuccess(UserVo userVo) throws Exception {
 
             Util.setUserVo(getApplicationContext(), userVo);
-            System.out.println(userVo);
             new PetGetAsyncTask().execute();
         }
     }
@@ -311,7 +320,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         @Override
         protected void onSuccess(PetVo petVo) throws Exception {
             Util.setPetVo(getApplicationContext(), petVo);
-            System.out.println(petVo);
             new GetPiInfoAsyncTask().execute();
             loadNavHeader();
 
@@ -368,7 +376,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         @Override
         protected void onSuccess(PiVo piVo) throws Exception {
             Util.setPiVo(getApplicationContext(), piVo);
-            System.out.println(piVo);
         }
     }
 

@@ -12,10 +12,10 @@
         android:layout_width="match_parent"
         android:layout_height="205dp"
         android:layout_marginTop="50dp"
-        android:text="1000일"
+        android:text="0일"
         android:textAlignment="center"
-        android:textColor="@color/colorPrimary"
-        android:textSize="50dp" />
+        android:textColor="@android:color/black"
+        android:textSize="60dp" />
 
 
     <LinearLayout
@@ -32,26 +32,26 @@
 
             <com.github.siyamed.shapeimageview.CircularImageView
                 android:id="@+id/userImage"
-                android:layout_width="130dp"
+                android:layout_width="120dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|left"
                 android:layout_marginBottom="50dp"
                 android:layout_marginLeft="10dp"
                 android:src="@drawable/profiledog"
                 app:siBorderColor="@android:color/transparent"
-                app:siBorderWidth="1dp" />
+                 />
 
 
             <com.github.siyamed.shapeimageview.CircularImageView
                 android:id="@+id/petImage"
-                android:layout_width="130dp"
+                android:layout_width="120dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|right"
                 android:layout_marginBottom="50dp"
                 android:layout_marginRight="10dp"
                 android:src="@drawable/profiledog"
                 app:siBorderColor="@android:color/transparent"
-                app:siBorderWidth="1dp" />
+                 />
 
         </GridLayout>
     </LinearLayout>

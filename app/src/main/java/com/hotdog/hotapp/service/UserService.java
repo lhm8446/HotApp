@@ -190,7 +190,6 @@ public class UserService {
     public String updatePet(PetVo petVo) {
         String url = SERVER_URL + "/user/app/account/petprofilemodify";
         HttpRequest httpRequest = HttpRequest.post(url);
-        System.out.println(petVo);
 
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("users_no", toString().valueOf(petVo.getUsers_no()));
@@ -203,7 +202,6 @@ public class UserService {
         if (httpRequest.form(data).created()) {
             System.out.println("----- Pet update ----");
         }
-        System.out.println(httpRequest.body());
         JSONResultUpdatePet jSONResultUpdatePet = fromJSON(httpRequest, JSONResultUpdatePet.class);
         return jSONResultUpdatePet.getData();
     }
@@ -234,7 +232,9 @@ public class UserService {
 
         if (httpRequest.form(data).created()) {
         }
-        return httpRequest.body();
+        JSONResultSendEmail jSONResultSendEmail = fromJSON(httpRequest, JSONResultSendEmail.class);
+        System.out.println(jSONResultSendEmail.getData());
+        return jSONResultSendEmail.getData();
     }
 
     // (최종 로그인)이메일 + 비밀번호 체크

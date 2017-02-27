@@ -1,6 +1,5 @@
 package com.hotdog.hotapp.fragment.join;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,7 +12,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.hotdog.hotapp.R;
-import com.hotdog.hotapp.activity.LoginActivity;
 import com.hotdog.hotapp.other.network.SafeAsyncTask;
 import com.hotdog.hotapp.service.UserService;
 import com.hotdog.hotapp.vo.UserVo;
@@ -32,7 +30,6 @@ public class JoinInfoFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        getFragmentManager().popBackStack();
         super.onDestroy();
     }
 
@@ -166,7 +163,6 @@ public class JoinInfoFragment extends Fragment {
 
         @Override
         protected void onSuccess(String flag) throws Exception {
-
             // 닉네임 존재하면 'no' 아니면 'yes' 리턴
             if ("yes".equals(flag)) {
                 nicknameEr.setVisibility(view.GONE);
@@ -178,7 +174,6 @@ public class JoinInfoFragment extends Fragment {
         }
     }
 
-
     // 회원가입
     private class FetchUserInsertAsyncTask extends SafeAsyncTask<UserVo> {
         @Override
@@ -189,7 +184,6 @@ public class JoinInfoFragment extends Fragment {
             userVo.setEmail(email);
             userVo.setPass_word(pass_word);
             userVo.setNickname(nickname);
-
             return userService.userInsert(userVo);
         }
 
@@ -202,11 +196,7 @@ public class JoinInfoFragment extends Fragment {
         @Override
         protected void onSuccess(UserVo userVo) throws Exception {
 
-            // 통신 완료 값은 사용자 번호. 0보다 크면 회원가입 완료 아니면 실패
-            // 회원가입 완료 + 회원가입 실패 프래그먼트 띄우기 ( 구현 x )
             if (userVo.getUsers_no() > 0) {
-                Intent intent = new Intent(getActivity().getApplicationContext(), LoginActivity.class);
-                startActivity(intent);
                 getActivity().finish();
             }
         }

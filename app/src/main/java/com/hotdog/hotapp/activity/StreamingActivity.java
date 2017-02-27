@@ -12,7 +12,6 @@ import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -46,7 +45,7 @@ public class StreamingActivity extends Activity implements
 
     public final static String TAG = "StreamingActivity";
     private MediaPlayer mp;
-    private ImageButton mButtonVideo, mButtonStart, mButtonCamera, lightoff, flash;
+    private ImageButton mButtonVideo, mButtonStart, mButtonCamera, flash;
     private RadioGroup mRadioGroup;
     private FrameLayout mLayoutVideoSettings;
     private SurfaceView mSurfaceView;
@@ -119,7 +118,6 @@ public class StreamingActivity extends Activity implements
         mButtonVideo = (ImageButton) findViewById(R.id.videosettings);
         mButtonStart = (ImageButton) findViewById(R.id.start);
         mButtonCamera = (ImageButton) findViewById(R.id.camera);
-        lightoff = (ImageButton) findViewById(R.id.lightoff);
         mSurfaceView = (SurfaceView) findViewById(R.id.surface);
         mTextBitrate = (TextView) findViewById(R.id.bitrate);
         mLayoutVideoSettings = (FrameLayout) findViewById(R.id.video_layout);
@@ -132,7 +130,6 @@ public class StreamingActivity extends Activity implements
         mRadioGroup.setOnClickListener(this);
         mButtonStart.setOnClickListener(this);
         mButtonCamera.setOnClickListener(this);
-        lightoff.setOnClickListener(this);
         mButtonVideo.setOnClickListener(this);
         flash.setOnClickListener(this);
 
@@ -205,12 +202,6 @@ public class StreamingActivity extends Activity implements
             case R.id.videosettings:
                 mRadioGroup.clearCheck();
                 mLayoutVideoSettings.setVisibility(View.VISIBLE);
-                break;
-            case R.id.lightoff:
-                WindowManager.LayoutParams params = getWindow().getAttributes();
-                params.flags |= WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
-                params.screenBrightness = 0;
-                getWindow().setAttributes(params);
                 break;
             case R.id.flash2:
                 if (!isChecked) {

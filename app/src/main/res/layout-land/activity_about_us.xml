@@ -15,14 +15,12 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left|top"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="20dp"
+            android:layout_gravity="center"
             android:orientation="vertical">
 
             <com.github.siyamed.shapeimageview.CircularImageView
                 android:id="@+id/userImage1"
-                android:layout_width="150dp"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:src="@drawable/profiledog"
@@ -32,7 +30,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="12dp"
                 android:text="@string/donghu"
                 android:textSize="30dp" />
 
@@ -40,26 +38,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/donghu_info" />
+                android:text="@string/donghu_info"
+                android:textSize="12dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/donghu_git" />
+                android:text="@string/donghu_git"
+
+                android:textSize="12dp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right|top"
-            android:layout_marginRight="5dp"
-            android:layout_marginTop="20dp"
+            android:layout_gravity="center"
+
             android:orientation="vertical">
 
             <com.github.siyamed.shapeimageview.CircularImageView
                 android:id="@+id/userImage2"
-                android:layout_width="150dp"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:src="@drawable/profiledog"
@@ -69,7 +69,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="12dp"
                 android:text="@string/hamin"
                 android:textSize="30dp" />
 
@@ -77,32 +77,27 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/hamin_info" />
+                android:text="@string/hamin_info"
+                android:textSize="12dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/hamin_git" />
+                android:text="@string/hamin_git"
+                android:textSize="12dp" />
         </LinearLayout>
 
-    </GridLayout>
-
-    <GridLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left|bottom"
-            android:layout_marginBottom="20dp"
-            android:layout_marginLeft="5dp"
+            android:layout_gravity="center"
             android:orientation="vertical">
 
             <com.github.siyamed.shapeimageview.CircularImageView
                 android:id="@+id/userImage3"
-                android:layout_width="150dp"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:src="@drawable/profiledog"
@@ -112,7 +107,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="12dp"
                 android:text="@string/junwoo"
                 android:textSize="30dp" />
 
@@ -120,26 +115,26 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/junwoo_info" />
+                android:text="@string/junwoo_info"
+                android:textSize="12dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/junwoo_git" />
+                android:text="@string/junwoo_git"
+                android:textSize="12dp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right|bottom"
-            android:layout_marginBottom="20dp"
-            android:layout_marginRight="5dp"
+            android:layout_gravity="center"
             android:orientation="vertical">
 
             <com.github.siyamed.shapeimageview.CircularImageView
                 android:id="@+id/userImage4"
-                android:layout_width="150dp"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:src="@drawable/profiledog"
@@ -149,7 +144,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="12dp"
                 android:text="@string/jinwon"
                 android:textSize="30dp" />
 
@@ -157,13 +152,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/jinwon_info" />
+                android:text="@string/jinwon_info"
+                android:textSize="12dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/jinwon_git" />
+                android:text="@string/jinwon_git"
+                android:textSize="12dp" />
         </LinearLayout>
 
     </GridLayout>
