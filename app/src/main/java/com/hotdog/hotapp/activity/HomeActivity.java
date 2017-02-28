@@ -76,7 +76,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         init();
         dataInit();
-
         Util.checkStoragePermission(this);
     }
 
@@ -183,9 +182,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             CURRENT_TAG = STREAM_TAG;
             new SecPassChkAsyncTask().execute();
         } else if (id == R.id.nav_vod) {
-            if (Util.checkAudioPermission(getApplicationContext())) {
-                startActivity(new Intent(HomeActivity.this, VodActivity.class));
-            }
+            startActivity(new Intent(HomeActivity.this, VodActivity.class));
         } else if (id == R.id.nav_gallery) {
             popClear();
             Util.changeHomeFragment(getSupportFragmentManager(), new FetchCaptureFragment(), PAGE_TAG);

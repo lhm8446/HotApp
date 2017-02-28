@@ -310,7 +310,7 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
 
         getWindow().requestFeature(Window.FEATURE_PROGRESS);
         getWindow().setFeatureInt(Window.FEATURE_PROGRESS, Window.PROGRESS_VISIBILITY_ON);
-
+        Util.checkAudioPermission(this);
         setContentView(R.layout.activity_video);
         mthis = this;
 
@@ -487,7 +487,7 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
     }
 
     public void captureImage() {
-        Util.checkStoragePermission(getApplication());
+        Util.checkStoragePermission(this);
         //VideoShot frame = player.getVideoShot(200, 200);
         MediaPlayer.VideoShot frame = player.getVideoShot(-1, -1);
         if (frame == null)
@@ -513,7 +513,7 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
     }
 
     public void captureImage2() {
-        Util.checkStoragePermission(getApplication());
+        Util.checkStoragePermission(this);
         //VideoShot frame = player.getVideoShot(200, 200);
         MediaPlayer.VideoShot frame = player.getVideoShot(-1, -1);
         if (frame == null)
@@ -1031,7 +1031,7 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
 
         @Override
         public String call() throws Exception {
-            return streamingService.audioUpload(file, userVo.getUsers_no());
+            return streamingService.imageUpload(file, userVo.getUsers_no());
         }
 
         @Override
@@ -1055,7 +1055,7 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
 
         @Override
         public String call() throws Exception {
-            return streamingService.audioUpload(file, userVo.getUsers_no());
+            return streamingService.imageUpload(file, userVo.getUsers_no());
         }
 
         @Override

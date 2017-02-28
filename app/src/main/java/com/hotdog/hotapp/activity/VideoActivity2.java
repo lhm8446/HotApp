@@ -14,6 +14,7 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
@@ -305,7 +306,7 @@ public class VideoActivity2 extends Activity implements OnClickListener, MediaPl
         multicastLock = wifi.createMulticastLock("multicastLock");
         multicastLock.setReferenceCounted(true);
         multicastLock.acquire();
-
+        Util.checkAudioPermission(this);
         getWindow().requestFeature(Window.FEATURE_PROGRESS);
         getWindow().setFeatureInt(Window.FEATURE_PROGRESS, Window.PROGRESS_VISIBILITY_ON);
 
@@ -342,7 +343,6 @@ public class VideoActivity2 extends Activity implements OnClickListener, MediaPl
         VideoURL = "rtsp://150.95.141.66:1935/live/" + userVo.getNickname() + "/stream";
 
         buttonInit();
-
         player.getSurfaceView().setZOrderOnTop(true);    // necessary
         SurfaceHolder sfhTrackHolder = player.getSurfaceView().getHolder();
         sfhTrackHolder.setFormat(PixelFormat.TRANSPARENT);
@@ -368,7 +368,6 @@ public class VideoActivity2 extends Activity implements OnClickListener, MediaPl
         toggleVoice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Util.checkAudioPermission(getApplicationContext());
                 if (isChecked) {
                     isChecked = false;
                     toggleAudio(isChecked);
@@ -461,7 +460,7 @@ public class VideoActivity2 extends Activity implements OnClickListener, MediaPl
     }
 
     public void captureImage() {
-        Util.checkStoragePermission(getApplication());
+        Util.checkStoragePermission(this);
         //VideoShot frame = player.getVideoShot(200, 200);
         MediaPlayer.VideoShot frame = player.getVideoShot(-1, -1);
         if (frame == null)
@@ -910,7 +909,7 @@ public class VideoActivity2 extends Activity implements OnClickListener, MediaPl
 
         @Override
         public String call() throws Exception {
-            return streamingService.audioUpload(file, userVo.getUsers_no());
+            return streamingService.imageUpload(file, userVo.getUsers_no());
         }
 
         @Override
@@ -921,15 +920,22 @@ public class VideoActivity2 extends Activity implements OnClickListener, MediaPl
         @Override
         protected void onSuccess(final String filename) throws Exception {
             new PiControllAsyncTask("audio", piVo.getDevice_num()).execute();
+            MediaMetadataRetriever metaRetriever = new MediaMetadataRetriever();
+            metaRetriever.setDataSource(file.getPath());
+            String duration =
+                    metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+            long dur = Long.parseLong(duration);
+            final int sec = (int) dur;
+
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        Thread.sleep(200);
+                        Thread.sleep((int) (sec * 2));
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    new PiControllAsyncTask(filename, piVo.getDevice_num()).execute();
+                    new PiControllAsyncTask("audiostop", piVo.getDevice_num()).execute();
                 }
             }).start();
 
@@ -985,7 +991,7 @@ public class VideoActivity2 extends Activity implements OnClickListener, MediaPl
 
         @Override
         public String call() throws Exception {
-            return streamingService.audioUpload(file, userVo.getUsers_no());
+            return streamingService.imageUpload(file, userVo.getUsers_no());
         }
 
         @Override

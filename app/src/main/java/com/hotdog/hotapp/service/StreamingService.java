@@ -64,6 +64,22 @@ public class StreamingService {
         return httpRequest.code();
     }
 
+    public String imageUpload(File file, int users_no) throws IOException {
+        String url = "http://150.95.141.66/hotdog/user/app/imageupload";
+        HttpRequest httpRequest = HttpRequest.post(url);
+        httpRequest.part("file", file.getName(), file);
+        httpRequest.part("users_no", users_no);
+        int responseCode = httpRequest.code();
+
+        if (responseCode != HttpURLConnection.HTTP_OK) {
+            Log.d("2", "uploadUserImage: no" + httpRequest.body());
+        } else {
+            Log.d("2", "uploadUserImage: yes");
+        }
+        JSONResultImageUpload jSONResultImageUpload = fromJSON(httpRequest, JSONResultImageUpload.class);
+        return jSONResultImageUpload.getData();
+    }
+
     public String audioUpload(File file, int users_no) throws IOException {
         String url = "http://150.95.141.66/hotdog/user/app/audioupload";
         HttpRequest httpRequest = HttpRequest.post(url);
@@ -84,6 +100,9 @@ public class StreamingService {
     }
 
     private class JSONResultAudioUpload extends JSONResult<String> {
+    }
+
+    private class JSONResultImageUpload extends JSONResult<String> {
     }
 
     protected <V> V fromJSON(HttpRequest request, Class<V> target) {

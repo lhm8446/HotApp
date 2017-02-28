@@ -71,7 +71,6 @@ public class VodActivity extends AppCompatActivity {
         } else {
             return hour + ":" + min + ":" + sec;
         }
-
     }
 
     private class getVodUrl extends SafeAsyncTask<ArrayList<VideoVo>> {
