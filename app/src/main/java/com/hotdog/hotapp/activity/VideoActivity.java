@@ -391,14 +391,18 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
                 }
             }
         });
-        stop2.setOnClickListener(new View.OnClickListener() {
+        stop2.setOnClickListener(new View.OnClickListener()
+
+        {
             @Override
             public void onClick(View v) {
                 new moblieControlAsyncTask("stop", piVo.getSec_token()).execute();
                 onBackPressed();
             }
         });
-        flash.setOnClickListener(new View.OnClickListener() {
+        flash.setOnClickListener(new View.OnClickListener()
+
+        {
             @Override
             public void onClick(View v) {
                 if (isChecked2) {
@@ -412,7 +416,9 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
                 }
             }
         });
-        videosettings2.setOnClickListener(new View.OnClickListener() {
+        videosettings2.setOnClickListener(new View.OnClickListener()
+
+        {
             @Override
             public void onClick(View v) {
                 //mRadioGroup.clearCheck();
@@ -420,7 +426,9 @@ public class VideoActivity extends Activity implements OnClickListener, MediaPla
             }
         });
 
-        mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+
+        {
             @Override
             public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
                 mLayoutVideoSettings.setVisibility(View.GONE);

@@ -285,7 +285,7 @@ public class StreamingActivity extends Activity implements
         try {
             mp.reset();
             mp.setDataSource("http://150.95.141.66/hotdog/hotdog/image/user/" + users_no + "/myrecord.mp3");
-            mp.prepareAsync();
+
             mp.setLooping(false);
             MediaPlayer.OnCompletionListener listener2 = new MediaPlayer.OnCompletionListener() {
                 @Override
@@ -296,7 +296,13 @@ public class StreamingActivity extends Activity implements
                 }
             };
             mp.setOnCompletionListener(listener2);
-            mp.start();
+            mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    mp.start();
+                }
+            });
+            mp.prepareAsync();
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
 
@@ -329,7 +335,7 @@ public class StreamingActivity extends Activity implements
     }
 
     private void logError(final String msg) {
- /*       final String error = (msg == null) ? "Error unknown" : msg;
+   /*     final String error = (msg == null) ? "Error unknown" : msg;
         AlertDialog.Builder builder = new AlertDialog.Builder(StreamingActivity.this);
         builder.setMessage(msg).setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {

@@ -9,16 +9,6 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="-100dp"
-        android:layout_marginTop="15dp"
-        android:text="@string/joinInfo_title"
-        android:textColor="#2A78E4"
-        android:textSize="18dp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginTop="55dp"
         android:text="@string/joinInfo_subTitle"
         android:textStyle="bold" />

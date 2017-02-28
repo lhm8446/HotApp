@@ -368,6 +368,7 @@ public class VideoActivity2 extends Activity implements OnClickListener, MediaPl
         toggleVoice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Util.checkAudioPermission(getApplicationContext());
                 if (isChecked) {
                     isChecked = false;
                     toggleAudio(isChecked);
@@ -585,7 +586,7 @@ public class VideoActivity2 extends Activity implements OnClickListener, MediaPl
         } else {
             if ("Disconnected".equals(playerStatusText.getText().toString())) {
                 if (!isChecked2) {
-                    new PiControllAsyncTask("start", piVo.getDevice_num()).execute();
+                    new PiControllAsyncTask("stream", piVo.getDevice_num()).execute();
                     isChecked2 = true;
                 }
             }
