@@ -1,6 +1,5 @@
 package com.hotdog.hotapp.fragment.home;
 
-import android.accounts.AccountManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,13 +12,11 @@ import android.widget.TextView;
 import com.hotdog.hotapp.R;
 import com.hotdog.hotapp.other.Util;
 import com.hotdog.hotapp.vo.PiVo;
-import com.hotdog.hotapp.vo.UserVo;
 
 public class MypageRaspMainFragment extends Fragment {
 
     private TextView raspDevice;
     private Button secPassChange, DeviceNumChange, DeviceNumDelete;
-    private UserVo userVo;
     private PiVo piVo;
 
     @Nullable
@@ -33,7 +30,6 @@ public class MypageRaspMainFragment extends Fragment {
         DeviceNumChange = (Button) rootView.findViewById(R.id.DeviceNumChange);
         DeviceNumDelete = (Button) rootView.findViewById(R.id.DeviceNumDelete);
 
-        userVo = Util.getUserVo(getActivity());
         piVo = Util.getPiVo(getActivity());
 
         raspDevice.setText(piVo.getDevice_num());
@@ -64,8 +60,6 @@ public class MypageRaspMainFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        getFragmentManager().popBackStack();
-        System.out.println(getFragmentManager().getBackStackEntryCount());
         super.onDestroy();
     }
 }

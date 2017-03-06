@@ -18,6 +18,7 @@
         android:layout_width="225dp"
         android:layout_height="25dp"
         android:background="@drawable/whitebox"
+        android:inputType="textEmailAddress"
         android:padding="5dp"
         android:textSize="13dp" />
 
